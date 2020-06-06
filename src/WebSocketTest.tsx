@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { flatbuffers } from "flatbuffers";
-import { StdMsgsString } from "./std_msgs_string_generated";
+import { fb } from "./schema_generated.js";
 
 export default function WebSocketTest(props: {url: string}) {
     const reconnectDelay = 2000;
     const timeout = useRef(null as number | null);
     const [ws, setWs] = useState(null as WebSocket | null);
     const [state, setState] = useState("disconnected");
-    const [messages, setMessages] = useState([] as Array<string>);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         if (ws === null)
@@ -23,8 +23,9 @@ export default function WebSocketTest(props: {url: string}) {
         ws.onmessage = async (msg) => {
             const data = await msg.data.arrayBuffer();
             const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
-            const obj = StdMsgsString.getRootAsStdMsgsString(buf);
-            setMessages((messages) => [...messages, obj.data() ?? "<null>"]);
+            const obj = fb.sensor_msgs.NavSatFix.getRootAsNavSatFix(buf);
+            const message = `lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
+            setMessage(message);
         };
         ws.onerror = (error) => {
             console.error("Websocket error", error);
@@ -48,6 +49,6 @@ export default function WebSocketTest(props: {url: string}) {
 
     return <div style={{display: "flex", flexDirection: "column"}}>
         <div>Connection state: {state}</div>
-        {messages.map((m, i) => <div key={i}>{m}</div>)}
+        <div>Message: {message}</div>
     </div>
 }
