@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { flatbuffers } from "flatbuffers";
-import { fb } from "./schema_generated.js";
+import { fb } from "./schema_generated";
 
 export default function WebSocketTest(props: {url: string}) {
     const reconnectDelay = 2000;
@@ -24,7 +24,10 @@ export default function WebSocketTest(props: {url: string}) {
             const data = await msg.data.arrayBuffer();
             const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
             const obj = fb.sensor_msgs.NavSatFix.getRootAsNavSatFix(buf);
-            const message = `lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
+
+            const statusConsts = new fb.sensor_msgs.NavSatStatusConstants();
+            const hasFix = obj.status()?.status() === statusConsts.statusNoFix();
+            const message = `has fix: ${hasFix}; lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
             setMessage(message);
         };
         ws.onerror = (error) => {
