@@ -23,12 +23,19 @@ export default function WebSocketTest(props: {url: string}) {
         ws.onmessage = async (msg) => {
             const data = await msg.data.arrayBuffer();
             const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
-            const obj = fb.sensor_msgs.NavSatFix.getRootAsNavSatFix(buf);
 
-            const statusConsts = new fb.sensor_msgs.NavSatStatusConstants();
-            const hasFix = obj.status()?.status() === statusConsts.statusNoFix();
-            const message = `has fix: ${hasFix}; lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
-            setMessage(message);
+            // check topic for arbitrary message type
+            const metadata = fb.MsgWithMetadata.getRootAsMsgWithMetadata(buf);
+            const topic = metadata._metadata()?.topic();
+
+            if (topic === "/navsat/fix") {
+                const obj = fb.sensor_msgs.NavSatFix.getRootAsNavSatFix(buf);
+                // const statusConsts = fb.sensor_msgs.NavSatStatusConstants.getRootAsNavSatStatusConstants(new flatbuffers.ByteBuffer(new Uint8Array()));
+                const statusConsts = fb.sensor_msgs.NavSatStatusConstants;
+                const hasFix = obj.status()?.status() === statusConsts.status_no_fix.value;
+                const message = `has fix: ${hasFix}; lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
+                setMessage(message);
+            }
         };
         ws.onerror = (error) => {
             console.error("Websocket error", error);
