@@ -5,6 +5,7 @@ import { fb } from "./schema_generated";
 
 export default function WebSocketTest(props: {url: string}) {
     const {callbacks, state} = useWebSocket({url: props.url});
+    const [status, setStatus] = useState("");
     const [navsatMsg, setNavsatMsg] = useState("");
 
     type Handlers = {[key: string]: (buffer: flatbuffers.ByteBuffer) => void};
@@ -16,6 +17,10 @@ export default function WebSocketTest(props: {url: string}) {
             const hasFix = obj.status()?.status() === statusConsts.status_no_fix.value;
             const msg = `has fix: ${hasFix}; lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
             setNavsatMsg(msg);
+        },
+        "/test/status": (buf) => {
+            const obj = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(buf);
+            setStatus(`status: ${obj.status()}, is_ok: ${obj.isOk()}, location: ${obj.location()}, battery: ${obj.batteryLevel()}`);
         },
     };
 
@@ -37,6 +42,7 @@ export default function WebSocketTest(props: {url: string}) {
 
     return <div style={{display: "flex", flexDirection: "column"}}>
         <div>Connection state: {state}</div>
+        <div>Robot status: {status}</div>
         <div>Navsat: {navsatMsg}</div>
     </div>;
 }
