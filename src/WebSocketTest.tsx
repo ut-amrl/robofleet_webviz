@@ -8,21 +8,25 @@ export default function WebSocketTest(props: {url: string}) {
     const [status, setStatus] = useState("");
     const [navsatMsg, setNavsatMsg] = useState("");
 
-    type Handlers = {[key: string]: (buffer: flatbuffers.ByteBuffer) => void};
-    const handlers: Handlers = {
-        "/navsat/fix": (buf) => {
-            const obj = fb.sensor_msgs.NavSatFix.getRootAsNavSatFix(buf);
-            // const statusConsts = fb.sensor_msgs.NavSatStatusConstants.getRootAsNavSatStatusConstants(new flatbuffers.ByteBuffer(new Uint8Array()));
-            const statusConsts = fb.sensor_msgs.NavSatStatusConstants;
-            const hasFix = obj.status()?.status() === statusConsts.status_no_fix.value;
-            const msg = `has fix: ${hasFix}; lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
-            setNavsatMsg(msg);
-        },
-        "/test/status": (buf) => {
-            const obj = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(buf);
-            setStatus(`status: ${obj.status()}, is_ok: ${obj.isOk()}, location: ${obj.location()}, battery: ${obj.batteryLevel()}`);
-        },
-    };
+    type Handlers = Map<RegExp, (buffer: flatbuffers.ByteBuffer, match: RegExpMatchArray) => void>;
+    const handlers: Handlers = new Map();
+
+    // group 1: namespace
+    const rosNamespaced = (topic: string) => new RegExp(`(?:(.*)/)?${topic}$`);
+
+    handlers.set(rosNamespaced("navsat/fix"), (buf, match) => {
+        const obj = fb.sensor_msgs.NavSatFix.getRootAsNavSatFix(buf);
+        // const statusConsts = fb.sensor_msgs.NavSatStatusConstants.getRootAsNavSatStatusConstants(new flatbuffers.ByteBuffer(new Uint8Array()));
+        const statusConsts = fb.sensor_msgs.NavSatStatusConstants;
+        const hasFix = obj.status()?.status() === statusConsts.status_no_fix.value;
+        const msg = `has fix: ${hasFix}; lat: ${obj.latitude()}, long: ${obj.longitude()}` ?? "<null>";
+        setNavsatMsg(msg);
+    });
+
+    handlers.set(rosNamespaced("status"), (buf, match) => {
+        const obj = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(buf);
+        setStatus(`status: ${obj.status()}, is_ok: ${obj.isOk()}, location: ${obj.location()}, battery: ${obj.batteryLevel()}`);
+    });
 
     callbacks.onmessage = async (msg: MessageEvent) => {
         const data = await msg.data.arrayBuffer();
@@ -33,9 +37,17 @@ export default function WebSocketTest(props: {url: string}) {
         const topic = metadata._metadata()?.topic();
 
         // handle dynamic dispatch based on message topic
-        if (topic && topic in handlers) {
-            handlers[topic](buf);
-        } else {
+        let matched = false;
+        if (topic) {
+            for (let [pattern, handler] of handlers) {
+                const match = topic.match(pattern);
+                if (match) {
+                    matched = true;
+                    handler(buf, match);
+                }
+            }
+        }
+        if (!matched) {
             console.warn(`Ignored message with topic: "${topic}"`);
         }
     };
