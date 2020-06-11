@@ -7,7 +7,18 @@ import { Wifi, WifiOff } from "@material-ui/icons";
 
 export default function NavBar() {
   const ws = useContext(WebSocketContext);
-  const connectionIndicator = ws?.state === "connected" ? <Wifi/> : <WifiOff color="disabled"/>;
+
+  const indicateConnected = <>
+    <Typography variant="body2" style={{marginRight: "0.5em"}}>Connected</Typography>
+    <Wifi/>
+  </>;
+  const indicateDisconnected = <>
+    <Typography variant="body2" style={{marginRight: "0.5em"}}>Disconnected</Typography>
+    <WifiOff color="disabled"/>
+  </>;
+  const connectionIndicator = <div style={{display: "flex", alignItems: "center", marginRight: "1em"}}>
+    {ws?.state === "connected" ? indicateConnected : indicateDisconnected}
+  </div>;
 
   return <AppBar position="static" color="transparent">
     <Toolbar>
