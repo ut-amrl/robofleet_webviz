@@ -1,4 +1,4 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, CircularProgress } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -35,7 +35,7 @@ export default function Overview() {
     return <TableRow>
       <TableCell align="left">{name}</TableCell>
       <TableCell align="center">
-        {obj.is_ok ? <Check/> : <Clear color="secondary"/>}
+        {obj.is_ok ? <Check/> : <Clear color="error"/>}
       </TableCell>
       <TableCell align="center">
         <PercentageDisplay value={obj.battery_level}/>
@@ -66,6 +66,10 @@ export default function Overview() {
           {items}
         </TableBody>
       </Table>
+      <div style={{padding: "1em", display: "flex", alignItems: "center"}}>
+        <CircularProgress variant="indeterminate" size={16}/>
+        <Typography variant="body2" style={{marginLeft: "1em"}}>Robots will appear here...</Typography>
+      </div>
     </TableContainer>
   </div>;
 }
