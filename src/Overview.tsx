@@ -1,25 +1,35 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button } from "@material-ui/core";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
-import React from "react";
-import PercentageDisplay from "./components/PercentageDisplay";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import PercentageDisplay from "./components/PercentageDisplay";
+import useRobofleetMsgHandlers from "./hooks/useRobofleetMsgHandlers";
+import { matchNamespacedTopic, MsgHandlers } from "./util";
+import { fb } from "./schema_generated";
+
+type RobotStatus = {name: string, is_ok: boolean, battery_level: number, status: string, location: string};
 
 export default function Overview() {
-  const data = {
-    "/a/b": {
-      is_ok: true,
-      battery_level: 0.87,
-      status: "testing",
-      location: "nowhere"
-    },
-    "/x/y": {
-      is_ok: false,
-      battery_level: 0.46,
-      status: "broken",
-      location: "nowhere"
-    }
-  };
-  
+  const [data, setData] = useState({} as {[name: string]: RobotStatus});
+
+  const msgHandlers: MsgHandlers = new Map();
+  msgHandlers.set(matchNamespacedTopic("status"), (buf, match) => {
+    const name = match[1];
+    const status = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(buf);
+    setData(data => ({
+      ...data, 
+      [name]: {
+        name: name,
+        is_ok: status.isOk(),
+        battery_level: status.batteryLevel(),
+        status: status.status() ?? "",
+        location: status.location() ?? ""
+      }
+    }));
+  });
+
+  useRobofleetMsgHandlers(msgHandlers);
+
   const items = Object.entries(data).map(([name, obj]) => {
     const href = `/robot/${btoa(name)}`;
     return <TableRow>
