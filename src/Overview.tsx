@@ -5,6 +5,39 @@ import PercentageDisplay from "./components/PercentageDisplay";
 import { Link } from "react-router-dom";
 
 export default function Overview() {
+  const data = {
+    "/a/b": {
+      is_ok: true,
+      battery_level: 0.87,
+      status: "testing",
+      location: "nowhere"
+    },
+    "/x/y": {
+      is_ok: false,
+      battery_level: 0.46,
+      status: "broken",
+      location: "nowhere"
+    }
+  };
+  
+  const items = Object.entries(data).map(([name, obj]) => {
+    const href = `/robot/${btoa(name)}`;
+    return <TableRow>
+      <TableCell align="left">{name}</TableCell>
+      <TableCell align="center">
+        {obj.is_ok ? <Check/> : <Clear color="secondary"/>}
+      </TableCell>
+      <TableCell align="center">
+        <PercentageDisplay value={obj.battery_level}/>
+      </TableCell>
+      <TableCell align="center">{obj.status}</TableCell>
+      <TableCell align="center">{obj.location}</TableCell>
+      <TableCell align="center">
+        <Button component={Link} to={href} size="small" variant="outlined" color="primary">View</Button>
+      </TableCell>
+    </TableRow>;
+  });
+
   return <div>
     <Typography component="h1" variant="h3">
       Overview
@@ -12,42 +45,15 @@ export default function Overview() {
     <TableContainer component={Paper}>
       <Table size="small">
         <TableHead>
-          <TableCell padding="checkbox" align="center"></TableCell>
-          <TableCell align="left">Robot</TableCell>
-          <TableCell align="center">OK</TableCell>
-          <TableCell align="center">Battery</TableCell>
+          <TableCell align="left">Name</TableCell>
+          <TableCell style={{width: "3em"}} align="center">OK</TableCell>
+          <TableCell style={{width: "5em"}} align="center">Battery</TableCell>
           <TableCell align="center">Status</TableCell>
           <TableCell align="center">Location</TableCell>
+          <TableCell style={{width: "80px"}} align="center"></TableCell>
         </TableHead>
         <TableBody>
-          <TableRow>
-            <TableCell padding="checkbox" align="center">
-              <Button component={Link} to="/robot/1" size="small" variant="outlined" color="primary">View</Button>
-            </TableCell>
-            <TableCell align="left">testbot</TableCell>
-            <TableCell align="center">
-              <Check/>
-            </TableCell>
-            <TableCell align="center">
-              <PercentageDisplay value={0.87}/>
-            </TableCell>
-            <TableCell align="center">Testing</TableCell>
-            <TableCell align="center">Nowhere</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell padding="checkbox" align="center">
-              <Button component={Link} to="/robot/2" size="small" variant="outlined" color="primary">View</Button>
-            </TableCell>
-            <TableCell align="left">testbot</TableCell>
-            <TableCell align="center">
-              <Clear color="secondary"/>
-            </TableCell>
-            <TableCell align="center">
-              <PercentageDisplay value={0.33}/>
-            </TableCell>
-            <TableCell align="center">Testing</TableCell>
-            <TableCell align="center">Nowhere</TableCell>
-          </TableRow>
+          {items}
         </TableBody>
       </Table>
     </TableContainer>

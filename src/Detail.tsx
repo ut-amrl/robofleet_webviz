@@ -4,10 +4,11 @@ import { useParams } from "react-router";
 
 export default function Detail() {
   const {id} = useParams();
+  const name = atob(id);
 
   return <div>
     <Typography variant="h3" component="h2">
-      Robot: {id}
+      Robot: {name}
     </Typography>
     <Card>
       <CardContent>
