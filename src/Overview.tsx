@@ -49,7 +49,7 @@ export default function Overview() {
   });
 
   return <div>
-    <Typography component="h1" variant="h3">
+    <Typography variant="h3" component="h2" style={{marginBottom: "0.25em"}}>
       Overview
     </Typography>
     <TableContainer component={Paper}>

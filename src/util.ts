@@ -3,8 +3,13 @@ import { fb } from "./schema_generated";
 
 export type MsgHandlers = Map<RegExp, (buffer: flatbuffers.ByteBuffer, match: RegExpMatchArray) => void>;
 
+// https://stackoverflow.com/a/3561711/1175802
+// $& means the whole matched string
+export const escapeRegExp = (str: string) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
 // group 1 matches namespace, group 2 matches topic
-export const matchNamespacedTopic = (topic: string) => new RegExp(`(?:(.*)/)?(${topic})$`);
+export const matchNamespacedTopic = (topic: string) => new RegExp(`(?:(.*)/)?(${escapeRegExp(topic)})$`);
+export const matchExactTopic = (topic: string) => new RegExp(escapeRegExp(topic));
 
 export async function dispatchRobofleetMsg(msg: MessageEvent, handlers: MsgHandlers) {
   const data = await msg.data.arrayBuffer();
