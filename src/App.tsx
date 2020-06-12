@@ -8,8 +8,7 @@ import WebSocketContext from "./contexts/WebSocketContext";
 import Detail from "./Detail";
 import useWebSocket from "./hooks/useWebSocket";
 import Overview from "./Overview";
-
-const serverUrl = "ws://localhost:8080";
+import config from "./config";
 
 function App() {
   const theme = createMuiTheme({
@@ -24,7 +23,7 @@ function App() {
     }
   });
 
-  const ws = useWebSocket({url: serverUrl});
+  const ws = useWebSocket({url: config.serverUrl});
 
   return <Router basename="/robofleet">
     <ThemeProvider theme={theme}>

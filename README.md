@@ -1,8 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Configuration
 
-In the project directory, you can run:
+The web visualizer must be configured before building.
+1. `cp src/config.example.ts src/config.ts`
+2. Edit parameters in `src/config.ts`
+
+## Building
 
 ### `yarn start`
 
