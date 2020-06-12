@@ -26,7 +26,7 @@ function App() {
 
   const ws = useWebSocket({url: serverUrl});
 
-  return <Router>
+  return <Router basename="/robofleet">
     <ThemeProvider theme={theme}>
       <WebSocketContext.Provider value={ws}>
         <NavBar/>
