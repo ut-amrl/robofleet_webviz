@@ -1,9 +1,9 @@
+import { AppBar, Button, IconButton, Toolbar, Typography } from "@material-ui/core";
+import { Wifi, WifiOff } from "@material-ui/icons";
 import React, { useContext } from "react";
-import { AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core";
-import { Home } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import WebSocketContext from "../contexts/WebSocketContext";
-import { Wifi, WifiOff } from "@material-ui/icons";
+import Logo from "./Logo";
 
 export default function NavBar() {
   const ws = useContext(WebSocketContext);
@@ -22,10 +22,10 @@ export default function NavBar() {
 
   return <AppBar position="static" color="transparent">
     <Toolbar>
-      <IconButton component={Link} to="/" edge="start" color="inherit" aria-label="home">
-        <Home/>
+      <IconButton size="medium" component={Link} to="/" edge="start" color="inherit" aria-label="home">
+        <Logo/>
       </IconButton>
-      <Typography variant="h6" style={{flexGrow: 1}}>
+      <Typography variant="h6" style={{flexGrow: 1, marginLeft: "1rem"}}>
         Robofleet
       </Typography>
       {connectionIndicator}

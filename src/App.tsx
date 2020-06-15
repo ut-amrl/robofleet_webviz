@@ -12,6 +12,20 @@ import config from "./config";
 
 function App() {
   const theme = createMuiTheme({
+    typography: {
+      body1: {
+        fontFamily: [
+          "B612",
+          "sans-serif"
+        ].join(","),
+      },
+      body2: {
+        fontFamily: [
+          "B612",
+          "sans-serif"
+        ].join(","),
+      }
+    },
     palette: {
       type: "dark",
       primary: {
