@@ -9,5 +9,5 @@ export default function(ws: UseWebSocketResult | null, listener: MessageListener
       if (ws !== null)
         ws.removeMessageListener(listener);
     }
-  });
+  }, [ws]);
 }

@@ -17,7 +17,7 @@ export default function NavBar() {
     <WifiOff color="disabled"/>
   </>;
   const connectionIndicator = <div style={{display: "flex", alignItems: "center", marginRight: "1em"}}>
-    {ws?.state === "connected" ? indicateConnected : indicateDisconnected}
+    {ws?.connected ? indicateConnected : indicateDisconnected}
   </div>;
 
   return <AppBar position="static" color="transparent">

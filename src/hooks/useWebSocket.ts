@@ -6,14 +6,15 @@ export type MessageListener = (msg: MessageEvent) => void;
 export type UseWebSocketResult = {
   addMessageListener: (fn: MessageListener) => void,
   removeMessageListener: (fn: MessageListener) => void,
-  state: WebSocketState
+  connected: boolean
 };
 
 export default function useWebSocket({url, reconnectDelay=2000}: {url: string, reconnectDelay?: number}): UseWebSocketResult {
-  const timeout = useRef(null as number | null);
-  const [ws, setWs] = useState(null as WebSocket | null);
-  const [state, setState] = useState("disconnected" as WebSocketState);
+  const interval = useRef(null as number | null);
+  const ws = useRef(null as WebSocket | null);
+  const state = useRef("disconnected" as WebSocketState);
   const listeners = useRef([] as Array<any>);
+  const [connected, setConnected] = useState(false);
 
   const addMessageListener = (fn: MessageListener) => {
     listeners.current.push(fn);
@@ -26,38 +27,49 @@ export default function useWebSocket({url, reconnectDelay=2000}: {url: string, r
     }
     listeners.current.splice(idx, 1);
   };
-  
-  useEffect(() => {
-    if (ws === null)
-    return;
-    ws.onopen = () => {
-      setState("connected");
+
+  const reconnect = () => {
+    ws.current = new WebSocket(url);
+    ws.current.onopen = () => {
+      state.current = "connected";
+      setConnected(true);
     };
-    ws.onclose = () => {
-      setState("disconnected");
+    ws.current.onclose = () => {
+      state.current = "disconnected";
+      setConnected(false);
     };
-    ws.onmessage = (msg) => {
+    ws.current.onmessage = (msg) => {
       listeners.current.forEach((listener) => listener(msg));
     };
-    ws.onerror = (error) => {};
-  }, [ws]);
-  
-  // reconnect on disconnection
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error: ");
+      console.error(error);
+    };
+  };
+
   useEffect(() => {
-    if (state === "disconnected") {
-      if (timeout.current !== null) {
-        window.clearTimeout(timeout.current);
+    if (connected) {
+      if (interval.current !== null) {
+        window.clearInterval(interval.current);
+        interval.current = null;
       }
-      timeout.current = window.setTimeout(() => {
-        setState("connecting");
-        setWs(new WebSocket(url));
-      }, reconnectDelay);
+    } else {
+      if (interval.current === null) {
+        interval.current = window.setInterval(() => {
+          if (state.current === "disconnected") {
+            state.current = "connecting";
+            reconnect();
+          }
+        }, reconnectDelay);
+      }
     }
-  }, [url, reconnectDelay, state]);
+  }, [connected, reconnectDelay]);
+  
+  useEffect(() => reconnect(), [url]);
   
   return {
-    addMessageListener, 
-    removeMessageListener, 
-    state
+    addMessageListener,
+    removeMessageListener,
+    connected
   };
 }
