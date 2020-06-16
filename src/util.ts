@@ -11,8 +11,24 @@ export const escapeRegExp = (str: string) => str.replace(/[-\/\\^$*+?.()|[\]{}]/
 export const matchNamespacedTopic = (topic: string) => new RegExp(`(?:(.*)/)?(${escapeRegExp(topic)})$`);
 export const matchExactTopic = (topic: string) => new RegExp(escapeRegExp(topic));
 
+// polyfill for https://www.caniuse.com/#feat=mdn-api_blob_arraybuffer
+let blobToArrayBuffer: (blob: Blob) => Promise<ArrayBuffer>;
+if (Blob.prototype.hasOwnProperty("arrayBuffer")) {
+  // console.log("Using Blob.arrayBuffer()");
+  blobToArrayBuffer = (blob: any) => blob.arrayBuffer();
+} else {
+  // console.log("Using FileReader");
+  blobToArrayBuffer = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = (err) => reject(err);
+    reader.readAsArrayBuffer(blob);
+  });
+}
+export {blobToArrayBuffer};
+
 export async function dispatchRobofleetMsg(msg: MessageEvent, handlers: MsgHandlers) {
-  const data = await msg.data.arrayBuffer();
+  const data = await blobToArrayBuffer(msg.data);
   const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
   
   // get metadata for arbitrary message type that extends MsgWithMetadata
