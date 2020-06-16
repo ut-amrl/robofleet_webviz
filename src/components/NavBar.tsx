@@ -1,9 +1,47 @@
-import { AppBar, Button, IconButton, Toolbar, Typography } from "@material-ui/core";
-import { Wifi, WifiOff } from "@material-ui/icons";
-import React, { useContext } from "react";
+import { AppBar, Button, IconButton, Toolbar, Typography, Menu, MenuItem } from "@material-ui/core";
+import { Wifi, WifiOff, AccountCircle } from "@material-ui/icons";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import WebSocketContext from "../contexts/WebSocketContext";
 import Logo from "./Logo";
+
+export function UserProfileButton() {
+  const ws = useContext(WebSocketContext);
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+
+  const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchor(event.currentTarget);
+  };
+
+  const doClose = () => {
+    setAnchor(null);
+  };
+
+  const profileMenu = <Menu
+    id="profile-menu"
+    anchorEl={anchor}
+    keepMounted
+    open={Boolean(anchor)}
+    onClose={doClose}
+  >
+    <MenuItem disabled>IP: 1.2.3.4</MenuItem>
+    <MenuItem onClick={doClose}>Sign in</MenuItem>
+    <MenuItem onClick={doClose}>Logout</MenuItem>
+  </Menu>;
+
+  return <>
+    <IconButton
+      edge="end"
+      aria-label="account of current user"
+      aria-haspopup="true"
+      onClick={handleClickOpen}
+      color="inherit"
+    >
+      <AccountCircle/>
+    </IconButton>
+    {profileMenu}
+  </>;
+}
 
 export default function NavBar() {
   const ws = useContext(WebSocketContext);
@@ -29,7 +67,7 @@ export default function NavBar() {
         Robofleet
       </Typography>
       {connectionIndicator}
-      <Button color="inherit">Login</Button>
+      <UserProfileButton/>
     </Toolbar>
   </AppBar>;
 }
