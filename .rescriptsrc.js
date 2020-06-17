@@ -1,3 +1,4 @@
+const path = require('path');
 const { edit, getPaths } = require('@rescripts/utilities');
 
 // test a Webpack "test" rule against a string
@@ -28,19 +29,34 @@ module.exports = [
         ]
     }],
     (config) => {
-        // replace babel-loader with ts-loader for TypeScript
+        // don't load generated schema with babel-loader
         config = edit(
             (rule) => {
-                rule.loader = require.resolve("ts-loader");
-                rule.options = {
-                    // create-react-app will destroy anything it doesn't like in tsconfig.json
-                    configFile: "tsconfig.tsc.json"
-                };
+                if (!rule.hasOwnProperty("exclude"))
+                    rule.exclude = [];
+                rule.exclude.push(path.resolve(__dirname, "src/schema_generated.ts"));
                 return rule;
             },
             getPaths(isTsRule, config),
             config,
         );
+        
+        // load generated schema with ts-loader
+        config = edit(
+            (module) => {
+                module.rules.unshift({
+                    include: [path.resolve(__dirname, "src/schema_generated.ts")],
+                    loader: require.resolve("ts-loader"),
+                    options: {
+                        configFile: "tsconfig.tsc.json"
+                    }
+                });
+                return module;
+            },
+            getPaths(x => x.rules, config),
+            config
+        );
+
         return config;
     }
 ];
