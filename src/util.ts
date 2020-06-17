@@ -1,15 +1,21 @@
 import { flatbuffers } from "flatbuffers";
 import { fb } from "./schema_generated";
 
-export type MsgHandlers = Map<RegExp, (buffer: flatbuffers.ByteBuffer, match: RegExpMatchArray) => void>;
-
 // https://stackoverflow.com/a/3561711/1175802
 // $& means the whole matched string
 export const escapeRegExp = (str: string) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-// group 1 matches namespace, group 2 matches topic
-export const matchNamespacedTopic = (topic: string) => new RegExp(`(?:(.*)/)?(${escapeRegExp(topic)})$`);
-export const matchExactTopic = (topic: string) => new RegExp(escapeRegExp(topic));
+// match a particular topic in any namespace. Captures namespace as group "ns"
+export const matchTopicAnyNamespace = (topic: string) => new RegExp(`(?:(?<ns>.*)/)?${escapeRegExp(topic)}$`);
+
+// match a fully-qualified topic.
+export const matchExactTopic = (exactTopic: string) => new RegExp(escapeRegExp(exactTopic));
+
+// match any topic in a given namespace. Captures topic as group "topic"
+export const matchAnyTopic = (namespace: string) => new RegExp(`${namespace}/(?<topic>.*)`);
+
+// match a given topic in a given namespace.
+export const matchTopic = (namespace: string, topic: string) => new RegExp(`${namespace}/${topic}`);
 
 // polyfill for https://www.caniuse.com/#feat=mdn-api_blob_arraybuffer
 let blobToArrayBuffer: (blob: Blob) => Promise<ArrayBuffer>;
@@ -26,26 +32,3 @@ if (Blob.prototype.hasOwnProperty("arrayBuffer")) {
   });
 }
 export {blobToArrayBuffer};
-
-export async function dispatchRobofleetMsg(msg: MessageEvent, handlers: MsgHandlers) {
-  const data = await blobToArrayBuffer(msg.data);
-  const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
-  
-  // get metadata for arbitrary message type that extends MsgWithMetadata
-  const metadataMsg = fb.MsgWithMetadata.getRootAsMsgWithMetadata(buf);
-  const topic = metadataMsg._metadata()?.topic();
-  
-  let matched = false;
-  if (topic) {
-    for (let [regex, handler] of handlers) {
-      const match = topic.match(regex);
-      if (match) {
-        matched = true;
-        handler(buf, match);
-      }
-    }
-  }
-  if (!matched) {
-    console.warn(`Ignored message with topic: "${topic}"`);
-  }
-}

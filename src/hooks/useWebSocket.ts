@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { flatbuffers } from "flatbuffers";
+import { blobToArrayBuffer } from "../util";
 
 export type WebSocketState = "connecting" | "connected" | "disconnected";
-export type MessageListener = (msg: MessageEvent) => void;
+export type MessageListener = (buf: flatbuffers.ByteBuffer) => void;
 
 export type UseWebSocketResult = {
   addMessageListener: (fn: MessageListener) => void,
@@ -39,8 +41,10 @@ export default function useWebSocket({url, reconnectDelay=2000}: {url: string, r
       state.current = "disconnected";
       setConnected(false);
     };
-    ws.current.onmessage = (msg) => {
-      listeners.current.forEach((listener) => listener(msg));
+    ws.current.onmessage = async (msg) => {
+      const data = await blobToArrayBuffer(msg.data);
+      const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
+      listeners.current.forEach((listener) => listener(buf));
     };
     ws.current.onerror = (error) => {
       console.error("WebSocket error: ");
