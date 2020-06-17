@@ -4,26 +4,22 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import WebSocketContext from "../contexts/WebSocketContext";
 import Logo from "./Logo";
+import config from "../config";
 
 export function IpAddress() {
-  const ws = useContext(WebSocketContext);
   const [ipAddr, setIpAddr] = useState("<unknown>");
 
   useEffect(() => {
     const fetchIp = async () => {
-      const baseUrlStr = ws?.ws?.url;
-      if (!baseUrlStr)
-        return;
-      const url = new URL(baseUrlStr);
-      url.protocol = window.location.protocol;
-      url.pathname = "/echo-ip";
-      const res = await fetch(url.toString());
+      const baseUrl = new URL(config.serverUrl);
+      baseUrl.protocol = window.location.protocol;
+      const res = await fetch(new URL("echo-ip", baseUrl).toString());
       if (res.status === 200) {
         setIpAddr(await res.text());
       }
     };
     fetchIp();
-  }, [ws?.connected]);
+  }, [config.serverUrl]);
 
   return <span>{ipAddr}</span>;
 }
