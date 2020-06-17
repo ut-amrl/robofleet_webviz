@@ -658,6 +658,269 @@ static createHeader(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Off
 /**
  * @constructor
  */
+export namespace fb.amrl_msgs{
+export class Pose2Df {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns Pose2Df
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):Pose2Df {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param Pose2Df= obj
+ * @returns Pose2Df
+ */
+static getRootAsPose2Df(bb:flatbuffers.ByteBuffer, obj?:Pose2Df):Pose2Df {
+  return (obj || new Pose2Df()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param Pose2Df= obj
+ * @returns Pose2Df
+ */
+static getSizePrefixedRootAsPose2Df(bb:flatbuffers.ByteBuffer, obj?:Pose2Df):Pose2Df {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new Pose2Df()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+x():number {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+y():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+theta():number {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startPose2Df(builder:flatbuffers.Builder) {
+  builder.startObject(4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number x
+ */
+static addX(builder:flatbuffers.Builder, x:number) {
+  builder.addFieldFloat32(1, x, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number y
+ */
+static addY(builder:flatbuffers.Builder, y:number) {
+  builder.addFieldFloat32(2, y, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number theta
+ */
+static addTheta(builder:flatbuffers.Builder, theta:number) {
+  builder.addFieldFloat32(3, theta, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endPose2Df(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  return offset;
+};
+
+static createPose2Df(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, x:number, y:number, theta:number):flatbuffers.Offset {
+  Pose2Df.startPose2Df(builder);
+  Pose2Df.add_Metadata(builder, _metadataOffset);
+  Pose2Df.addX(builder, x);
+  Pose2Df.addY(builder, y);
+  Pose2Df.addTheta(builder, theta);
+  return Pose2Df.endPose2Df(builder);
+}
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class Localization2DMsg {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns Localization2DMsg
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):Localization2DMsg {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param Localization2DMsg= obj
+ * @returns Localization2DMsg
+ */
+static getRootAsLocalization2DMsg(bb:flatbuffers.ByteBuffer, obj?:Localization2DMsg):Localization2DMsg {
+  return (obj || new Localization2DMsg()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param Localization2DMsg= obj
+ * @returns Localization2DMsg
+ */
+static getSizePrefixedRootAsLocalization2DMsg(bb:flatbuffers.ByteBuffer, obj?:Localization2DMsg):Localization2DMsg {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new Localization2DMsg()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.std_msgs.Header= obj
+ * @returns fb.std_msgs.Header|null
+ */
+header(obj?:fb.std_msgs.Header):fb.std_msgs.Header|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? (obj || new fb.std_msgs.Header()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.amrl_msgs.Pose2Df= obj
+ * @returns fb.amrl_msgs.Pose2Df|null
+ */
+pose(obj?:fb.amrl_msgs.Pose2Df):fb.amrl_msgs.Pose2Df|null {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? (obj || new fb.amrl_msgs.Pose2Df()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
+ */
+map():string|null
+map(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+map(optionalEncoding?:any):string|Uint8Array|null {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startLocalization2DMsg(builder:flatbuffers.Builder) {
+  builder.startObject(4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset headerOffset
+ */
+static addHeader(builder:flatbuffers.Builder, headerOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, headerOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset poseOffset
+ */
+static addPose(builder:flatbuffers.Builder, poseOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(2, poseOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset mapOffset
+ */
+static addMap(builder:flatbuffers.Builder, mapOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(3, mapOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endLocalization2DMsg(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  return offset;
+};
+
+static createLocalization2DMsg(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, poseOffset:flatbuffers.Offset, mapOffset:flatbuffers.Offset):flatbuffers.Offset {
+  Localization2DMsg.startLocalization2DMsg(builder);
+  Localization2DMsg.add_Metadata(builder, _metadataOffset);
+  Localization2DMsg.addHeader(builder, headerOffset);
+  Localization2DMsg.addPose(builder, poseOffset);
+  Localization2DMsg.addMap(builder, mapOffset);
+  return Localization2DMsg.endLocalization2DMsg(builder);
+}
+}
+}
+/**
+ * @constructor
+ */
 export namespace fb.sensor_msgs{
 export class NavSatStatus {
   bb: flatbuffers.ByteBuffer|null = null;
