@@ -18,7 +18,9 @@ export function IpAddress() {
       url.protocol = window.location.protocol;
       url.pathname = "/echo-ip";
       const res = await fetch(url.toString());
-      setIpAddr(await res.text());
+      if (res.status === 200) {
+        setIpAddr(await res.text());
+      }
     };
     fetchIp();
   }, [ws?.connected]);
