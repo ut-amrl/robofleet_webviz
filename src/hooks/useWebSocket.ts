@@ -6,7 +6,8 @@ export type MessageListener = (msg: MessageEvent) => void;
 export type UseWebSocketResult = {
   addMessageListener: (fn: MessageListener) => void,
   removeMessageListener: (fn: MessageListener) => void,
-  connected: boolean
+  connected: boolean,
+  ws: WebSocket | null
 };
 
 export default function useWebSocket({url, reconnectDelay=2000}: {url: string, reconnectDelay?: number}): UseWebSocketResult {
@@ -70,6 +71,7 @@ export default function useWebSocket({url, reconnectDelay=2000}: {url: string, r
   return {
     addMessageListener,
     removeMessageListener,
-    connected
+    connected,
+    ws: ws.current
   };
 }
