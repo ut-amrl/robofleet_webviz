@@ -1,5 +1,5 @@
 import { Box, CircularProgress } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Canvas } from "react-three-fiber";
 import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
@@ -13,7 +13,7 @@ export default function Localization2DViewer(props: {namespace: string}) {
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
   const [mapName, setMapName] = useState("GDC1");
-  const [linesData, setLinesData] = useState(new Float32Array(50000));
+  const [linesData, setLinesData] = useState(new Float32Array(0));
 
   useRobofleetMsgListener(matchTopic(props.namespace, "localization"), (buf, match) => {
     setLoaded(true);
@@ -53,18 +53,23 @@ export default function Localization2DViewer(props: {namespace: string}) {
 }
 
 function Viewer(props: any) {
+  const linesPos = useMemo(() => (
+    <bufferAttribute 
+      attachObject={["attributes", "position"]}
+      // can't use props; need to reconstruct to resize buffer
+      args={[props.linesData, 3, false]}
+      count={props.linesData.length / 3}
+      onUpdate={(self) => {
+        self.needsUpdate = true;
+      }}
+    />),
+    [props.linesData]
+  );
+
   return <>
     <lineSegments>
       <bufferGeometry attach="geometry">
-        <bufferAttribute 
-          attachObject={["attributes", "position"]}
-          itemSize={3}
-          count={props.linesData.length / 3}
-          array={props.linesData}
-          onUpdate={(self) => {
-            self.needsUpdate = true;
-          }}
-          />
+        {linesPos}
       </bufferGeometry>
       <lineBasicMaterial attach="material"
         color={0xFF00FF}
