@@ -1,30 +1,18 @@
-import { AppBar, Chip, Divider, Drawer, IconButton, List, ListItem, Toolbar, Typography } from "@material-ui/core";
-import { AccountCircle, Wifi, WifiOff } from "@material-ui/icons";
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import config from "../config";
+import { AppBar, Divider, fade, IconButton, ListItemIcon, ListItemText, makeStyles, Menu, MenuItem, Theme, Toolbar, Tooltip, Typography } from "@material-ui/core";
+import { AccountCircle, PersonAdd, Wifi, WifiOff } from "@material-ui/icons";
+import React, { ReactElement, useContext, useState } from "react";
 import WebSocketContext from "../contexts/WebSocketContext";
+import useIpAddress from "../hooks/useIpAddress";
 import Logo from "./Logo";
 
-export function IpAddress() {
-  const [ipAddr, setIpAddr] = useState("<unknown>");
-
-  useEffect(() => {
-    const fetchIp = async () => {
-      const baseUrl = new URL(config.serverUrl);
-      baseUrl.protocol = window.location.protocol;
-      const res = await fetch(new URL("echo-ip", baseUrl).toString());
-      if (res.status === 200) {
-        setIpAddr(await res.text());
-      }
-    };
-    fetchIp();
-  }, []);
-
-  return <span>{ipAddr}</span>;
-}
+const useStyles = makeStyles((theme: Theme) => ({
+  toolbar: {
+    backgroundColor: fade(theme.palette.background.paper, 0.67),
+  },
+}));
 
 export function UserProfileButton() {
+  const ipAddr = useIpAddress();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -35,63 +23,61 @@ export function UserProfileButton() {
     setAnchor(null);
   };
 
-  const profileMenu = <Drawer
+  const profileMenu = <Menu
     id="profile-menu"
-    anchor="right"
+    anchorEl={anchor}
     keepMounted
     open={Boolean(anchor)}
     onClose={doClose}
   >
-    <List>
-      <ListItem>
-        <div style={{marginRight: "1rem"}}>IP</div> 
-        <Chip label={<code><IpAddress/></code>}/>
-      </ListItem>
-      <Divider/>
-      <ListItem button onClick={doClose}>Sign in</ListItem>
-      <ListItem button onClick={doClose}>Logout</ListItem>
-    </List>
-  </Drawer>;
+    <MenuItem disabled>
+      <ListItemIcon>IP</ListItemIcon>
+      <ListItemText><code>{ipAddr ?? "<unknown>"}</code></ListItemText>
+    </MenuItem>
+    <Divider/>
+    <MenuItem onClick={doClose}>
+      <ListItemIcon><PersonAdd/></ListItemIcon>
+      <ListItemText>Sign in</ListItemText>
+    </MenuItem>
+  </Menu>;
 
   return <>
-    <IconButton
-      edge="end"
-      aria-label="account of current user"
-      aria-haspopup="true"
-      onClick={handleClickOpen}
-      color="inherit"
-    >
-      <AccountCircle/>
-    </IconButton>
+    <Tooltip arrow title="User Account">
+      <IconButton
+        edge="end"
+        aria-label="account of current user"
+        aria-haspopup="true"
+        onClick={handleClickOpen}
+        color="inherit"
+      >
+        <AccountCircle/>
+      </IconButton>
+    </Tooltip>
     {profileMenu}
   </>;
 }
 
-export default function NavBar() {
+export default function NavBar(props: {title?: string, navIcon?: ReactElement<any>, tabs?: ReactElement<any>}) {
   const ws = useContext(WebSocketContext);
+  const classes = useStyles();
 
-  const indicateConnected = <>
-    <Typography variant="body2" style={{marginRight: "0.5em"}}>Connected</Typography>
-    <Wifi/>
-  </>;
-  const indicateDisconnected = <>
-    <Typography variant="body2" style={{marginRight: "0.5em"}}>Disconnected</Typography>
-    <WifiOff color="disabled"/>
-  </>;
-  const connectionIndicator = <div style={{display: "flex", alignItems: "center", marginRight: "1em"}}>
-    {ws?.connected ? indicateConnected : indicateDisconnected}
-  </div>;
+  const indicateConnected = <Wifi/>;
+  const indicateDisconnected = <WifiOff color="disabled"/>;
+  const connectionIndicator = <Tooltip arrow title={ws?.ws?.url ?? "Server unknown"}>
+    <IconButton>
+      {ws?.connected ? indicateConnected : indicateDisconnected}
+    </IconButton>
+  </Tooltip>;
 
-  return <AppBar position="static" color="transparent">
-    <Toolbar>
-      <IconButton size="medium" component={Link} to="/" edge="start" color="inherit" aria-label="home">
-        <Logo/>
-      </IconButton>
+  return <AppBar position="static" color="transparent" className={classes.toolbar}>
+    <Toolbar variant="dense">
+      {props.navIcon ?? <IconButton><Logo/></IconButton>}
       <Typography variant="h6" style={{flexGrow: 1, marginLeft: "1rem"}}>
-        Robofleet
+        {props.title ?? "Robofleet"}
       </Typography>
       {connectionIndicator}
       <UserProfileButton/>
     </Toolbar>
+    {props.tabs}
   </AppBar>;
 }

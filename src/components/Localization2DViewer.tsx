@@ -1,4 +1,4 @@
-import { CircularProgress, Grid, Paper } from "@material-ui/core";
+import { Box, CircularProgress } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Canvas } from "react-three-fiber";
 import config from "../config";
@@ -39,18 +39,17 @@ export default function Localization2DViewer(props: {namespace: string}) {
     loadMap();
   }, [mapName]);
 
-  return <>
-    {!loaded && <CircularProgress variant="indeterminate"/>}
-    <Grid item component={Paper} xs={6} style={{height: "300px"}}>
-      <Canvas
-        orthographic={true}
-        pixelRatio={window.devicePixelRatio}
-        >
-        <CameraControls/>
-        <Viewer {...props} linesData={linesData} x={x} y={y} theta={theta}/>
-      </Canvas>
-    </Grid>
-  </>;
+  const canvas = <Canvas
+    orthographic={true}
+    pixelRatio={window.devicePixelRatio}
+    >
+    <CameraControls/>
+    <Viewer {...props} linesData={linesData} x={x} y={y} theta={theta}/>
+  </Canvas>;
+
+  return <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">
+    {loaded ? canvas : <CircularProgress variant="indeterminate"/>}
+  </Box>;
 }
 
 function Viewer(props: any) {
