@@ -1,7 +1,7 @@
-import * as THREE from "three";
-import { extend, ReactThreeFiber, useThree, useFrame } from "react-three-fiber";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import React, { useRef } from "react";
+import { extend, ReactThreeFiber, useFrame, useThree } from "react-three-fiber";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 // add OrbitControls as external three.js thing
 extend({OrbitControls});

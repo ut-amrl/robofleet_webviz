@@ -54,7 +54,6 @@ export default function Localization2DViewer(props: {namespace: string}) {
 }
 
 function Viewer(props: any) {
-  console.log(props.mapName);
   return <>
     <lineSegments>
       <bufferGeometry attach="geometry">
