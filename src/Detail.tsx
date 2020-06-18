@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, CircularProgress, Container, Grid, IconButton, Tab, Tabs, Typography } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import Localization2DViewer from "./components/Localization2DViewer";
@@ -8,9 +8,28 @@ import NavBar from "./components/NavBar";
 import OdometryViewer from "./components/OdometryViewer";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import { matchAnyTopic } from "./util";
+import { Canvas } from "react-three-fiber";
+import CameraControls from "./components/CameraControls";
+import WebSocketContext from "./contexts/WebSocketContext";
 
 export function VizTab(props: any) {
-  return <Localization2DViewer {...props}/>;
+  const ws = useContext(WebSocketContext);
+
+  // since <Canvas> uses the react-three-fiber reconciler, we must forward
+  // any contexts manually :(
+  const viewers = <WebSocketContext.Provider value={ws}>
+      <Localization2DViewer {...props}/>
+  </WebSocketContext.Provider>;
+
+  return <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">
+    <Canvas
+      orthographic={true}
+      pixelRatio={window.devicePixelRatio}
+    >
+      <CameraControls/>
+      {viewers}
+    </Canvas>;
+  </Box>;
 }
 
 export function ImageryTab(props: any) {

@@ -1,14 +1,10 @@
-import { Box, CircularProgress } from "@material-ui/core";
-import React, { useEffect, useState, useMemo } from "react";
-import { Canvas } from "react-three-fiber";
+import React, { useEffect, useMemo, useState } from "react";
 import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
-import CameraControls from "./CameraControls";
 
 export default function Localization2DViewer(props: {namespace: string}) {
-  const [loaded, setLoaded] = useState(false);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
@@ -16,7 +12,6 @@ export default function Localization2DViewer(props: {namespace: string}) {
   const [linesData, setLinesData] = useState(new Float32Array(0));
 
   useRobofleetMsgListener(matchTopic(props.namespace, "localization"), (buf, match) => {
-    setLoaded(true);
     const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(buf);
     const map = loc.map();
     if (map !== null)
@@ -39,37 +34,25 @@ export default function Localization2DViewer(props: {namespace: string}) {
     loadMap();
   }, [mapName]);
 
-  const canvas = <Canvas
-    orthographic={true}
-    pixelRatio={window.devicePixelRatio}
-    >
-    <CameraControls/>
-    <Viewer {...props} linesData={linesData} x={x} y={y} theta={theta}/>
-  </Canvas>;
-
-  return <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">
-    {loaded ? canvas : <CircularProgress variant="indeterminate"/>}
-  </Box>;
-}
-
-function Viewer(props: any) {
-  const linesPos = useMemo(() => (
+  const linesPosAttrib = useMemo(() => (
     <bufferAttribute 
       attachObject={["attributes", "position"]}
       // can't use props; need to reconstruct to resize buffer
-      args={[props.linesData, 3, false]}
-      count={props.linesData.length / 3}
+      args={[linesData, 3, false]}
+      count={linesData.length / 3}
       onUpdate={(self) => {
         self.needsUpdate = true;
       }}
     />),
-    [props.linesData]
+    [linesData]
   );
 
   return <>
-    <lineSegments>
+    <lineSegments
+      frustumCulled={false}
+      >
       <bufferGeometry attach="geometry">
-        {linesPos}
+        {linesPosAttrib}
       </bufferGeometry>
       <lineBasicMaterial attach="material"
         color={0xFF00FF}
@@ -77,9 +60,9 @@ function Viewer(props: any) {
         />
     </lineSegments>
     <mesh
-      scale={[12,2,1]}
-      rotation={[0,0,props.theta]}
-      position={[props.x,props.y,0]}
+      scale={[12, 2, 1]}
+      rotation={[0, 0, theta]}
+      position={[x, y, 0]}
       frustumCulled={false}
       >
       <boxBufferGeometry attach="geometry"/>
