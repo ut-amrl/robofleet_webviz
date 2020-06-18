@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import OdometryViewer from "./components/OdometryViewer";
 import { matchAnyTopic } from "./util";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
+import Localization2DViewer from "./components/Localization2DViewer";
 
 export default function Detail() {
   const {id} = useParams();
@@ -14,6 +15,7 @@ export default function Detail() {
   
   const details = <>
     <OdometryViewer namespace={namespace}/>
+    <Localization2DViewer namespace={namespace}/>
   </>;
 
   const loader = <>
