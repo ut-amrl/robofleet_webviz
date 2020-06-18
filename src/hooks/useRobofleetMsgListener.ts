@@ -7,6 +7,9 @@ export type RobofleetMsgListener = (buffer: flatbuffers.ByteBuffer, match: RegEx
 
 export default function useRobofleetMsgListener(regex: RegExp, handler: RobofleetMsgListener) {
   const ws = useContext(WebSocketContext);
+  if (ws === null)
+    throw new Error("No WebSocketContext provided.");
+  
   useMessageListener(ws, (buf) => {
     // get metadata for arbitrary message type that extends MsgWithMetadata
     const metadataMsg = fb.MsgWithMetadata.getRootAsMsgWithMetadata(buf);
