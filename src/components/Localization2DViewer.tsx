@@ -1,22 +1,11 @@
 import { CircularProgress, Grid, Paper } from "@material-ui/core";
-import React, { useEffect, useState, useRef } from "react";
-import { Canvas, extend, ReactThreeFiber, useThree, useFrame } from "react-three-fiber";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import React, { useEffect, useState } from "react";
+import { Canvas } from "react-three-fiber";
 import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
-import * as THREE from "three";
-
-// add OrbitControls as external three.js thing
-extend({OrbitControls});
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      orbitControls: ReactThreeFiber.Object3DNode<OrbitControls, typeof OrbitControls>
-    }
-  }
-}
+import CameraControls from "./CameraControls";
 
 export default function Localization2DViewer(props: {namespace: string}) {
   const [loaded, setLoaded] = useState(false);
@@ -52,40 +41,16 @@ export default function Localization2DViewer(props: {namespace: string}) {
 
   return <>
     {!loaded && <CircularProgress variant="indeterminate"/>}
-    <Grid item component={Paper} xs={4} style={{height: "200px"}}>
+    <Grid item component={Paper} xs={6} style={{height: "300px"}}>
       <Canvas
         orthographic={true}
         pixelRatio={window.devicePixelRatio}
         >
-        <Controls
-          target={[0, 0, 0]}
-          enableRotate={false}
-          enableZoom={true}
-          enableDamping
-          dampingFactor={0.1}
-          screenSpacePanning
-          mouseButtons={{
-            LEFT: THREE.MOUSE.RIGHT,
-            MIDDLE: THREE.MOUSE.MIDDLE,
-            RIGHT: THREE.MOUSE.LEFT 
-          }}
-        />
+        <CameraControls/>
         <Viewer {...props} linesData={linesData} x={x} y={y} theta={theta}/>
       </Canvas>
     </Grid>
   </>;
-}
-
-function Controls(props: any) {
-  // https://codesandbox.io/s/r3f-orbit-controls-un2oh?from-embed=&file=/src/index.js
-  const ref = useRef<any>();
-  const { camera, gl } = useThree();
-  useFrame(() => ref.current && ref.current.update());
-  return <orbitControls
-    ref={ref}
-    args={[camera, gl.domElement]}
-    {...props}
-  />;
 }
 
 function Viewer(props: any) {
