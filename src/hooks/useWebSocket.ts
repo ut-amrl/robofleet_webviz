@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { flatbuffers } from "flatbuffers";
 import { blobToArrayBuffer } from "../util";
 
@@ -31,7 +31,7 @@ export default function useWebSocket({url, reconnectDelay=2000}: {url: string, r
     listeners.current.splice(idx, 1);
   };
 
-  const reconnect = () => {
+  const reconnect = useCallback(() => {
     ws.current = new WebSocket(url);
     ws.current.onopen = () => {
       state.current = "connected";
@@ -50,7 +50,7 @@ export default function useWebSocket({url, reconnectDelay=2000}: {url: string, r
       console.error("WebSocket error: ");
       console.error(error);
     };
-  };
+  }, [url]);
 
   useEffect(() => {
     if (connected) {
@@ -68,9 +68,9 @@ export default function useWebSocket({url, reconnectDelay=2000}: {url: string, r
         }, reconnectDelay);
       }
     }
-  }, [connected, reconnectDelay]);
+  }, [connected, reconnectDelay, reconnect]);
   
-  useEffect(() => reconnect(), [url]);
+  useEffect(() => reconnect(), [url, reconnect]);
   
   return {
     addMessageListener,

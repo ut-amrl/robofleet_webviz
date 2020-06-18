@@ -1,10 +1,10 @@
-import { AppBar, Button, IconButton, Toolbar, Typography, Menu, MenuItem, Chip, Grid, Drawer, ListItem, List, Divider } from "@material-ui/core";
-import { Wifi, WifiOff, AccountCircle } from "@material-ui/icons";
-import React, { useContext, useState, useEffect } from "react";
+import { AppBar, Chip, Divider, Drawer, IconButton, List, ListItem, Toolbar, Typography } from "@material-ui/core";
+import { AccountCircle, Wifi, WifiOff } from "@material-ui/icons";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import config from "../config";
 import WebSocketContext from "../contexts/WebSocketContext";
 import Logo from "./Logo";
-import config from "../config";
 
 export function IpAddress() {
   const [ipAddr, setIpAddr] = useState("<unknown>");
@@ -19,7 +19,7 @@ export function IpAddress() {
       }
     };
     fetchIp();
-  }, [config.serverUrl]);
+  }, []);
 
   return <span>{ipAddr}</span>;
 }

@@ -1,9 +1,6 @@
-import { flatbuffers } from "flatbuffers";
-import { fb } from "./schema_generated";
-
 // https://stackoverflow.com/a/3561711/1175802
 // $& means the whole matched string
-export const escapeRegExp = (str: string) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+export const escapeRegExp = (str: string) => str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
 // match a particular topic in any namespace. Captures namespace as group "ns"
 export const matchTopicAnyNamespace = (topic: string) => new RegExp(`(?:(?<ns>.*)/)?${escapeRegExp(topic)}$`);
