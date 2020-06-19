@@ -4,14 +4,14 @@ import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
 
-export default function Localization2DViewer(props: {namespace: string}) {
+export default function Localization2DViewer(props: {namespace: string, topic: string}) {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
   const [mapName, setMapName] = useState("GDC1");
   const [linesData, setLinesData] = useState(new Float32Array(0));
 
-  useRobofleetMsgListener(matchTopic(props.namespace, "localization"), (buf, match) => {
+  useRobofleetMsgListener(matchTopic(props.namespace, props.topic), (buf, match) => {
     const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(buf);
     const map = loc.map();
     if (map !== null)
@@ -60,7 +60,7 @@ export default function Localization2DViewer(props: {namespace: string}) {
         />
     </lineSegments>
     <mesh
-      scale={[12, 2, 1]}
+      scale={[1, 0.2, 1]}
       rotation={[0, 0, theta]}
       position={[x, y, 0]}
       frustumCulled={false}
