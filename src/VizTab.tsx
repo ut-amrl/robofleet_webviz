@@ -21,6 +21,6 @@ export default function VizTab(props: any) {
     >
       <CameraControls/>
       {viewers}
-    </Canvas>;
+    </Canvas>
   </Box>;
 }

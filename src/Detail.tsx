@@ -1,4 +1,4 @@
-import { CircularProgress, Grid, IconButton, Tab, Tabs, Typography, Container } from "@material-ui/core";
+import { Box, Card, CircularProgress, Container, IconButton, Tab, Tabs, Typography, CardContent } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
 import React, { useState } from "react";
 import { useParams } from "react-router";
@@ -27,14 +27,15 @@ export default function Detail() {
 
   useRobofleetMsgListener(matchAnyTopic(namespace), (_, __) => setReceivedMsg(true));
 
-  const loader = <>
-    <Grid item xs={1}>
-      <CircularProgress variant="indeterminate" size={32}/>
-    </Grid>
-    <Grid item xs={11}>
-      <Typography variant="h5" component="h2">Waiting for data...</Typography>
-    </Grid>
-  </>;
+  const loader = <Container maxWidth="md">
+    <Box height="2em"/>
+    <Card>
+      <CardContent style={{display: "flex"}}>
+        <CircularProgress variant="indeterminate" size={32} style={{marginRight: "1rem"}}/>
+        <Typography variant="h5" component="h2">Waiting for data...</Typography>
+      </CardContent>
+    </Card>
+  </Container>;
 
   const backIcon = <IconButton component={Link} to="/">
     <ArrowBack/>
@@ -49,14 +50,18 @@ export default function Detail() {
     <Tab label="Stats"/>
   </Tabs>;
 
+  const content = <>
+    <TabHider id={0} index={tabIndex}><VizTab namespace={namespace}/></TabHider>
+    <TabHider id={1} index={tabIndex}><ImageryTab namespace={namespace}/></TabHider>
+    <TabHider id={2} index={tabIndex}><StatsTab namespace={namespace}/></TabHider>
+  </>;
+
   return <>
     <NavBar 
       title={`Robot: ${namespace}`}
       navIcon={backIcon}
       tabs={tabs}
       />
-    <TabHider id={0} index={tabIndex}><VizTab namespace={namespace}/></TabHider>
-    <TabHider id={1} index={tabIndex}><ImageryTab namespace={namespace}/></TabHider>
-    <TabHider id={2} index={tabIndex}><StatsTab namespace={namespace}/></TabHider>
+    {receivedMsg ? content : loader}
   </>;
 }
