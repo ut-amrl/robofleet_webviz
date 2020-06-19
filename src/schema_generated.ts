@@ -1270,6 +1270,331 @@ static createNavSatFix(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.
 /**
  * @constructor
  */
+export namespace fb.sensor_msgs{
+export class LaserScan {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns LaserScan
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):LaserScan {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param LaserScan= obj
+ * @returns LaserScan
+ */
+static getRootAsLaserScan(bb:flatbuffers.ByteBuffer, obj?:LaserScan):LaserScan {
+  return (obj || new LaserScan()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param LaserScan= obj
+ * @returns LaserScan
+ */
+static getSizePrefixedRootAsLaserScan(bb:flatbuffers.ByteBuffer, obj?:LaserScan):LaserScan {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new LaserScan()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.std_msgs.Header= obj
+ * @returns fb.std_msgs.Header|null
+ */
+header(obj?:fb.std_msgs.Header):fb.std_msgs.Header|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? (obj || new fb.std_msgs.Header()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+angleMin():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+angleMax():number {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+angleIncrement():number {
+  var offset = this.bb!.__offset(this.bb_pos, 12);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+timeIncrement():number {
+  var offset = this.bb!.__offset(this.bb_pos, 14);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+scanTime():number {
+  var offset = this.bb!.__offset(this.bb_pos, 16);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+rangeMin():number {
+  var offset = this.bb!.__offset(this.bb_pos, 18);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+rangeMax():number {
+  var offset = this.bb!.__offset(this.bb_pos, 20);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @param number index
+ * @returns number
+ */
+ranges(index: number):number|null {
+  var offset = this.bb!.__offset(this.bb_pos, 22);
+  return offset ? this.bb!.readFloat32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
+};
+
+/**
+ * @returns number
+ */
+rangesLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 22);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns Float32Array
+ */
+rangesArray():Float32Array|null {
+  var offset = this.bb!.__offset(this.bb_pos, 22);
+  return offset ? new Float32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+};
+
+/**
+ * @param number index
+ * @returns number
+ */
+intensities(index: number):number|null {
+  var offset = this.bb!.__offset(this.bb_pos, 24);
+  return offset ? this.bb!.readFloat32(this.bb!.__vector(this.bb_pos + offset) + index * 4) : 0;
+};
+
+/**
+ * @returns number
+ */
+intensitiesLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 24);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @returns Float32Array
+ */
+intensitiesArray():Float32Array|null {
+  var offset = this.bb!.__offset(this.bb_pos, 24);
+  return offset ? new Float32Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startLaserScan(builder:flatbuffers.Builder) {
+  builder.startObject(11);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset headerOffset
+ */
+static addHeader(builder:flatbuffers.Builder, headerOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, headerOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number angleMin
+ */
+static addAngleMin(builder:flatbuffers.Builder, angleMin:number) {
+  builder.addFieldFloat32(2, angleMin, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number angleMax
+ */
+static addAngleMax(builder:flatbuffers.Builder, angleMax:number) {
+  builder.addFieldFloat32(3, angleMax, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number angleIncrement
+ */
+static addAngleIncrement(builder:flatbuffers.Builder, angleIncrement:number) {
+  builder.addFieldFloat32(4, angleIncrement, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number timeIncrement
+ */
+static addTimeIncrement(builder:flatbuffers.Builder, timeIncrement:number) {
+  builder.addFieldFloat32(5, timeIncrement, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number scanTime
+ */
+static addScanTime(builder:flatbuffers.Builder, scanTime:number) {
+  builder.addFieldFloat32(6, scanTime, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number rangeMin
+ */
+static addRangeMin(builder:flatbuffers.Builder, rangeMin:number) {
+  builder.addFieldFloat32(7, rangeMin, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number rangeMax
+ */
+static addRangeMax(builder:flatbuffers.Builder, rangeMax:number) {
+  builder.addFieldFloat32(8, rangeMax, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset rangesOffset
+ */
+static addRanges(builder:flatbuffers.Builder, rangesOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(9, rangesOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<number> data
+ * @returns flatbuffers.Offset
+ */
+static createRangesVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addFloat32(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startRangesVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset intensitiesOffset
+ */
+static addIntensities(builder:flatbuffers.Builder, intensitiesOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(10, intensitiesOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<number> data
+ * @returns flatbuffers.Offset
+ */
+static createIntensitiesVector(builder:flatbuffers.Builder, data:number[] | Uint8Array):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addFloat32(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startIntensitiesVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endLaserScan(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  return offset;
+};
+
+static createLaserScan(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, angleMin:number, angleMax:number, angleIncrement:number, timeIncrement:number, scanTime:number, rangeMin:number, rangeMax:number, rangesOffset:flatbuffers.Offset, intensitiesOffset:flatbuffers.Offset):flatbuffers.Offset {
+  LaserScan.startLaserScan(builder);
+  LaserScan.add_Metadata(builder, _metadataOffset);
+  LaserScan.addHeader(builder, headerOffset);
+  LaserScan.addAngleMin(builder, angleMin);
+  LaserScan.addAngleMax(builder, angleMax);
+  LaserScan.addAngleIncrement(builder, angleIncrement);
+  LaserScan.addTimeIncrement(builder, timeIncrement);
+  LaserScan.addScanTime(builder, scanTime);
+  LaserScan.addRangeMin(builder, rangeMin);
+  LaserScan.addRangeMax(builder, rangeMax);
+  LaserScan.addRanges(builder, rangesOffset);
+  LaserScan.addIntensities(builder, intensitiesOffset);
+  return LaserScan.endLaserScan(builder);
+}
+}
+}
+/**
+ * @constructor
+ */
 export namespace fb.geometry_msgs{
 export class Point {
   bb: flatbuffers.ByteBuffer|null = null;
