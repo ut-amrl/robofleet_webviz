@@ -1,49 +1,21 @@
-import { Box, Card, CardContent, CircularProgress, Container, Grid, IconButton, Tab, Tabs, Typography } from "@material-ui/core";
+import { CircularProgress, Grid, IconButton, Tab, Tabs, Typography, Container } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import Localization2DViewer from "./components/Localization2DViewer";
 import NavBar from "./components/NavBar";
-import OdometryViewer from "./components/OdometryViewer";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
+import ImageryTab from "./ImageryTab";
+import StatsTab from "./StatsTab";
 import { matchAnyTopic } from "./util";
-import { Canvas } from "react-three-fiber";
-import CameraControls from "./components/CameraControls";
-import WebSocketContext from "./contexts/WebSocketContext";
+import VizTab from "./VizTab";
 
-export function VizTab(props: any) {
-  const ws = useContext(WebSocketContext);
-
-  // since <Canvas> uses the react-three-fiber reconciler, we must forward
-  // any contexts manually :(
-  const viewers = <WebSocketContext.Provider value={ws}>
-      <Localization2DViewer {...props}/>
-  </WebSocketContext.Provider>;
-
-  return <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">
-    <Canvas
-      orthographic={true}
-      pixelRatio={window.devicePixelRatio}
-    >
-      <CameraControls/>
-      {viewers}
-    </Canvas>;
-  </Box>;
-}
-
-export function ImageryTab(props: any) {
-  return <></>;
-}
-
-export function StatsTab(props: any) {
-  return <Container maxWidth="md">
-    <Box height="2em"/>
-    <Card>
-      <CardContent>
-        <OdometryViewer {...props}/>
-      </CardContent>
-    </Card>
+export function TabHider(props: {id: number, index: number, children: any}) {
+  // currently, we render all tabs but hide invisible ones.
+  // alternatively, don't render invisible ones for lower resource usage but more tab-switch latency.
+  const style = (props.index === props.id) ? {} : {display: "none"};
+  return <Container style={style}>
+    {props.children}
   </Container>;
 }
 
@@ -83,8 +55,8 @@ export default function Detail() {
       navIcon={backIcon}
       tabs={tabs}
       />
-    {tabIndex === 0 && <VizTab namespace={namespace}/>}
-    {tabIndex === 1 && <ImageryTab namespace={namespace}/>}
-    {tabIndex === 2 && <StatsTab namespace={namespace}/>}
+    <TabHider id={0} index={tabIndex}><VizTab namespace={namespace}/></TabHider>
+    <TabHider id={1} index={tabIndex}><ImageryTab namespace={namespace}/></TabHider>
+    <TabHider id={2} index={tabIndex}><StatsTab namespace={namespace}/></TabHider>
   </>;
 }
