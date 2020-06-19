@@ -3,8 +3,9 @@ import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
+import { Matrix4 } from "three";
 
-export default function LaserScanViewer(props: {namespace: string, topic: string, color: any, pointSize?: number}) {
+export default function LaserScanViewer(props: {namespace: string, topic: string, color: any, matrix?: Matrix4, pointSize?: number}) {
   const [pointsData, setPointsData] = useState(new Float32Array(0));
 
   useRobofleetMsgListener(matchTopic(props.namespace, props.topic), (buf, match) => {
@@ -33,9 +34,14 @@ export default function LaserScanViewer(props: {namespace: string, topic: string
     [pointsData]
   );
 
+  const I = useMemo(() => new Matrix4(), []);
+
   return <>
     <points
       frustumCulled={false}
+      matrixAutoUpdate={false}
+      matrixWorldNeedsUpdate={true}
+      matrix={props.matrix ?? I}
       >
       <bufferGeometry attach="geometry">
         {pointsPosAttrib}
