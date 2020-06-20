@@ -13,7 +13,8 @@ import VizTab from "./VizTab";
 export function TabHider(props: {id: number, index: number, children: any}) {
   // currently, we render all tabs but hide invisible ones.
   // alternatively, don't render invisible ones for lower resource usage but more tab-switch latency.
-  const style = (props.index === props.id) ? {} : {display: "none"};
+  const visible = props.index === props.id;
+  const style = visible ? {} : {display: "none"};
   return <Container style={style}>
     {props.children}
   </Container>;
