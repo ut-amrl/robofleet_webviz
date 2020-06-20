@@ -11,13 +11,11 @@ import { matchAnyTopic } from "./util";
 import VizTab from "./VizTab";
 
 export function TabHider(props: {id: number, index: number, children: any}) {
-  // currently, we render all tabs but hide invisible ones.
-  // alternatively, don't render invisible ones for lower resource usage but more tab-switch latency.
+  // currently, we only render visible tabls
+  // alternatively, just hide invisible ones for less tab-switch latency but higher resource usage.
+  // alternatively, support disabling updates for all child components somehow.
   const visible = props.index === props.id;
-  const style = visible ? {} : {display: "none"};
-  return <Container style={style}>
-    {props.children}
-  </Container>;
+  return visible ? props.children : <></>;
 }
 
 export default function Detail() {
