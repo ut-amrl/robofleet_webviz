@@ -5,30 +5,39 @@ import { fb } from "../schema";
 
 export default function CompressedImageViewer(props: {namespace: string, topic: string, enabled: boolean}) {
   const { namespace } = props;
-  const img = useRef<HTMLImageElement>(null);
-  const [blob, setBlob] = useState(null as Blob | null);
-  const [imgSrc, setImgSrc] = useState("");
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const ctx = useRef(null as CanvasRenderingContext2D | null);
+  const [size, setSize] = useState([0, 0]);
   
   useRobofleetMsgListener(matchTopic(namespace, props.topic), useCallback((buf, match) => {
     if (!props.enabled)
       return;
-    const ci = fb.sensor_msgs.CompressedImage.getRootAsCompressedImage(buf);
-    const blob = new Blob(
-      [ci.dataArray() ?? new Uint8Array()], 
-      {type: `image/${ci.format()}`}
-    );
-    setBlob(blob);
+    (async () => {
+      if (ctx.current === null)
+        return;
+      const ci = fb.sensor_msgs.CompressedImage.getRootAsCompressedImage(buf);
+      const blob = new Blob(
+        [ci.dataArray() ?? new Uint8Array()], 
+        {type: `image/${ci.format()}`}
+      );
+      const bmp = await window.createImageBitmap(blob);
+      if (size[0] !== bmp.width || size[1] !== bmp.height)
+        setSize([bmp.width, bmp.height]);
+      ctx.current.clearRect(0, 0, size[0], size[1]);
+      ctx.current.drawImage(bmp, 0, 0);
+    })();
   }, [props.enabled]));
 
   useEffect(() => {
-    if (blob === null)
+    if (canvas.current === null)
       return;
-    const src = URL.createObjectURL(blob);
-    setImgSrc(src);
-    return () => {
-      URL.revokeObjectURL(imgSrc);
-    };
-  }, [blob]);
+    ctx.current = canvas.current.getContext("2d");
+  }, [canvas.current]);
   
-  return <img ref={img} src={imgSrc} style={{maxWidth: "100%", maxHeight: "100%"}}/>; 
+  return <canvas 
+    ref={canvas} 
+    width={size[0]} 
+    height={size[1]}
+    style={{maxWidth: "100%", maxHeight: "100%"}}
+  />;
 }
