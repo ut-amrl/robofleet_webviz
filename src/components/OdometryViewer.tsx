@@ -1,5 +1,5 @@
 import { Avatar, Chip, Grid, Typography } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
@@ -10,7 +10,7 @@ export default function OdometryViewer(props: {namespace: string}) {
   const [pos, setPos] = useState([0, 0, 0]);
   const [vel, setVel] = useState([0, 0, 0]);
 
-  useRobofleetMsgListener(matchTopic(namespace, "odometry/raw"), (buf, match) => {
+  useRobofleetMsgListener(matchTopic(namespace, "odometry/raw"), useCallback((buf, match) => {
     setLoaded(true);
     const odom = fb.nav_msgs.Odometry.getRootAsOdometry(buf);
     setPos([
@@ -23,7 +23,7 @@ export default function OdometryViewer(props: {namespace: string}) {
       odom.twist()?.twist()?.linear()?.y() ?? 0,
       odom.twist()?.twist()?.linear()?.z() ?? 0,
     ]);
-  });
+  }, []));
 
   const positionDisplay = <Grid container item xs={2} direction="column" spacing={1}>
     <Grid item><Typography variant="h5">Position</Typography></Grid>

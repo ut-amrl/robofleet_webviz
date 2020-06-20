@@ -5,6 +5,13 @@ import { fb } from "../schema";
 
 export type RobofleetMsgListener = (buffer: flatbuffers.ByteBuffer, match: RegExpMatchArray) => void;
 
+/**
+ * Listen for Robofleet messages on topics matching a given regular expression.
+ * Ensure that the handler is memoized with useCallback() for performance.
+ * 
+ * @param regex a RegExp to test against the ROS message topic.
+ * @param handler a listener that receives any matching flatbuffers and the regex match result
+ */
 export default function useRobofleetMsgListener(regex: RegExp, handler: RobofleetMsgListener) {
   const ws = useContext(WebSocketContext);
   if (ws === null)

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
@@ -11,7 +11,7 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
   const [mapName, setMapName] = useState("GDC1");
   const [linesData, setLinesData] = useState(new Float32Array(0));
 
-  useRobofleetMsgListener(matchTopic(props.namespace, props.topic), (buf, match) => {
+  useRobofleetMsgListener(matchTopic(props.namespace, props.topic), useCallback((buf, match) => {
     const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(buf);
     const map = loc.map();
     if (map !== null)
@@ -19,7 +19,7 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
     setX(loc.pose()?.x() ?? 0);
     setY(loc.pose()?.y() ?? 0);
     setTheta(loc.pose()?.theta() ?? 0);
-  });
+  }, []));
 
   useEffect(() => {
     const loadMap = async () => {

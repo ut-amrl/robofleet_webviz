@@ -1,6 +1,6 @@
 import { Box, Card, CircularProgress, Container, IconButton, Tab, Tabs, Typography, CardContent } from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
@@ -25,7 +25,7 @@ export default function Detail() {
   const [tabIndex, setTabIndex] = useState(0);
   const [receivedMsg, setReceivedMsg] = useState(false);
 
-  useRobofleetMsgListener(matchAnyTopic(namespace), (_, __) => setReceivedMsg(true));
+  useRobofleetMsgListener(matchAnyTopic(namespace), useCallback((_, __) => setReceivedMsg(true), []));
 
   const loader = <Container maxWidth="md">
     <Box height="2em"/>

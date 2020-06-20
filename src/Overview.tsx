@@ -1,6 +1,6 @@
 import { Box, Button, CircularProgress, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import PercentageDisplay from "./components/PercentageDisplay";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
@@ -13,7 +13,7 @@ type RobotStatus = {name: string, is_ok: boolean, battery_level: number, status:
 export default function Overview() {
   const [data, setData] = useState({} as {[name: string]: RobotStatus});
 
-  useRobofleetMsgListener(matchTopicAnyNamespace("status"), (buf, match) => {
+  useRobofleetMsgListener(matchTopicAnyNamespace("status"), useCallback((buf, match) => {
     const name = match[1];
     const status = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(buf);
     setData(data => ({
@@ -26,7 +26,7 @@ export default function Overview() {
         location: status.location() ?? ""
       }
     }));
-  });
+  }, []));
 
   const items = Object.entries(data).map(([name, obj]) => {
     const href = `/robot/${btoa(name)}`;

@@ -1,6 +1,6 @@
 import { Box, Snackbar } from "@material-ui/core";
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import { Canvas } from "react-three-fiber";
 import * as THREE from "three";
 import CameraControls from "./components/CameraControls";
@@ -21,7 +21,7 @@ export default function VizTab(props: {namespace: string}) {
   const [baseLink, setBaseLink] = useState(new THREE.Matrix4());
 
   // build base_link transform using Localization2DMsg
-  useRobofleetMsgListener(matchTopic(props.namespace, "localization"), (buf, match) => {
+  useRobofleetMsgListener(matchTopic(props.namespace, "localization"), useCallback((buf, match) => {
     const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(buf);
     const translation = new THREE.Matrix4().makeTranslation(
       loc.pose()?.x() ?? 0,
@@ -31,7 +31,7 @@ export default function VizTab(props: {namespace: string}) {
     const rotation = new THREE.Matrix4().makeRotationZ(loc.pose()?.theta() ?? 0);
     setBaseLink(translation.multiply(rotation));
     setLocAlertOpen(false);
-  });
+  }, []));
 
   // since <Canvas> uses the react-three-fiber reconciler, we must forward
   // any contexts manually :(
