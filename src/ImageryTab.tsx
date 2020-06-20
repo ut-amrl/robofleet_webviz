@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Container, Box, Card, CardContent, GridList, GridListTile, CardActionArea, CardMedia, Typography, Dialog, DialogTitle, DialogContent, IconButton } from "@material-ui/core";
+import { Container, Box, Card, CardContent, GridList, GridListTile, CardActionArea, CardMedia, Typography, Dialog, DialogTitle, DialogContent, IconButton, useMediaQuery } from "@material-ui/core";
 import CompressedImageViewer from "./components/CompressedImageViewer";
 import { Close } from "@material-ui/icons";
 
 export function ImageCard(props: {namespace: string, topic: string, enablePreviews?: boolean, onClose?: () => void, onOpen?: () => void}) {
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const fullScreen = useMediaQuery("(max-width: 600px)");
 
   const handleOpen = () => {
     setDialogOpen(true);
@@ -16,7 +18,7 @@ export function ImageCard(props: {namespace: string, topic: string, enablePrevie
     if (props.onClose)
       props.onClose();
   }
-  const dialog = <Dialog maxWidth={false} onClose={handleClose} open={dialogOpen}>
+  const dialog = <Dialog maxWidth={false} fullScreen={fullScreen} onClose={handleClose} open={dialogOpen}>
     <DialogTitle disableTypography>
       <Typography variant="h6">{props.topic}</Typography>
       <IconButton 
