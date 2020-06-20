@@ -1,9 +1,10 @@
 import { AppBar, Divider, fade, IconButton, ListItemIcon, ListItemText, makeStyles, Menu, MenuItem, Theme, Toolbar, Tooltip, Typography } from "@material-ui/core";
-import { AccountCircle, PersonAdd, Wifi, WifiOff } from "@material-ui/icons";
+import { AccountCircle, PersonAdd, Wifi, WifiOff, WbIncandescent, WbIncandescentOutlined } from "@material-ui/icons";
 import React, { ReactElement, useContext, useState } from "react";
 import WebSocketContext from "../contexts/WebSocketContext";
 import useIpAddress from "../hooks/useIpAddress";
 import Logo from "./Logo";
+import AppContext from "../contexts/AppContext";
 
 const useStyles = makeStyles((theme: Theme) => ({
   toolbar: {
@@ -59,7 +60,16 @@ export function UserProfileButton() {
 
 export default function NavBar(props: {title?: string, navIcon?: ReactElement<any>, tabs?: ReactElement<any>}) {
   const ws = useContext(WebSocketContext);
+  const appContext = useContext(AppContext);
+  const {darkMode, setDarkMode} = appContext;
   const classes = useStyles();
+
+  const darkModeText = darkMode ? "Use Light Mode" : "Use Dark Mode";
+  const darkModeButton = <Tooltip arrow title={darkModeText}>
+    <IconButton onClick={() => setDarkMode(darkMode => !darkMode)}>
+      {darkMode ? <WbIncandescent/> : <WbIncandescentOutlined/>}
+    </IconButton>
+  </Tooltip>;
 
   const indicateConnected = <Wifi/>;
   const indicateDisconnected = <WifiOff color="disabled"/>;
@@ -75,6 +85,7 @@ export default function NavBar(props: {title?: string, navIcon?: ReactElement<an
       <Typography variant="h6" style={{flexGrow: 1, marginLeft: "1rem"}}>
         {props.title ?? "Robofleet"}
       </Typography>
+      {darkModeButton}
       {connectionIndicator}
       <UserProfileButton/>
     </Toolbar>
