@@ -8,17 +8,19 @@ export type MessageListener = (buf: flatbuffers.ByteBuffer) => void;
 export type UseWebSocketResult = {
   addMessageListener: (fn: MessageListener) => void,
   removeMessageListener: (fn: MessageListener) => void,
-  dispatch: (buf: flatbuffers.ByteBuffer) => void,
   connected: boolean,
   ws: WebSocket | null
 };
 
 export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {url: string, paused?: boolean, reconnectDelay?: number}): UseWebSocketResult {
+  const pausedRef = useRef(false);
   const interval = useRef(null as number | null);
   const ws = useRef(null as WebSocket | null);
   const state = useRef("disconnected" as WebSocketState);
   const listeners = useRef([] as Array<any>);
   const [connected, setConnected] = useState(false);
+
+  pausedRef.current = paused;
 
   const addMessageListener = (fn: MessageListener) => {
     listeners.current.push(fn);
@@ -47,7 +49,7 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
       setConnected(false);
     };
     ws.current.onmessage = async (msg) => {
-      if (paused)
+      if (pausedRef.current)
         return;
       const data = await blobToArrayBuffer(msg.data);
       const buf = new flatbuffers.ByteBuffer(new Uint8Array(data));
@@ -57,7 +59,7 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
       console.error("WebSocket error: ");
       console.error(error);
     };
-  }, [url, paused]);
+  }, [url]);
 
   useEffect(() => {
     if (connected) {
@@ -82,7 +84,6 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
   return {
     addMessageListener,
     removeMessageListener,
-    dispatch,
     connected,
     ws: ws.current
   };
