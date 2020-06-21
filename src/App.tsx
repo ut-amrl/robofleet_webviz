@@ -9,11 +9,11 @@ import Detail from "./Detail";
 import useWebSocket from "./hooks/useWebSocket";
 import Overview from "./Overview";
 import AppContext from "./contexts/AppContext";
+import useTimeTravelDispatcher from "./hooks/useTimeTravelDispatcher";
 
 function App() {
+  const timeTravelMaxCount = config.timeTravelMaxCount;
   const [darkMode, setDarkMode] = useState(true);
-
-  const appContext = {darkMode, setDarkMode};
 
   const theme = createMuiTheme({
     palette: {
@@ -28,6 +28,15 @@ function App() {
   });
 
   const ws = useWebSocket({url: config.serverUrl});
+  const dispatchTimeTravel = useTimeTravelDispatcher(ws, {maxCount: 128});
+
+  const appContext = {
+    darkMode, 
+    setDarkMode, 
+    timeTravelMaxCount,
+    dispatchTimeTravel,
+  };
+
   return <Router basename="/robofleet">
     <ThemeProvider theme={theme}>
     <AppContext.Provider value={appContext}>
