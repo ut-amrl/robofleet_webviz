@@ -1,6 +1,6 @@
-import { Box, Card, CircularProgress, Container, IconButton, Tab, Tabs, Typography, CardContent } from "@material-ui/core";
-import { ArrowBack } from "@material-ui/icons";
-import React, { useState, useCallback } from "react";
+import { Box, Card, CircularProgress, Container, IconButton, Tab, Tabs,  Typography, CardContent, Grid, Toolbar, Button } from "@material-ui/core";
+import { ArrowBack, Pause, PlayArrow } from "@material-ui/icons";
+import React, { useState, useCallback, useContext } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
@@ -9,6 +9,7 @@ import ImageryTab from "./ImageryTab";
 import StatsTab from "./StatsTab";
 import { matchAnyTopic } from "./util";
 import VizTab from "./VizTab";
+import AppContext from "./contexts/AppContext";
 
 export function TabHider(props: {id: number, index: number, children: any}) {
   // currently, we only render visible tabls
@@ -16,6 +17,20 @@ export function TabHider(props: {id: number, index: number, children: any}) {
   // alternatively, support disabling updates for all child components somehow.
   const visible = props.index === props.id;
   return visible ? props.children : <></>;
+}
+
+export function PauseButton() {
+  const {paused, setPaused} = useContext(AppContext);
+
+  return <Button 
+    color="primary" 
+    variant="outlined"
+    startIcon={paused ? <PlayArrow/> : <Pause/>}
+    style={{width: "100px"}}
+    onClick={() => setPaused((paused) => !paused)}
+  >
+    {paused ? "Play" : "Pause"}
+  </Button>;
 }
 
 export default function Detail() {
@@ -40,14 +55,18 @@ export default function Detail() {
     <ArrowBack/>
   </IconButton>;
 
-  const tabs = <Tabs
-    value={tabIndex}
-    onChange={(_, index) => setTabIndex(index)}
-    >
-    <Tab label="Viz"/>
-    <Tab label="Imagery"/>
-    <Tab label="Stats"/>
-  </Tabs>;
+  const tabs = <>
+      <Tabs
+        value={tabIndex}
+        onChange={(_, index) => setTabIndex(index)}
+        style={{flexGrow: 1}}
+      >
+        <Tab label="Viz"/>
+        <Tab label="Imagery"/>
+        <Tab label="Stats"/>
+      </Tabs>
+      <PauseButton/>
+  </>;
 
   const content = <>
     <TabHider id={0} index={tabIndex}><VizTab namespace={namespace}/></TabHider>

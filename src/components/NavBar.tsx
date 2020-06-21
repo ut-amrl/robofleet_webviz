@@ -89,6 +89,6 @@ export default function NavBar(props: {title?: string, navIcon?: ReactElement<an
       {connectionIndicator}
       <UserProfileButton/>
     </Toolbar>
-    {props.tabs}
+    {props.tabs && <Toolbar variant="dense">{props.tabs}</Toolbar>}
   </AppBar>;
 }
