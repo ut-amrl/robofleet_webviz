@@ -57,7 +57,7 @@ export default function Detail() {
 
   return <>
     <NavBar 
-      title={`Robot: ${namespace}`}
+      title={`${namespace}`}
       navIcon={backIcon}
       tabs={tabs}
       />

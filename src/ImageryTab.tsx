@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { Container, Box, Card, CardContent, GridList, GridListTile, CardActionArea, CardMedia, Typography, Dialog, DialogTitle, DialogContent, IconButton, useMediaQuery } from "@material-ui/core";
-import CompressedImageViewer from "./components/CompressedImageViewer";
+import { Box, Card, CardActionArea, CardContent, Container, Dialog, DialogContent, DialogTitle, IconButton, Typography, useMediaQuery } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
+import React, { useState } from "react";
+import CompressedImageViewer from "./components/CompressedImageViewer";
 
 export function ImageCard(props: {namespace: string, topic: string, enablePreviews?: boolean, onClose?: () => void, onOpen?: () => void}) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const fullScreen = useMediaQuery("(max-width: 600px)");
+  const smallWidth = useMediaQuery("(max-width: 800px)");
+  const smallHeight = useMediaQuery("(max-height: 600px)");
+  const fullScreen = smallWidth || smallHeight;
 
   const handleOpen = () => {
     setDialogOpen(true);
