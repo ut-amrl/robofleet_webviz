@@ -2,6 +2,7 @@ import { useContext } from "react";
 import WebSocketContext from "../contexts/WebSocketContext";
 import useMessageListener from "./useMessageListener";
 import { fb } from "../schema";
+import useRobofleetSubscription from "./useRobofleetSubscription";
 
 export type RobofleetMsgListener = (buffer: flatbuffers.ByteBuffer, match: RegExpMatchArray) => void;
 
@@ -16,6 +17,8 @@ export default function useRobofleetMsgListener(regex: RegExp, handler: Roboflee
   const ws = useContext(WebSocketContext);
   if (ws === null)
     throw new Error("No WebSocketContext provided.");
+  
+  useRobofleetSubscription(regex);
   
   useMessageListener(ws, (buf) => {
     // get metadata for arbitrary message type that extends MsgWithMetadata
