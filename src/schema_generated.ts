@@ -3,10 +3,29 @@
 /**
  * @enum {number}
  */
+export namespace fb.amrl_msgs.RobofleetSubscriptionConstants{
+export enum action_unsubscribe{
+  value= 0
+};
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.amrl_msgs.RobofleetSubscriptionConstants{
+export enum action_subscribe{
+  value= 1
+};
+}
+
+/**
+ * @enum {number}
+ */
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum status_no_fix{
   value= -1
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -14,7 +33,8 @@ export enum status_no_fix{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum status_fix{
   value= 0
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -22,7 +42,8 @@ export enum status_fix{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum status_sbas_fix{
   value= 1
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -30,7 +51,8 @@ export enum status_sbas_fix{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum status_gbas_fix{
   value= 2
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -38,7 +60,8 @@ export enum status_gbas_fix{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum service_gps{
   value= 1
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -46,7 +69,8 @@ export enum service_gps{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum service_glonass{
   value= 2
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -54,7 +78,8 @@ export enum service_glonass{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum service_compass{
   value= 4
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -62,7 +87,8 @@ export enum service_compass{
 export namespace fb.sensor_msgs.NavSatStatusConstants{
 export enum service_galileo{
   value= 8
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -70,7 +96,8 @@ export enum service_galileo{
 export namespace fb.sensor_msgs.NavSatFixConstants{
 export enum covariance_type_unknown{
   value= 0
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -78,7 +105,8 @@ export enum covariance_type_unknown{
 export namespace fb.sensor_msgs.NavSatFixConstants{
 export enum covariance_type_approximated{
   value= 1
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -86,7 +114,8 @@ export enum covariance_type_approximated{
 export namespace fb.sensor_msgs.NavSatFixConstants{
 export enum covariance_type_diagonal_known{
   value= 2
-}};
+};
+}
 
 /**
  * @enum {number}
@@ -94,7 +123,8 @@ export enum covariance_type_diagonal_known{
 export namespace fb.sensor_msgs.NavSatFixConstants{
 export enum covariance_type_known{
   value= 3
-}};
+};
+}
 
 /**
  * @constructor
@@ -525,6 +555,121 @@ static createRobofleetStatus(builder:flatbuffers.Builder, _metadataOffset:flatbu
 /**
  * @constructor
  */
+export namespace fb.amrl_msgs{
+export class RobofleetSubscription {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns RobofleetSubscription
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):RobofleetSubscription {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param RobofleetSubscription= obj
+ * @returns RobofleetSubscription
+ */
+static getRootAsRobofleetSubscription(bb:flatbuffers.ByteBuffer, obj?:RobofleetSubscription):RobofleetSubscription {
+  return (obj || new RobofleetSubscription()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param RobofleetSubscription= obj
+ * @returns RobofleetSubscription
+ */
+static getSizePrefixedRootAsRobofleetSubscription(bb:flatbuffers.ByteBuffer, obj?:RobofleetSubscription):RobofleetSubscription {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new RobofleetSubscription()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
+ */
+topicRegex():string|null
+topicRegex(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+topicRegex(optionalEncoding?:any):string|Uint8Array|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
+};
+
+/**
+ * @returns number
+ */
+action():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readUint8(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startRobofleetSubscription(builder:flatbuffers.Builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset topicRegexOffset
+ */
+static addTopicRegex(builder:flatbuffers.Builder, topicRegexOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, topicRegexOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number action
+ */
+static addAction(builder:flatbuffers.Builder, action:number) {
+  builder.addFieldInt8(2, action, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endRobofleetSubscription(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  return offset;
+};
+
+static createRobofleetSubscription(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, topicRegexOffset:flatbuffers.Offset, action:number):flatbuffers.Offset {
+  RobofleetSubscription.startRobofleetSubscription(builder);
+  RobofleetSubscription.add_Metadata(builder, _metadataOffset);
+  RobofleetSubscription.addTopicRegex(builder, topicRegexOffset);
+  RobofleetSubscription.addAction(builder, action);
+  return RobofleetSubscription.endRobofleetSubscription(builder);
+}
+}
+}
+/**
+ * @constructor
+ */
 export namespace fb.std_msgs{
 export class Header {
   bb: flatbuffers.ByteBuffer|null = null;
@@ -645,14 +790,6 @@ static endHeader(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createHeader(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, seq:number, stampOffset:flatbuffers.Offset, frameIdOffset:flatbuffers.Offset):flatbuffers.Offset {
-  Header.startHeader(builder);
-  Header.add_Metadata(builder, _metadataOffset);
-  Header.addSeq(builder, seq);
-  Header.addStamp(builder, stampOffset);
-  Header.addFrameId(builder, frameIdOffset);
-  return Header.endHeader(builder);
-}
 }
 }
 /**
@@ -908,14 +1045,6 @@ static endLocalization2DMsg(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createLocalization2DMsg(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, poseOffset:flatbuffers.Offset, mapOffset:flatbuffers.Offset):flatbuffers.Offset {
-  Localization2DMsg.startLocalization2DMsg(builder);
-  Localization2DMsg.add_Metadata(builder, _metadataOffset);
-  Localization2DMsg.addHeader(builder, headerOffset);
-  Localization2DMsg.addPose(builder, poseOffset);
-  Localization2DMsg.addMap(builder, mapOffset);
-  return Localization2DMsg.endLocalization2DMsg(builder);
-}
 }
 }
 /**
@@ -1253,18 +1382,6 @@ static endNavSatFix(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createNavSatFix(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, statusOffset:flatbuffers.Offset, latitude:number, longitude:number, altitude:number, positionCovarianceOffset:flatbuffers.Offset, positionCovarianceType:number):flatbuffers.Offset {
-  NavSatFix.startNavSatFix(builder);
-  NavSatFix.add_Metadata(builder, _metadataOffset);
-  NavSatFix.addHeader(builder, headerOffset);
-  NavSatFix.addStatus(builder, statusOffset);
-  NavSatFix.addLatitude(builder, latitude);
-  NavSatFix.addLongitude(builder, longitude);
-  NavSatFix.addAltitude(builder, altitude);
-  NavSatFix.addPositionCovariance(builder, positionCovarianceOffset);
-  NavSatFix.addPositionCovarianceType(builder, positionCovarianceType);
-  return NavSatFix.endNavSatFix(builder);
-}
 }
 }
 /**
@@ -1575,21 +1692,6 @@ static endLaserScan(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createLaserScan(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, angleMin:number, angleMax:number, angleIncrement:number, timeIncrement:number, scanTime:number, rangeMin:number, rangeMax:number, rangesOffset:flatbuffers.Offset, intensitiesOffset:flatbuffers.Offset):flatbuffers.Offset {
-  LaserScan.startLaserScan(builder);
-  LaserScan.add_Metadata(builder, _metadataOffset);
-  LaserScan.addHeader(builder, headerOffset);
-  LaserScan.addAngleMin(builder, angleMin);
-  LaserScan.addAngleMax(builder, angleMax);
-  LaserScan.addAngleIncrement(builder, angleIncrement);
-  LaserScan.addTimeIncrement(builder, timeIncrement);
-  LaserScan.addScanTime(builder, scanTime);
-  LaserScan.addRangeMin(builder, rangeMin);
-  LaserScan.addRangeMax(builder, rangeMax);
-  LaserScan.addRanges(builder, rangesOffset);
-  LaserScan.addIntensities(builder, intensitiesOffset);
-  return LaserScan.endLaserScan(builder);
-}
 }
 }
 /**
@@ -1753,14 +1855,6 @@ static endCompressedImage(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createCompressedImage(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, formatOffset:flatbuffers.Offset, dataOffset:flatbuffers.Offset):flatbuffers.Offset {
-  CompressedImage.startCompressedImage(builder);
-  CompressedImage.add_Metadata(builder, _metadataOffset);
-  CompressedImage.addHeader(builder, headerOffset);
-  CompressedImage.addFormat(builder, formatOffset);
-  CompressedImage.addData(builder, dataOffset);
-  return CompressedImage.endCompressedImage(builder);
-}
 }
 }
 /**
@@ -2143,13 +2237,6 @@ static endPose(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createPose(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, positionOffset:flatbuffers.Offset, orientationOffset:flatbuffers.Offset):flatbuffers.Offset {
-  Pose.startPose(builder);
-  Pose.add_Metadata(builder, _metadataOffset);
-  Pose.addPosition(builder, positionOffset);
-  Pose.addOrientation(builder, orientationOffset);
-  return Pose.endPose(builder);
-}
 }
 }
 /**
@@ -2294,13 +2381,6 @@ static endPoseWithCovariance(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createPoseWithCovariance(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, poseOffset:flatbuffers.Offset, covarianceOffset:flatbuffers.Offset):flatbuffers.Offset {
-  PoseWithCovariance.startPoseWithCovariance(builder);
-  PoseWithCovariance.add_Metadata(builder, _metadataOffset);
-  PoseWithCovariance.addPose(builder, poseOffset);
-  PoseWithCovariance.addCovariance(builder, covarianceOffset);
-  return PoseWithCovariance.endPoseWithCovariance(builder);
-}
 }
 }
 /**
@@ -2537,13 +2617,6 @@ static endTwist(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createTwist(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, linearOffset:flatbuffers.Offset, angularOffset:flatbuffers.Offset):flatbuffers.Offset {
-  Twist.startTwist(builder);
-  Twist.add_Metadata(builder, _metadataOffset);
-  Twist.addLinear(builder, linearOffset);
-  Twist.addAngular(builder, angularOffset);
-  return Twist.endTwist(builder);
-}
 }
 }
 /**
@@ -2688,13 +2761,6 @@ static endTwistWithCovariance(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createTwistWithCovariance(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, twistOffset:flatbuffers.Offset, covarianceOffset:flatbuffers.Offset):flatbuffers.Offset {
-  TwistWithCovariance.startTwistWithCovariance(builder);
-  TwistWithCovariance.add_Metadata(builder, _metadataOffset);
-  TwistWithCovariance.addTwist(builder, twistOffset);
-  TwistWithCovariance.addCovariance(builder, covarianceOffset);
-  return TwistWithCovariance.endTwistWithCovariance(builder);
-}
 }
 }
 /**
@@ -2838,14 +2904,5 @@ static endOdometry(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 };
 
-static createOdometry(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, headerOffset:flatbuffers.Offset, childFrameIdOffset:flatbuffers.Offset, poseOffset:flatbuffers.Offset, twistOffset:flatbuffers.Offset):flatbuffers.Offset {
-  Odometry.startOdometry(builder);
-  Odometry.add_Metadata(builder, _metadataOffset);
-  Odometry.addHeader(builder, headerOffset);
-  Odometry.addChildFrameId(builder, childFrameIdOffset);
-  Odometry.addPose(builder, poseOffset);
-  Odometry.addTwist(builder, twistOffset);
-  return Odometry.endOdometry(builder);
-}
 }
 }
