@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import config from "../config";
 
+/**
+ * Retrieve the client's IP address as seen by the Robofleet server, using the
+ * server's echo-ip API.
+ * 
+ * @returns this client's IP address
+ */
 export default function useIpAddress() {
   const [ipAddr, setIpAddr] = useState<string | null>(null);
 

@@ -25,6 +25,13 @@ export function makeSubscriptionMsg({topicRegex, action}: {topicRegex: string, a
   return fbb.asUint8Array();
 }
 
+/**
+ * Maintain a Robofleet subscription to the given topic regex.
+ * This is invoked automatically by useRobofleetMsgListener, so you generally
+ * should not have to use it explicitly.
+ * 
+ * @param topicRegex the topicRegex parameter for the Robofleet subscription
+ */
 export default function useRobofleetSubscription(topicRegex: RegExp) {
   const ws = useContext(WebSocketContext);
   if (ws === null) {
