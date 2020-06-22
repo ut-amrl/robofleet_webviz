@@ -17,7 +17,7 @@ export default function Overview() {
 
   useEffect(() => {
     setPaused(false);
-  }, []);
+  }, [setPaused]);
 
   useRobofleetMsgListener(matchTopicAnyNamespace("status"), useCallback((buf, match) => {
     const name = match[1];
@@ -36,7 +36,7 @@ export default function Overview() {
 
   const items = Object.entries(data).map(([name, obj]) => {
     const href = `/robot/${btoa(name)}`;
-    return <TableRow>
+    return <TableRow key={name}>
       <TableCell align="left">{name}</TableCell>
       <TableCell align="center">
         {obj.is_ok ? <Check/> : <Clear color="error"/>}
@@ -62,12 +62,14 @@ export default function Overview() {
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
-            <TableCell align="left">Name</TableCell>
-            <TableCell style={{width: "3em"}} align="center">OK</TableCell>
-            <TableCell style={{width: "5em"}} align="center">Battery</TableCell>
-            <TableCell align="center">Status</TableCell>
-            <TableCell align="center">Location</TableCell>
-            <TableCell style={{width: "80px"}} align="center"></TableCell>
+            <TableRow>
+              <TableCell align="left">Name</TableCell>
+              <TableCell style={{width: "3em"}} align="center">OK</TableCell>
+              <TableCell style={{width: "5em"}} align="center">Battery</TableCell>
+              <TableCell align="center">Status</TableCell>
+              <TableCell align="center">Location</TableCell>
+              <TableCell style={{width: "80px"}} align="center"></TableCell>
+            </TableRow>
           </TableHead>
           <TableBody>
             {items}

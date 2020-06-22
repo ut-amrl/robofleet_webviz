@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { extend, ReactThreeFiber, useFrame, useThree } from "react-three-fiber";
+import { extend, ReactThreeFiber, useFrame, useThree } from "react-three-fiber"; // eslint-disable-line
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 

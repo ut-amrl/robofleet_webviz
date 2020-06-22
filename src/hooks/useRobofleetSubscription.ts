@@ -1,7 +1,7 @@
-import React, { useEffect, useContext } from "react";
 import { flatbuffers } from "flatbuffers";
-import { fb } from "../schema";
+import { useContext, useEffect } from "react";
 import WebSocketContext from "../contexts/WebSocketContext";
+import { fb } from "../schema";
 
 export const ACTION_SUBSCRIBE = fb.amrl_msgs.RobofleetSubscriptionConstants.action_subscribe.value;
 export const ACTION_UNSUBSCRIBE = fb.amrl_msgs.RobofleetSubscriptionConstants.action_unsubscribe.value;
@@ -48,5 +48,5 @@ export default function useRobofleetSubscription(topicRegex: RegExp) {
       ws.ws?.send(buf);
       console.log(`Unsubscribed from ${regexStr}`);
     };
-  }, [ws.ws]);
+  }, [ws.ws, topicRegex.source]);
 }

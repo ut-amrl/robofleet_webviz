@@ -1,15 +1,15 @@
-import { Box, Card, CircularProgress, Container, IconButton, Tab, Tabs,  Typography, CardContent, Grid, Toolbar, Button } from "@material-ui/core";
+import { Box, Button, Card, CardContent, CircularProgress, Container, IconButton, Tab, Tabs, Typography } from "@material-ui/core";
 import { ArrowBack, Pause, PlayArrow } from "@material-ui/icons";
-import React, { useState, useCallback, useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import AppContext from "./contexts/AppContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import ImageryTab from "./ImageryTab";
 import StatsTab from "./StatsTab";
 import { matchAnyTopic } from "./util";
 import VizTab from "./VizTab";
-import AppContext from "./contexts/AppContext";
 
 export function TabHider(props: {id: number, index: number, children: any}) {
   // currently, we only render visible tabls

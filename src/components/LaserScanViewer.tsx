@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
-import config from "../config";
+import React, { useCallback, useMemo, useState } from "react";
+import { Matrix4 } from "three";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
-import { Matrix4 } from "three";
 
 export default function LaserScanViewer(props: {namespace: string, topic: string, color: any, matrix?: Matrix4, pointSize?: number}) {
   const [pointsData, setPointsData] = useState(new Float32Array(0));

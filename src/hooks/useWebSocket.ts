@@ -59,7 +59,7 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
       console.error("WebSocket error: ");
       console.error(error);
     };
-  }, [url]);
+  }, [url, dispatch]);
 
   useEffect(() => {
     if (connected) {
