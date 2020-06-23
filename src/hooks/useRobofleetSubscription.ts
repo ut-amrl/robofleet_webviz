@@ -39,6 +39,8 @@ export default function useRobofleetSubscription(topicRegex: RegExp) {
   }
   
   useEffect(() => {
+    if (!ws.connected)
+      return;
     const regexStr = topicRegex.source;
     const buf = makeSubscriptionMsg({
       topicRegex: regexStr,
@@ -55,5 +57,5 @@ export default function useRobofleetSubscription(topicRegex: RegExp) {
       ws.ws?.send(buf);
       console.log(`Unsubscribed from ${regexStr}`);
     };
-  }, [ws.ws, topicRegex.source]);
+  }, [ws.ws, ws.connected, topicRegex.source]);
 }
