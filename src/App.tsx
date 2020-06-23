@@ -9,10 +9,12 @@ import Detail from "./Detail";
 import useWebSocket from "./hooks/useWebSocket";
 import Overview from "./Overview";
 import AppContext from "./contexts/AppContext";
+import IdTokenContext from "./contexts/IdTokenContext";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [idToken, setIdToken] = useState<string | null>(null);
 
   const theme = createMuiTheme({
     palette: {
@@ -26,7 +28,7 @@ function App() {
     }
   });
 
-  const ws = useWebSocket({url: config.serverUrl, paused: paused});
+  const ws = useWebSocket({url: config.serverUrl, paused, idToken});
 
   const appContext = {
     darkMode, 
@@ -35,10 +37,16 @@ function App() {
     setPaused,
   };
 
+  const idTokenContext = {
+    idToken,
+    setIdToken
+  };
+
   return <Router basename="/robofleet">
     <ThemeProvider theme={theme}>
     <AppContext.Provider value={appContext}>
     <WebSocketContext.Provider value={ws}>
+    <IdTokenContext.Provider value={idTokenContext}>
       <CssBaseline/>
       <Switch>
         <Route exact path="/">
@@ -48,6 +56,7 @@ function App() {
           <Detail/>
         </Route>
       </Switch>
+    </IdTokenContext.Provider>
     </WebSocketContext.Provider>
     </AppContext.Provider>
     </ThemeProvider>

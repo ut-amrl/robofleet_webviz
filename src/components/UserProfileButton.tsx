@@ -1,16 +1,18 @@
 import { Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip, Avatar } from "@material-ui/core";
 import { AccountCircle, ExitToApp, PersonAddDisabled } from "@material-ui/icons";
 import config from "../config";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useGoogleLogin, useGoogleLogout, GoogleLoginResponse } from "react-google-login";
 import useIpAddress from "../hooks/useIpAddress";
 import btnGoogle from "../assets/btn_google.svg";
+import IdTokenContext from "../contexts/IdTokenContext";
 
 export function isGoogleLoginResponse(x: any): x is GoogleLoginResponse {
   return "getAuthResponse" in x;
 }
 
 export default function UserProfileButton() {
+  const { setIdToken } = useContext(IdTokenContext);
   const ipAddr = useIpAddress();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [signedIn, setSignedIn] = useState(false);
@@ -19,11 +21,13 @@ export default function UserProfileButton() {
   const clientId = config.googleClientId as string | null;
   const {signIn} = useGoogleLogin({
     clientId: clientId as string, // if it's null, we won't use the hook
+    responseType: "id_token",
     onSuccess: (res) => {
       if (!isGoogleLoginResponse(res))
         return;
       setSignedIn(true);
       setLoginResponse(res);
+      setIdToken(res.getAuthResponse().id_token);
     },
     onFailure: () => {}
   });
@@ -31,6 +35,7 @@ export default function UserProfileButton() {
     clientId: clientId as string, // if it's null, we won't use the hook
     onLogoutSuccess: () => {
       setSignedIn(false);
+      setIdToken(null);
     }
   });
 

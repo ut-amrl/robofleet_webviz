@@ -2,17 +2,42 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { flatbuffers } from "flatbuffers";
 import { blobToArrayBuffer } from "../util";
 
-export type WebSocketState = "connecting" | "connected" | "disconnected";
+type WebSocketState = "connecting" | "connected" | "disconnected";
 export type MessageListener = (buf: flatbuffers.ByteBuffer) => void;
 
 export type UseWebSocketResult = {
+  /**
+   * Register a callback to fire for each received message.
+   */
   addMessageListener: (fn: MessageListener) => void,
+
+  /**
+   * Unregister a previously-registered message listener callback.
+   */
   removeMessageListener: (fn: MessageListener) => void,
+
+  /**
+   * Whether the WebSocket is connected to the server.
+   */
   connected: boolean,
+
+  /**
+   * The actual WebSocket instance.
+   */
   ws: WebSocket | null
 };
 
-export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {url: string, paused?: boolean, reconnectDelay?: number}): UseWebSocketResult {
+/**
+ * Maintain a WebSocket connection with the Robofleet server.
+ * 
+ * @param params.url Full URL of the Robofleet server
+ * @param params.idToken ID token, if available
+ * @param params.paused Whether to pause firing message listeners
+ * @param params.reconnectDelay How many milliseconds to wait before attempting to reconnect
+ * @returns a UseWebSocketResult
+ */
+export default function useWebSocket({url, idToken=null, paused=false, reconnectDelay=2000}: 
+    {url: string, idToken?: string | null, paused?: boolean, reconnectDelay?: number}): UseWebSocketResult {
   const pausedRef = useRef(false);
   const interval = useRef(null as number | null);
   const ws = useRef(null as WebSocket | null);
@@ -34,10 +59,12 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
     listeners.current.splice(idx, 1);
   };
 
+  // fires message listeners
   const dispatch = useCallback((buf: flatbuffers.ByteBuffer) => {
     listeners.current.forEach((listener) => listener(buf));
   }, []);
 
+  // [re]initializes websocket connection
   const reconnect = useCallback(() => {
     ws.current = new WebSocket(url);
     ws.current.onopen = () => {
@@ -61,6 +88,7 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
     };
   }, [url, dispatch]);
 
+  // automatic reconnect
   useEffect(() => {
     if (connected) {
       if (interval.current !== null) {
@@ -78,8 +106,22 @@ export default function useWebSocket({url, paused=false, reconnectDelay=2000}: {
       }
     }
   }, [connected, reconnectDelay, reconnect]);
-  
-  useEffect(() => reconnect(), [url, reconnect]);
+
+  // authenticate
+  useEffect(() => {
+    if (!connected)
+      return;
+    if (!idToken)
+      return;
+
+    const data = JSON.stringify({
+      id_token: idToken
+    });
+    ws.current?.send(data);
+  }, [connected, idToken]);
+
+  // reconnect on startup/prop change
+  useEffect(() => reconnect(), [reconnect]);
   
   return {
     addMessageListener,
