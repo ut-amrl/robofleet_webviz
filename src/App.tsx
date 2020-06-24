@@ -2,7 +2,6 @@ import { CssBaseline } from "@material-ui/core";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "./App.css";
 import config from "./config";
 import WebSocketContext from "./contexts/WebSocketContext";
 import Detail from "./Detail";
