@@ -2,14 +2,14 @@
 // $& means the whole matched string
 export const escapeRegExp = (str: string) => str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-// match a particular topic in any namespace. Captures namespace as group "ns"
-export const matchTopicAnyNamespace = (topic: string) => new RegExp(`(?:(?<ns>.*)/)?${escapeRegExp(topic)}$`);
+// match a particular topic in any namespace. Captures namespace as group 1
+export const matchTopicAnyNamespace = (topic: string) => new RegExp(`(?:(.*)/)?${escapeRegExp(topic)}$`);
 
 // match a fully-qualified topic.
 export const matchExactTopic = (exactTopic: string) => new RegExp(escapeRegExp(exactTopic));
 
-// match any topic in a given namespace. Captures topic as group "topic"
-export const matchAnyTopic = (namespace: string) => new RegExp(`${namespace}/(?<topic>.*)`);
+// match any topic in a given namespace. Captures topic as group 1
+export const matchAnyTopic = (namespace: string) => new RegExp(`${namespace}/(.*)`);
 
 // match a given topic in a given namespace.
 export const matchTopic = (namespace: string, topic: string) => new RegExp(`${namespace}/${topic}`);
