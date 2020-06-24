@@ -111,11 +111,10 @@ export default function useWebSocket({url, idToken=null, paused=false, reconnect
   useEffect(() => {
     if (!connected)
       return;
-    if (!idToken)
-      return;
 
+    // sending null de-auths (signs out) the user
     const data = JSON.stringify({
-      id_token: idToken
+      id_token: idToken ?? null
     });
     ws.current?.send(data);
   }, [connected, idToken]);
