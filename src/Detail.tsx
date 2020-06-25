@@ -39,7 +39,13 @@ export default function Detail() {
   const [tabIndex, setTabIndex] = useState(0);
   const [receivedMsg, setReceivedMsg] = useState(false);
 
-  useRobofleetMsgListener(matchAnyTopic(namespace), useCallback((_, __) => setReceivedMsg(true), []));
+  // subscribe to all messages until we receive something
+  useRobofleetMsgListener(matchAnyTopic(namespace), 
+    useCallback((_, __) => {
+      setReceivedMsg(true);
+    }, []),
+    {enabled: !receivedMsg}
+  );
 
   const loader = <Container maxWidth="md">
     <Box height="2em"/>
