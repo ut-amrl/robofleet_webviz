@@ -1,5 +1,5 @@
 import { flatbuffers } from "flatbuffers";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import WebSocketContext from "../contexts/WebSocketContext";
 import { fb } from "../schema";
 
@@ -32,30 +32,56 @@ export function makeSubscriptionMsg({topicRegex, action}: {topicRegex: string, a
  * 
  * @param topicRegex the topicRegex parameter for the Robofleet subscription
  */
-export default function useRobofleetSubscription(topicRegex: RegExp) {
+export default function useRobofleetSubscription(topicRegex: RegExp, {enabled=true}: {enabled?: boolean}={}) {
+  const [shouldBeSubscribed, setShouldBeSubscribed] = useState(enabled);
   const ws = useContext(WebSocketContext);
   if (ws === null) {
     throw new Error("No WebSocketContext provided.");
   }
-  
-  useEffect(() => {
-    if (!ws.connected)
-      return;
-    const regexStr = topicRegex.source;
+
+  const regexStr = topicRegex.source;
+
+  const subscribe = useCallback(() => {
     const buf = makeSubscriptionMsg({
       topicRegex: regexStr,
       action: ACTION_SUBSCRIBE
     });
     ws.ws?.send(buf);
     console.log(`Subscribed to ${regexStr}`);
+  }, [ws.ws, regexStr]);
 
-    return () => {
-      const buf = makeSubscriptionMsg({
-        topicRegex: regexStr,
-        action: ACTION_UNSUBSCRIBE
-      });
-      ws.ws?.send(buf);
-      console.log(`Unsubscribed from ${regexStr}`);
-    };
-  }, [ws.ws, ws.connected, topicRegex.source]);
+  const unsubscribe = useCallback(() => {
+    const buf = makeSubscriptionMsg({
+      topicRegex: regexStr,
+      action: ACTION_UNSUBSCRIBE
+    });
+    ws.ws?.send(buf);
+    console.log(`Unsubscribed from ${regexStr}`);
+  }, [ws.ws, regexStr]);
+
+  // subscribe if should be subscribed, unsubscribe on cleanup if subscribed.
+  useEffect(() => {
+    if (!ws.connected)
+      return;
+
+    if (shouldBeSubscribed)
+      subscribe();
+    else
+      unsubscribe();
+    
+    if (shouldBeSubscribed)
+      return () => unsubscribe();
+  }, [shouldBeSubscribed, ws.connected, subscribe, unsubscribe]);
+
+  // unsubscribe on disable
+  useEffect(() => {
+    if (!enabled)
+      setShouldBeSubscribed(false);
+  }, [enabled]);
+  
+  // subscribe if enabled
+  useEffect(() => {
+    if (enabled)
+      setShouldBeSubscribed(true);
+  }, [regexStr, enabled]);
 }

@@ -13,12 +13,12 @@ export type RobofleetMsgListener = (buffer: flatbuffers.ByteBuffer, match: RegEx
  * @param regex a RegExp to test against the ROS message topic.
  * @param handler a listener that receives any matching flatbuffers and the regex match result
  */
-export default function useRobofleetMsgListener(regex: RegExp, handler: RobofleetMsgListener) {
+export default function useRobofleetMsgListener(regex: RegExp, handler: RobofleetMsgListener, {enabled=true}: {enabled?: boolean}={}) {
   const ws = useContext(WebSocketContext);
   if (ws === null)
     throw new Error("No WebSocketContext provided.");
   
-  useRobofleetSubscription(regex);
+  useRobofleetSubscription(regex, {enabled});
   
   useMessageListener(ws, (buf) => {
     // get metadata for arbitrary message type that extends MsgWithMetadata
