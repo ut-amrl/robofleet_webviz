@@ -31,6 +31,7 @@ export function makeSubscriptionMsg({topicRegex, action}: {topicRegex: string, a
  * should not have to use it explicitly.
  * 
  * @param topicRegex the topicRegex parameter for the Robofleet subscription
+ * @param param1.enabled whether to be subscribed or not (allows conditional subscription)
  */
 export default function useRobofleetSubscription(topicRegex: RegExp, {enabled=true}: {enabled?: boolean}={}) {
   const [shouldBeSubscribed, setShouldBeSubscribed] = useState(enabled);
@@ -83,5 +84,5 @@ export default function useRobofleetSubscription(topicRegex: RegExp, {enabled=tr
   useEffect(() => {
     if (enabled)
       setShouldBeSubscribed(true);
-  }, [regexStr, enabled]);
+  }, [enabled]);
 }

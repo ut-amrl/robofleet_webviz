@@ -12,6 +12,7 @@ export type RobofleetMsgListener = (buffer: flatbuffers.ByteBuffer, match: RegEx
  * 
  * @param regex a RegExp to test against the ROS message topic.
  * @param handler a listener that receives any matching flatbuffers and the regex match result
+ * @param param1.enabled whether to subscribe enable this listener (enables conditional subcription and listening)
  */
 export default function useRobofleetMsgListener(regex: RegExp, handler: RobofleetMsgListener, {enabled=true}: {enabled?: boolean}={}) {
   const ws = useContext(WebSocketContext);
