@@ -49,6 +49,7 @@ export function PauseButton() {
 export default function Detail() {
   const { id } = useParams();
   const namespace = atob(id);
+  const {idToken} = useContext(IdTokenContext);
   const [tabIndex, setTabIndex] = useState(0);
   const [receivedMsg, setReceivedMsg] = useState(false);
 
@@ -60,6 +61,12 @@ export default function Detail() {
     }, []),
     { enabled: !receivedMsg }
   );
+  const authorized = useAuthCheck({
+    idToken,
+    op: "receive",
+    topic: `${namespace}/`
+  });
+  
 
   const loader = (
     <Container maxWidth="md">
@@ -114,10 +121,14 @@ export default function Detail() {
     </>
   );
 
-  return (
-    <>
-      <NavBar title={`${namespace}`} navIcon={backIcon} tabs={tabs} />
-      {receivedMsg ? content : loader}
-    </>
-  );
+  return <>
+    <NavBar 
+      title={`${namespace}`}
+      navIcon={backIcon}
+      tabs={tabs}
+      />
+    {receivedMsg ? content : loader}
+    <Backdrop open={!authorized}>
+    </Backdrop>
+  </>;
 }
