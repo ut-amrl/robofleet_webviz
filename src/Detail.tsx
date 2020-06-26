@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, CircularProgress, Container, IconButton, Tab, Tabs, Typography } from "@material-ui/core";
+import { Box, Button, Card, CardContent, CircularProgress, Container, IconButton, Tab, Tabs, Typography, Backdrop } from "@material-ui/core";
 import { ArrowBack, Pause, PlayArrow } from "@material-ui/icons";
 import React, { useCallback, useContext, useState } from "react";
 import { useParams } from "react-router";
@@ -10,6 +10,8 @@ import ImageryTab from "./ImageryTab";
 import StatsTab from "./StatsTab";
 import { matchAnyTopic } from "./util";
 import VizTab from "./VizTab";
+import useAuthCheck from "./hooks/useAuthCheck";
+import IdTokenContext from "./contexts/IdTokenContext";
 
 export function TabHider(props: {id: number, index: number, children: any}) {
   // currently, we only render visible tabls
@@ -36,6 +38,7 @@ export function PauseButton() {
 export default function Detail() {
   const {id} = useParams();
   const namespace = atob(id);
+  const {idToken} = useContext(IdTokenContext);
   const [tabIndex, setTabIndex] = useState(0);
   const [receivedMsg, setReceivedMsg] = useState(false);
 
@@ -46,6 +49,13 @@ export default function Detail() {
     }, []),
     {enabled: !receivedMsg}
   );
+
+  const authorized = useAuthCheck({
+    idToken,
+    op: "receive",
+    topic: `${namespace}/`
+  });
+  
 
   const loader = <Container maxWidth="md">
     <Box height="2em"/>
@@ -87,5 +97,7 @@ export default function Detail() {
       tabs={tabs}
       />
     {receivedMsg ? content : loader}
+    <Backdrop open={!authorized}>
+    </Backdrop>
   </>;
 }
