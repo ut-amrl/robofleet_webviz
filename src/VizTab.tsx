@@ -10,6 +10,7 @@ import WebSocketContext from "./contexts/WebSocketContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import { fb } from "./schema";
 import { matchTopic } from "./util";
+import VisualizationViewer from "./components/VisualizationViewer";
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="standard" {...props}/>;
@@ -45,6 +46,10 @@ export default function VizTab(props: {namespace: string}) {
         topic="velodyne_2dscan"
         matrix={baseLink}
         color={0xFFAA00}
+      />
+      <VisualizationViewer
+        namespace={props.namespace}
+        topic="visualization"
       />
   </WebSocketContext.Provider>;
 

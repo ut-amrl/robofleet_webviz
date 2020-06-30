@@ -538,6 +538,8 @@ static addLocation(builder:flatbuffers.Builder, locationOffset:flatbuffers.Offse
  */
 static endRobofleetStatus(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // status
+  builder.requiredField(offset, 12); // location
   return offset;
 };
 
@@ -655,6 +657,7 @@ static addAction(builder:flatbuffers.Builder, action:number) {
  */
 static endRobofleetSubscription(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // topic_regex
   return offset;
 };
 
@@ -787,6 +790,8 @@ static addFrameId(builder:flatbuffers.Builder, frameIdOffset:flatbuffers.Offset)
  */
 static endHeader(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 8); // stamp
+  builder.requiredField(offset, 10); // frame_id
   return offset;
 };
 
@@ -1042,6 +1047,988 @@ static addMap(builder:flatbuffers.Builder, mapOffset:flatbuffers.Offset) {
  */
 static endLocalization2DMsg(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // header
+  builder.requiredField(offset, 8); // pose
+  builder.requiredField(offset, 10); // map
+  return offset;
+};
+
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class PathVisualization {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns PathVisualization
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):PathVisualization {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param PathVisualization= obj
+ * @returns PathVisualization
+ */
+static getRootAsPathVisualization(bb:flatbuffers.ByteBuffer, obj?:PathVisualization):PathVisualization {
+  return (obj || new PathVisualization()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param PathVisualization= obj
+ * @returns PathVisualization
+ */
+static getSizePrefixedRootAsPathVisualization(bb:flatbuffers.ByteBuffer, obj?:PathVisualization):PathVisualization {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new PathVisualization()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+curvature():number {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+distance():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+clearance():number {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startPathVisualization(builder:flatbuffers.Builder) {
+  builder.startObject(4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number curvature
+ */
+static addCurvature(builder:flatbuffers.Builder, curvature:number) {
+  builder.addFieldFloat32(1, curvature, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number distance
+ */
+static addDistance(builder:flatbuffers.Builder, distance:number) {
+  builder.addFieldFloat32(2, distance, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number clearance
+ */
+static addClearance(builder:flatbuffers.Builder, clearance:number) {
+  builder.addFieldFloat32(3, clearance, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endPathVisualization(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  return offset;
+};
+
+static createPathVisualization(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, curvature:number, distance:number, clearance:number):flatbuffers.Offset {
+  PathVisualization.startPathVisualization(builder);
+  PathVisualization.add_Metadata(builder, _metadataOffset);
+  PathVisualization.addCurvature(builder, curvature);
+  PathVisualization.addDistance(builder, distance);
+  PathVisualization.addClearance(builder, clearance);
+  return PathVisualization.endPathVisualization(builder);
+}
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class Point2D {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns Point2D
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):Point2D {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param Point2D= obj
+ * @returns Point2D
+ */
+static getRootAsPoint2D(bb:flatbuffers.ByteBuffer, obj?:Point2D):Point2D {
+  return (obj || new Point2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param Point2D= obj
+ * @returns Point2D
+ */
+static getSizePrefixedRootAsPoint2D(bb:flatbuffers.ByteBuffer, obj?:Point2D):Point2D {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new Point2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+x():number {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+y():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startPoint2D(builder:flatbuffers.Builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number x
+ */
+static addX(builder:flatbuffers.Builder, x:number) {
+  builder.addFieldFloat32(1, x, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number y
+ */
+static addY(builder:flatbuffers.Builder, y:number) {
+  builder.addFieldFloat32(2, y, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endPoint2D(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  return offset;
+};
+
+static createPoint2D(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset, x:number, y:number):flatbuffers.Offset {
+  Point2D.startPoint2D(builder);
+  Point2D.add_Metadata(builder, _metadataOffset);
+  Point2D.addX(builder, x);
+  Point2D.addY(builder, y);
+  return Point2D.endPoint2D(builder);
+}
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class ColoredPoint2D {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns ColoredPoint2D
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):ColoredPoint2D {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param ColoredPoint2D= obj
+ * @returns ColoredPoint2D
+ */
+static getRootAsColoredPoint2D(bb:flatbuffers.ByteBuffer, obj?:ColoredPoint2D):ColoredPoint2D {
+  return (obj || new ColoredPoint2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param ColoredPoint2D= obj
+ * @returns ColoredPoint2D
+ */
+static getSizePrefixedRootAsColoredPoint2D(bb:flatbuffers.ByteBuffer, obj?:ColoredPoint2D):ColoredPoint2D {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new ColoredPoint2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.amrl_msgs.Point2D= obj
+ * @returns fb.amrl_msgs.Point2D|null
+ */
+point(obj?:fb.amrl_msgs.Point2D):fb.amrl_msgs.Point2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? (obj || new fb.amrl_msgs.Point2D()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+color():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startColoredPoint2D(builder:flatbuffers.Builder) {
+  builder.startObject(3);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset pointOffset
+ */
+static addPoint(builder:flatbuffers.Builder, pointOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, pointOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number color
+ */
+static addColor(builder:flatbuffers.Builder, color:number) {
+  builder.addFieldInt32(2, color, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endColoredPoint2D(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  builder.requiredField(offset, 6); // point
+  return offset;
+};
+
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class ColoredLine2D {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns ColoredLine2D
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):ColoredLine2D {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param ColoredLine2D= obj
+ * @returns ColoredLine2D
+ */
+static getRootAsColoredLine2D(bb:flatbuffers.ByteBuffer, obj?:ColoredLine2D):ColoredLine2D {
+  return (obj || new ColoredLine2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param ColoredLine2D= obj
+ * @returns ColoredLine2D
+ */
+static getSizePrefixedRootAsColoredLine2D(bb:flatbuffers.ByteBuffer, obj?:ColoredLine2D):ColoredLine2D {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new ColoredLine2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.amrl_msgs.Point2D= obj
+ * @returns fb.amrl_msgs.Point2D|null
+ */
+p0(obj?:fb.amrl_msgs.Point2D):fb.amrl_msgs.Point2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? (obj || new fb.amrl_msgs.Point2D()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.amrl_msgs.Point2D= obj
+ * @returns fb.amrl_msgs.Point2D|null
+ */
+p1(obj?:fb.amrl_msgs.Point2D):fb.amrl_msgs.Point2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? (obj || new fb.amrl_msgs.Point2D()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+color():number {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startColoredLine2D(builder:flatbuffers.Builder) {
+  builder.startObject(4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset p0Offset
+ */
+static addP0(builder:flatbuffers.Builder, p0Offset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, p0Offset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset p1Offset
+ */
+static addP1(builder:flatbuffers.Builder, p1Offset:flatbuffers.Offset) {
+  builder.addFieldOffset(2, p1Offset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number color
+ */
+static addColor(builder:flatbuffers.Builder, color:number) {
+  builder.addFieldInt32(3, color, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endColoredLine2D(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  builder.requiredField(offset, 6); // p0
+  builder.requiredField(offset, 8); // p1
+  return offset;
+};
+
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class ColoredArc2D {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns ColoredArc2D
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):ColoredArc2D {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param ColoredArc2D= obj
+ * @returns ColoredArc2D
+ */
+static getRootAsColoredArc2D(bb:flatbuffers.ByteBuffer, obj?:ColoredArc2D):ColoredArc2D {
+  return (obj || new ColoredArc2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param ColoredArc2D= obj
+ * @returns ColoredArc2D
+ */
+static getSizePrefixedRootAsColoredArc2D(bb:flatbuffers.ByteBuffer, obj?:ColoredArc2D):ColoredArc2D {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new ColoredArc2D()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.amrl_msgs.Point2D= obj
+ * @returns fb.amrl_msgs.Point2D|null
+ */
+center(obj?:fb.amrl_msgs.Point2D):fb.amrl_msgs.Point2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? (obj || new fb.amrl_msgs.Point2D()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+radius():number {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+startAngle():number {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+endAngle():number {
+  var offset = this.bb!.__offset(this.bb_pos, 12);
+  return offset ? this.bb!.readFloat32(this.bb_pos + offset) : 0.0;
+};
+
+/**
+ * @returns number
+ */
+color():number {
+  var offset = this.bb!.__offset(this.bb_pos, 14);
+  return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startColoredArc2D(builder:flatbuffers.Builder) {
+  builder.startObject(6);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset centerOffset
+ */
+static addCenter(builder:flatbuffers.Builder, centerOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, centerOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number radius
+ */
+static addRadius(builder:flatbuffers.Builder, radius:number) {
+  builder.addFieldFloat32(2, radius, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number startAngle
+ */
+static addStartAngle(builder:flatbuffers.Builder, startAngle:number) {
+  builder.addFieldFloat32(3, startAngle, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number endAngle
+ */
+static addEndAngle(builder:flatbuffers.Builder, endAngle:number) {
+  builder.addFieldFloat32(4, endAngle, 0.0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number color
+ */
+static addColor(builder:flatbuffers.Builder, color:number) {
+  builder.addFieldInt32(5, color, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endColoredArc2D(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  builder.requiredField(offset, 6); // center
+  return offset;
+};
+
+}
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs{
+export class VisualizationMsg {
+  bb: flatbuffers.ByteBuffer|null = null;
+
+  bb_pos:number = 0;
+/**
+ * @param number i
+ * @param flatbuffers.ByteBuffer bb
+ * @returns VisualizationMsg
+ */
+__init(i:number, bb:flatbuffers.ByteBuffer):VisualizationMsg {
+  this.bb_pos = i;
+  this.bb = bb;
+  return this;
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param VisualizationMsg= obj
+ * @returns VisualizationMsg
+ */
+static getRootAsVisualizationMsg(bb:flatbuffers.ByteBuffer, obj?:VisualizationMsg):VisualizationMsg {
+  return (obj || new VisualizationMsg()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param flatbuffers.ByteBuffer bb
+ * @param VisualizationMsg= obj
+ * @returns VisualizationMsg
+ */
+static getSizePrefixedRootAsVisualizationMsg(bb:flatbuffers.ByteBuffer, obj?:VisualizationMsg):VisualizationMsg {
+  bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+  return (obj || new VisualizationMsg()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
+};
+
+/**
+ * @param fb.MsgMetadata= obj
+ * @returns fb.MsgMetadata|null
+ */
+_metadata(obj?:fb.MsgMetadata):fb.MsgMetadata|null {
+  var offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? (obj || new fb.MsgMetadata()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param fb.std_msgs.Header= obj
+ * @returns fb.std_msgs.Header|null
+ */
+header(obj?:fb.std_msgs.Header):fb.std_msgs.Header|null {
+  var offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? (obj || new fb.std_msgs.Header()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+};
+
+/**
+ * @param flatbuffers.Encoding= optionalEncoding
+ * @returns string|Uint8Array|null
+ */
+ns():string|null
+ns(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+ns(optionalEncoding?:any):string|Uint8Array|null {
+  var offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
+};
+
+/**
+ * @param number index
+ * @param fb.amrl_msgs.Pose2Df= obj
+ * @returns fb.amrl_msgs.Pose2Df
+ */
+particles(index: number, obj?:fb.amrl_msgs.Pose2Df):fb.amrl_msgs.Pose2Df|null {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? (obj || new fb.amrl_msgs.Pose2Df()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+particlesLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 10);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param number index
+ * @param fb.amrl_msgs.PathVisualization= obj
+ * @returns fb.amrl_msgs.PathVisualization
+ */
+pathOptions(index: number, obj?:fb.amrl_msgs.PathVisualization):fb.amrl_msgs.PathVisualization|null {
+  var offset = this.bb!.__offset(this.bb_pos, 12);
+  return offset ? (obj || new fb.amrl_msgs.PathVisualization()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+pathOptionsLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 12);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param number index
+ * @param fb.amrl_msgs.ColoredPoint2D= obj
+ * @returns fb.amrl_msgs.ColoredPoint2D
+ */
+points(index: number, obj?:fb.amrl_msgs.ColoredPoint2D):fb.amrl_msgs.ColoredPoint2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 14);
+  return offset ? (obj || new fb.amrl_msgs.ColoredPoint2D()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+pointsLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 14);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param number index
+ * @param fb.amrl_msgs.ColoredLine2D= obj
+ * @returns fb.amrl_msgs.ColoredLine2D
+ */
+lines(index: number, obj?:fb.amrl_msgs.ColoredLine2D):fb.amrl_msgs.ColoredLine2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 16);
+  return offset ? (obj || new fb.amrl_msgs.ColoredLine2D()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+linesLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 16);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param number index
+ * @param fb.amrl_msgs.ColoredArc2D= obj
+ * @returns fb.amrl_msgs.ColoredArc2D
+ */
+arcs(index: number, obj?:fb.amrl_msgs.ColoredArc2D):fb.amrl_msgs.ColoredArc2D|null {
+  var offset = this.bb!.__offset(this.bb_pos, 18);
+  return offset ? (obj || new fb.amrl_msgs.ColoredArc2D()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
+};
+
+/**
+ * @returns number
+ */
+arcsLength():number {
+  var offset = this.bb!.__offset(this.bb_pos, 18);
+  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ */
+static startVisualizationMsg(builder:flatbuffers.Builder) {
+  builder.startObject(8);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset _metadataOffset
+ */
+static add_Metadata(builder:flatbuffers.Builder, _metadataOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, _metadataOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset headerOffset
+ */
+static addHeader(builder:flatbuffers.Builder, headerOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, headerOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset nsOffset
+ */
+static addNs(builder:flatbuffers.Builder, nsOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(2, nsOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset particlesOffset
+ */
+static addParticles(builder:flatbuffers.Builder, particlesOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(3, particlesOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<flatbuffers.Offset> data
+ * @returns flatbuffers.Offset
+ */
+static createParticlesVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startParticlesVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset pathOptionsOffset
+ */
+static addPathOptions(builder:flatbuffers.Builder, pathOptionsOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(4, pathOptionsOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<flatbuffers.Offset> data
+ * @returns flatbuffers.Offset
+ */
+static createPathOptionsVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startPathOptionsVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset pointsOffset
+ */
+static addPoints(builder:flatbuffers.Builder, pointsOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(5, pointsOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<flatbuffers.Offset> data
+ * @returns flatbuffers.Offset
+ */
+static createPointsVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startPointsVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset linesOffset
+ */
+static addLines(builder:flatbuffers.Builder, linesOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(6, linesOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<flatbuffers.Offset> data
+ * @returns flatbuffers.Offset
+ */
+static createLinesVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startLinesVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param flatbuffers.Offset arcsOffset
+ */
+static addArcs(builder:flatbuffers.Builder, arcsOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(7, arcsOffset, 0);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param Array.<flatbuffers.Offset> data
+ * @returns flatbuffers.Offset
+ */
+static createArcsVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
+  for (var i = data.length - 1; i >= 0; i--) {
+    builder.addOffset(data[i]);
+  }
+  return builder.endVector();
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @param number numElems
+ */
+static startArcsVector(builder:flatbuffers.Builder, numElems:number) {
+  builder.startVector(4, numElems, 4);
+};
+
+/**
+ * @param flatbuffers.Builder builder
+ * @returns flatbuffers.Offset
+ */
+static endVisualizationMsg(builder:flatbuffers.Builder):flatbuffers.Offset {
+  var offset = builder.endObject();
+  builder.requiredField(offset, 6); // header
+  builder.requiredField(offset, 8); // ns
+  builder.requiredField(offset, 10); // particles
+  builder.requiredField(offset, 12); // path_options
+  builder.requiredField(offset, 14); // points
+  builder.requiredField(offset, 16); // lines
+  builder.requiredField(offset, 18); // arcs
   return offset;
 };
 
@@ -1379,6 +2366,9 @@ static addPositionCovarianceType(builder:flatbuffers.Builder, positionCovariance
  */
 static endNavSatFix(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // header
+  builder.requiredField(offset, 8); // status
+  builder.requiredField(offset, 16); // position_covariance
   return offset;
 };
 
@@ -1689,6 +2679,9 @@ static startIntensitiesVector(builder:flatbuffers.Builder, numElems:number) {
  */
 static endLaserScan(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // header
+  builder.requiredField(offset, 22); // ranges
+  builder.requiredField(offset, 24); // intensities
   return offset;
 };
 
@@ -1852,6 +2845,9 @@ static startDataVector(builder:flatbuffers.Builder, numElems:number) {
  */
 static endCompressedImage(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // header
+  builder.requiredField(offset, 8); // format
+  builder.requiredField(offset, 10); // data
   return offset;
 };
 
@@ -2234,6 +3230,8 @@ static addOrientation(builder:flatbuffers.Builder, orientationOffset:flatbuffers
  */
 static endPose(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // position
+  builder.requiredField(offset, 8); // orientation
   return offset;
 };
 
@@ -2378,6 +3376,8 @@ static startCovarianceVector(builder:flatbuffers.Builder, numElems:number) {
  */
 static endPoseWithCovariance(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // pose
+  builder.requiredField(offset, 8); // covariance
   return offset;
 };
 
@@ -2614,6 +3614,8 @@ static addAngular(builder:flatbuffers.Builder, angularOffset:flatbuffers.Offset)
  */
 static endTwist(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // linear
+  builder.requiredField(offset, 8); // angular
   return offset;
 };
 
@@ -2758,6 +3760,8 @@ static startCovarianceVector(builder:flatbuffers.Builder, numElems:number) {
  */
 static endTwistWithCovariance(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // twist
+  builder.requiredField(offset, 8); // covariance
   return offset;
 };
 
@@ -2901,6 +3905,10 @@ static addTwist(builder:flatbuffers.Builder, twistOffset:flatbuffers.Offset) {
  */
 static endOdometry(builder:flatbuffers.Builder):flatbuffers.Offset {
   var offset = builder.endObject();
+  builder.requiredField(offset, 6); // header
+  builder.requiredField(offset, 8); // child_frame_id
+  builder.requiredField(offset, 10); // pose
+  builder.requiredField(offset, 12); // twist
   return offset;
 };
 
