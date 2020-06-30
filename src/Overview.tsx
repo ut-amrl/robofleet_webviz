@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Box, Button, CircularProgress, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, LinearProgress } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
 import React, { useState, useCallback, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
@@ -76,8 +76,8 @@ export default function Overview() {
           </TableBody>
         </Table>
         <div style={{padding: "1em", display: "flex", alignItems: "center"}}>
-          <CircularProgress variant="indeterminate" size={16}/>
-          <Typography variant="body2" style={{marginLeft: "1em"}}>Robots will appear here...</Typography>
+          <CircularProgress variant="indeterminate" disableShrink size={16}/>
+          <Typography variant="body2" color="textSecondary" style={{marginLeft: "1em"}}>Watching for new robots</Typography>
         </div>
       </TableContainer>
     </Container>
