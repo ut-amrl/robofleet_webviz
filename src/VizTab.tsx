@@ -34,6 +34,11 @@ export default function VizTab(props: {namespace: string}) {
     setLocAlertOpen(false);
   }, []));
 
+  const handleAlertClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason !== "clickaway")
+      setLocAlertOpen(false);
+  }
+
   // since <Canvas> uses the react-three-fiber reconciler, we must forward
   // any contexts manually :(
   const viewers = <WebSocketContext.Provider value={ws}>
@@ -50,13 +55,9 @@ export default function VizTab(props: {namespace: string}) {
       <VisualizationViewer
         namespace={props.namespace}
         topic="visualization"
+        baseLinkMatrix={baseLink}
       />
   </WebSocketContext.Provider>;
-
-  const handleAlertClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason !== "clickaway")
-      setLocAlertOpen(false);
-  }
 
   return <>
     <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">

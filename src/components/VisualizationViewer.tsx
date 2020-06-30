@@ -2,33 +2,41 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { matchTopic } from "../util";
 import { fb } from "../schema";
-import THREE, { BufferAttribute, Color, Vector4, Vector3 } from "three";
+import THREE, { BufferAttribute, Color, Vector4, Vector3, Matrix4 } from "three";
 
-export function ColoredLinesViewer(props: {msg: fb.amrl_msgs.VisualizationMsg}) {
-  const { msg } = props;
+const I = new Matrix4();
+
+export function ColoredLinesViewer(props: 
+    {msg: fb.amrl_msgs.VisualizationMsg, frame?: string, matrix?: Matrix4}) {
+  const { msg, frame } = props;
   const [linesLength, setLinesLength] = useState(0);
-  const [posArray, setPosArray] = useState(new Float32Array());
+  const [posArray, setPosArray] = useState(new Float32Array(1000000));
   const [posAttr, setPosAttr] = useState<BufferAttribute>();
-  const [colArray, setColArray] = useState(new Float32Array());
+  const [colArray, setColArray] = useState(new Float32Array(1000000));
   const [colAttr, setColAttr] = useState<BufferAttribute>();
 
   // grow buffers as necessary
   useEffect(() => {
+    if (frame && frame !== msg.header()?.frameId())
+      return;
     const newLength = msg.linesLength();
     if (newLength <= linesLength)
       return;
 
-    setPosArray(new Float32Array(newLength * 6));
+    setPosArray(new Float32Array(newLength * 2 * 3));
     setPosAttr(new BufferAttribute(posArray, 3, false));
 
-    setColArray(new Float32Array(newLength * 2));
+    setColArray(new Float32Array(newLength * 2 * 3));
     setColAttr(new BufferAttribute(colArray, 3, false));
   }, [msg.linesLength()]);
 
   // update buffer contents
   useEffect(() => {
+    if (frame && frame !== msg.header()?.frameId())
+      return;
     if (!posAttr || !colAttr)
       return;
+
     const a = new Vector3();
     const b = new Vector3();
     const color = new Color();
@@ -51,8 +59,14 @@ export function ColoredLinesViewer(props: {msg: fb.amrl_msgs.VisualizationMsg}) 
     posAttr.needsUpdate = true;
   }, [msg, posAttr, colAttr]);
 
+  if (!posAttr || !colAttr)
+    return <></>;
+
   return <lineSegments
     frustumCulled={false}
+    matrixAutoUpdate={false}
+    matrixWorldNeedsUpdate={true}
+    matrix={props.matrix ?? I}
   >
     <bufferGeometry attach="geometry"
       attributes-position={posAttr}
@@ -65,8 +79,8 @@ export function ColoredLinesViewer(props: {msg: fb.amrl_msgs.VisualizationMsg}) 
   </lineSegments>; 
 }
 
-export default function VisualizationViewer(props: {namespace: string, topic: string}) {
-  const { namespace, topic } = props;
+export default function VisualizationViewer(props: {namespace: string, topic: string, baseLinkMatrix: Matrix4}) {
+  const { namespace, topic, baseLinkMatrix } = props;
   const [msg, setMsg] = useState<fb.amrl_msgs.VisualizationMsg | null>(null);
 
   useRobofleetMsgListener(matchTopic(namespace, topic), useCallback((buf, match) => {
@@ -78,6 +92,7 @@ export default function VisualizationViewer(props: {namespace: string, topic: st
     return <></>;
 
   return <>
-    <ColoredLinesViewer msg={msg}/>
+    <ColoredLinesViewer msg={msg} frame="map"/>
+    <ColoredLinesViewer msg={msg} frame="base_link" matrix={baseLinkMatrix}/>
   </>;
 }
