@@ -4,6 +4,7 @@ import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
 import ColoredLinesViewer from "./ColoredLinesViewer";
+import ColoredPointsViewer from "./ColoredPointsViewer";
 
 export default function VisualizationViewer(props: {namespace: string, topic: string, baseLinkMatrix: Matrix4}) {
   const { namespace, topic, baseLinkMatrix } = props;
@@ -24,5 +25,7 @@ export default function VisualizationViewer(props: {namespace: string, topic: st
   return <>
     {mapMsg && <ColoredLinesViewer msg={mapMsg}/>}
     {baseLinkMsg && <ColoredLinesViewer msg={baseLinkMsg} matrix={baseLinkMatrix}/>}
+    {mapMsg && <ColoredPointsViewer msg={mapMsg}/>}
+    {baseLinkMsg && <ColoredPointsViewer msg={baseLinkMsg} matrix={baseLinkMatrix}/>}
   </>;
 }
