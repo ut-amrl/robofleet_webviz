@@ -8,7 +8,7 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
-  const [mapName, setMapName] = useState("GDC1");
+  const [mapName, setMapName] = useState("");
   const [linesData, setLinesData] = useState(new Float32Array(0));
 
   useRobofleetMsgListener(matchTopic(props.namespace, props.topic), useCallback((buf, match) => {
@@ -23,18 +23,19 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
 
   useEffect(() => {
     const loadMap = async () => {
-      const json = await fetch(config.mapUrl(mapName)).then((res) => {
+      let segments = [];
+      if (mapName !== "") {
+        const res = await fetch(config.mapUrl(mapName));
         if (res.ok) {
-          return res.json();
-        } else {
-          return Promise.reject(res);
+          try {
+            segments = await res.json();
+          } catch (err) {
+            console.error(`Bad map data for "${mapName}"`, err);
+          }
         }
-      }).catch((err) => {
-        console.error(`Unable to load map ${mapName}`, err);
-        return []; // If we can't load the map, make it empty
-      });
+      }
 
-      const posData = new Float32Array(json.flatMap((segment: any) => [
+      const posData = new Float32Array(segments.flatMap((segment: any) => [
         segment.p0.x, segment.p0.y, 0,
         segment.p1.x, segment.p1.y, 0
       ]));
