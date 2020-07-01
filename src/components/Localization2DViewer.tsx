@@ -23,8 +23,17 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
 
   useEffect(() => {
     const loadMap = async () => {
-      const data = await fetch(config.mapUrl(mapName));
-      const json = await data.json();
+      const json = await fetch(config.mapUrl(mapName)).then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return Promise.reject(res);
+        }
+      }).catch((err) => {
+        console.error(`Unable to load map ${mapName}`, err);
+        return []; // If we can't load the map, make it empty
+      });
+
       const posData = new Float32Array(json.flatMap((segment: any) => [
         segment.p0.x, segment.p0.y, 0,
         segment.p1.x, segment.p1.y, 0
