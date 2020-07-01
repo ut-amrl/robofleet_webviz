@@ -1,5 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Dependencies
+1. [Node.js 10.x+](https://nodejs.org/en/download/package-manager/)
+2. [yarn](https://classic.yarnpkg.com/en/docs/install)
+
 ## Configuration
 
 The web visualizer must be configured before building.
