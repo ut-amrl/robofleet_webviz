@@ -3,7 +3,7 @@ import { Color, Matrix4 } from "three";
 import { fb } from "../schema";
 
 export default function ColoredLinesViewer(props: 
-    {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4}) {
+    {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, lineWidth?: number}) {
   const { msg } = props;
 
   const length = msg.linesLength();
@@ -67,6 +67,7 @@ export default function ColoredLinesViewer(props:
     </bufferGeometry>
     <lineBasicMaterial attach="material"
       vertexColors={true}
+      linewidth={props.lineWidth ?? 3}
     />
   </lineSegments>; 
 }
