@@ -1,68 +1,21 @@
-import { Box, Snackbar, Fab, makeStyles, Theme, createStyles, Zoom, Card, Grow, CardHeader, CardContent, Typography, IconButton, Avatar } from "@material-ui/core";
+import { Box, List, Snackbar } from "@material-ui/core";
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import React, { useContext, useState, useCallback, ReactElement } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Canvas } from "react-three-fiber";
 import * as THREE from "three";
 import CameraControls from "./components/CameraControls";
+import CollapserItem from "./components/CollapserItem";
+import SettingsPanel from "./components/SettingsPanel";
 import LaserScanViewer from "./components/LaserScanViewer";
 import Localization2DViewer from "./components/Localization2DViewer";
+import VisualizationViewer from "./components/VisualizationViewer";
 import WebSocketContext from "./contexts/WebSocketContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import { fb } from "./schema";
 import { matchTopic } from "./util";
-import VisualizationViewer from "./components/VisualizationViewer";
-import { Settings, Tune, Close } from "@material-ui/icons";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    settingsContainer: {
-      position: "relative",
-      margin: theme.spacing(2),
-    },
-    fab: {
-      position: "absolute",
-    },
-    settingsPanel: {
-      position: "absolute",
-      minWidth: "200px"
-    },
-  })
-);
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="standard" {...props}/>;
-}
-
-export function SettingsPanel(props: {children?: React.ReactNode}) {
-  const classes = useStyles();
-  const [open, setOpen] = useState(false);
-
-  return <div className={classes.settingsContainer}> 
-    <Grow in={open} timeout={200} style={{transformOrigin: "0 0 0"}}>
-      <Card className={classes.settingsPanel}>
-        <CardHeader
-          action={
-            <IconButton onClick={() => setOpen(false)} aria-label="close">
-              <Close/>
-            </IconButton>
-          }
-          title={
-            <Typography variant="h6">
-              Settings
-            </Typography>
-          }
-        />
-        <CardContent>
-          {props.children}
-        </CardContent>
-      </Card>
-    </Grow>
-    <Zoom in={!open} timeout={200}>
-      <Fab onClick={() => setOpen(true)} color="primary" className={classes.fab}>
-        <Tune/>
-      </Fab>
-    </Zoom>
-  </div>;
 }
 
 export default function VizTab(props: {namespace: string}) {
@@ -110,6 +63,20 @@ export default function VizTab(props: {namespace: string}) {
       />
   </WebSocketContext.Provider>;
 
+  const settingsPanel = <SettingsPanel>
+    <List dense>
+      <CollapserItem label="Localization">
+        Placeholder
+      </CollapserItem>
+      <CollapserItem label="Laser Scan">
+        Placeholder
+      </CollapserItem>
+      <CollapserItem label="Visualization">
+        Placeholder
+      </CollapserItem>
+    </List>
+  </SettingsPanel>;
+
   return <>
     <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">
       <Canvas
@@ -125,8 +92,6 @@ export default function VizTab(props: {namespace: string}) {
         No localization available. Coordinate frames may be incorrect.
       </Alert>
     </Snackbar>
-    <SettingsPanel>
-      Hello world
-    </SettingsPanel>
+    {settingsPanel}
   </>;
 }
