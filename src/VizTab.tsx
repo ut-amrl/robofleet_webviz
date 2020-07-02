@@ -1,6 +1,6 @@
-import { Box, Snackbar } from "@material-ui/core";
+import { Box, Snackbar, Fab, makeStyles, Theme, createStyles, Zoom, Card, Grow, CardHeader, CardContent, Typography, IconButton, Avatar } from "@material-ui/core";
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback, ReactElement } from "react";
 import { Canvas } from "react-three-fiber";
 import * as THREE from "three";
 import CameraControls from "./components/CameraControls";
@@ -11,9 +11,58 @@ import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import { fb } from "./schema";
 import { matchTopic } from "./util";
 import VisualizationViewer from "./components/VisualizationViewer";
+import { Settings, Tune, Close } from "@material-ui/icons";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    settingsContainer: {
+      position: "relative",
+      margin: theme.spacing(2),
+    },
+    fab: {
+      position: "absolute",
+    },
+    settingsPanel: {
+      position: "absolute",
+      minWidth: "200px"
+    },
+  })
+);
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="standard" {...props}/>;
+}
+
+export function SettingsPanel(props: {children?: React.ReactNode}) {
+  const classes = useStyles();
+  const [open, setOpen] = useState(false);
+
+  return <div className={classes.settingsContainer}> 
+    <Grow in={open} timeout={200} style={{transformOrigin: "0 0 0"}}>
+      <Card className={classes.settingsPanel}>
+        <CardHeader
+          action={
+            <IconButton onClick={() => setOpen(false)} aria-label="close">
+              <Close/>
+            </IconButton>
+          }
+          title={
+            <Typography variant="h6">
+              Settings
+            </Typography>
+          }
+        />
+        <CardContent>
+          {props.children}
+        </CardContent>
+      </Card>
+    </Grow>
+    <Zoom in={!open} timeout={200}>
+      <Fab onClick={() => setOpen(true)} color="primary" className={classes.fab}>
+        <Tune/>
+      </Fab>
+    </Zoom>
+  </div>;
 }
 
 export default function VizTab(props: {namespace: string}) {
@@ -76,5 +125,8 @@ export default function VizTab(props: {namespace: string}) {
         No localization available. Coordinate frames may be incorrect.
       </Alert>
     </Snackbar>
+    <SettingsPanel>
+      Hello world
+    </SettingsPanel>
   </>;
 }
