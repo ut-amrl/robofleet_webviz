@@ -4,7 +4,8 @@ import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
 
-export default function Localization2DViewer(props: {namespace: string, topic: string}) {
+export default function Localization2DViewer(props: 
+    {namespace: string, topic: string, mapColor?: number, poseColor?: number}) {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
@@ -65,7 +66,7 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
         {linesPosAttrib}
       </bufferGeometry>
       <lineBasicMaterial attach="material"
-        color={0xFF00FF}
+        color={props.mapColor ?? 0x536dfe}
         linewidth={1}
         />
     </lineSegments>
@@ -77,7 +78,7 @@ export default function Localization2DViewer(props: {namespace: string, topic: s
       >
       <boxBufferGeometry attach="geometry"/>
       <meshBasicMaterial attach="material"
-        color={0x00FFFF}
+        color={props.poseColor ?? 0xb2ff59}
         />
     </mesh>
   </>;

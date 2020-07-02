@@ -45,12 +45,14 @@ export default function VizTab(props: {namespace: string}) {
       <Localization2DViewer
         namespace={props.namespace}
         topic="localization"
+        mapColor={0x536dfe}
+        poseColor={0xb2ff59}
       />
       <LaserScanViewer 
         namespace={props.namespace}
         topic="velodyne_2dscan"
         matrix={baseLink}
-        color={0xFFAA00}
+        color={0xff6e40}
       />
       <VisualizationViewer
         namespace={props.namespace}
