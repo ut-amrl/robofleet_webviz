@@ -46,7 +46,7 @@ export default function VizTab(props: {namespace: string}) {
         namespace={props.namespace}
         topic="localization"
         mapColor={0x536dfe}
-        poseColor={0xb2ff59}
+        poseColor={0x8ECC47}
       />
       <LaserScanViewer 
         namespace={props.namespace}

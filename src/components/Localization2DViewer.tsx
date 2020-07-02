@@ -3,9 +3,11 @@ import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
+import { BoxBufferGeometry, CylinderBufferGeometry, Color } from "three";
+import Pose from "./Pose";
 
 export default function Localization2DViewer(props: 
-    {namespace: string, topic: string, mapColor?: number, poseColor?: number}) {
+    {namespace: string, topic: string, mapColor: number, poseColor: number}) {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
@@ -66,20 +68,18 @@ export default function Localization2DViewer(props:
         {linesPosAttrib}
       </bufferGeometry>
       <lineBasicMaterial attach="material"
-        color={props.mapColor ?? 0x536dfe}
+        color={props.mapColor}
         linewidth={1}
         />
     </lineSegments>
-    <mesh
-      scale={[1, 0.2, 1]}
-      rotation={[0, 0, theta]}
-      position={[x, y, 0]}
-      frustumCulled={false}
-      >
-      <boxBufferGeometry attach="geometry"/>
-      <meshBasicMaterial attach="material"
-        color={props.poseColor ?? 0xb2ff59}
-        />
-    </mesh>
+    <Pose 
+      x={x} 
+      y={y} 
+      theta={theta}
+      materialProps={{
+        color: new Color(props.poseColor),
+        wireframe: true
+      }}
+    />
   </>;
 }
