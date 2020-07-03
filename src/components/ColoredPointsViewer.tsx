@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 import { Color, Matrix4 } from "three";
 import { fb } from "../schema";
 
-export default function ColoredPointsViewer(props: 
-    {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, pointSize?: number}) {
+export default function ColoredPointsViewer(props: {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, 
+    pointSize?: number, visible?: boolean}) {
   const { msg } = props;
 
   const length = msg.pointsLength();
@@ -54,6 +54,7 @@ export default function ColoredPointsViewer(props:
     matrixAutoUpdate={false}
     matrixWorldNeedsUpdate={true}
     matrix={props.matrix ?? I}
+    visible={props.visible ?? true}
   >
     <bufferGeometry attach="geometry">
       {positionAttrib}

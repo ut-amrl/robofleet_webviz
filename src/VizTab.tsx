@@ -1,16 +1,17 @@
-import { Box, List, Snackbar } from "@material-ui/core";
+import { Box, Checkbox, FormControlLabel, List, Snackbar, Switch } from "@material-ui/core";
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import React, { useCallback, useContext, useState } from "react";
 import { Canvas } from "react-three-fiber";
 import * as THREE from "three";
 import CameraControls from "./components/CameraControls";
 import CollapserItem from "./components/CollapserItem";
-import SettingsPanel from "./components/SettingsPanel";
 import LaserScanViewer from "./components/LaserScanViewer";
 import Localization2DViewer from "./components/Localization2DViewer";
+import SettingsPanel from "./components/SettingsPanel";
 import VisualizationViewer from "./components/VisualizationViewer";
 import WebSocketContext from "./contexts/WebSocketContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
+import useStorage from "./hooks/useStorage";
 import { fb } from "./schema";
 import { matchTopic } from "./util";
 
@@ -41,6 +42,40 @@ export default function VizTab(props: {namespace: string}) {
       setLocAlertOpen(false);
   }
 
+  const [locShowMap, setLocShowMap] = useStorage("Localization.showMap", true);
+  const [scanShow, setScanShow] = useStorage("LaserScan.show", true);
+  const [vizShowPoints, setVizShowPoints] = useStorage("Viz.showPoints", false);
+  const [vizShowLines, setVizShowLines] = useStorage("Viz.showLines", false);
+
+  const settingsPanel = <SettingsPanel>
+    <List >
+      <CollapserItem label="Localization">
+        <FormControlLabel
+          control={<Switch checked={locShowMap} onClick={() => setLocShowMap(s => !s)}/>}
+          label="Show map"
+        />
+      </CollapserItem>
+      <CollapserItem label="Laser Scan">
+        <FormControlLabel
+          control={<Switch checked={scanShow} onClick={() => setScanShow(s => !s)}/>}
+          label="Show laser scan"
+        />
+      </CollapserItem>
+      <CollapserItem label="Visualization">
+        <FormControlLabel
+          control={<Switch checked={vizShowPoints} onClick={() => setVizShowPoints(s => !s)}/>}
+          label="Show points"
+        />
+        <FormControlLabel
+          control={<Switch checked={vizShowLines} onClick={() => setVizShowLines(s => !s)}/>}
+          label="Show lines"
+        />
+      </CollapserItem>
+    </List>
+  </SettingsPanel>;
+
+  // just extract the controls to here and pass in props
+
   // since <Canvas> uses the react-three-fiber reconciler, we must forward
   // any contexts manually :(
   const viewers = <WebSocketContext.Provider value={ws}>
@@ -48,6 +83,7 @@ export default function VizTab(props: {namespace: string}) {
         namespace={props.namespace}
         topic="localization"
         mapColor={0x536dfe}
+        mapVisible={locShowMap}
         poseColor={0x8ECC47}
       />
       <LaserScanViewer 
@@ -55,27 +91,16 @@ export default function VizTab(props: {namespace: string}) {
         topic="velodyne_2dscan"
         matrix={baseLink}
         color={0xff6e40}
+        visible={scanShow}
       />
       <VisualizationViewer
         namespace={props.namespace}
         topic="visualization"
         baseLinkMatrix={baseLink}
+        pointsVisible={vizShowPoints}
+        linesVisible={vizShowLines}
       />
   </WebSocketContext.Provider>;
-
-  const settingsPanel = <SettingsPanel>
-    <List dense>
-      <CollapserItem label="Localization">
-        Placeholder
-      </CollapserItem>
-      <CollapserItem label="Laser Scan">
-        Placeholder
-      </CollapserItem>
-      <CollapserItem label="Visualization">
-        Placeholder
-      </CollapserItem>
-    </List>
-  </SettingsPanel>;
 
   return <>
     <Box position="absolute" zIndex="-1" bottom="0" top="0" left="0" right="0">

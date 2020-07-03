@@ -23,7 +23,7 @@ export default function CameraControls(props: any) {
     args={[camera, gl.domElement]}
 
     target={[0, 0, 0]}
-    enableRotate={true}
+    enableRotate={false}
     enableZoom={true}
     enableDamping
     dampingFactor={0.08}

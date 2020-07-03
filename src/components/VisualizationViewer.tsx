@@ -6,7 +6,8 @@ import { matchTopic } from "../util";
 import ColoredLinesViewer from "./ColoredLinesViewer";
 import ColoredPointsViewer from "./ColoredPointsViewer";
 
-export default function VisualizationViewer(props: {namespace: string, topic: string, baseLinkMatrix: Matrix4}) {
+export default function VisualizationViewer(props: {namespace: string, topic: string, baseLinkMatrix: Matrix4,
+    pointsVisible?: boolean, linesVisible?: boolean}) {
   const { namespace, topic, baseLinkMatrix } = props;
   const [mapMsg, setMapMsg] = useState<fb.amrl_msgs.VisualizationMsg | null>(null);
   const [baseLinkMsg, setBaseLinkMsg] = useState<fb.amrl_msgs.VisualizationMsg | null>(null);
@@ -23,9 +24,9 @@ export default function VisualizationViewer(props: {namespace: string, topic: st
   }, []));
 
   return <>
-    {mapMsg && <ColoredLinesViewer msg={mapMsg}/>}
-    {baseLinkMsg && <ColoredLinesViewer msg={baseLinkMsg} matrix={baseLinkMatrix}/>}
-    {mapMsg && <ColoredPointsViewer msg={mapMsg}/>}
-    {baseLinkMsg && <ColoredPointsViewer msg={baseLinkMsg} matrix={baseLinkMatrix}/>}
+    {mapMsg && <ColoredLinesViewer msg={mapMsg} visible={props.linesVisible}/>}
+    {baseLinkMsg && <ColoredLinesViewer msg={baseLinkMsg} matrix={baseLinkMatrix} visible={props.linesVisible}/>}
+    {mapMsg && <ColoredPointsViewer msg={mapMsg} visible={props.pointsVisible}/>}
+    {baseLinkMsg && <ColoredPointsViewer msg={baseLinkMsg} matrix={baseLinkMatrix} visible={props.pointsVisible}/>}
   </>;
 }

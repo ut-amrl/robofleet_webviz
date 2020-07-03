@@ -7,7 +7,7 @@ import { matchTopic } from "../util";
 import Pose from "./Pose";
 
 export default function Localization2DViewer(props: 
-    {namespace: string, topic: string, mapColor: number, poseColor: number}) {
+    {namespace: string, topic: string, mapColor: number, mapVisible?: boolean, poseColor: number}) {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [theta, setTheta] = useState(0);
@@ -63,6 +63,7 @@ export default function Localization2DViewer(props:
   return <>
     <lineSegments
       frustumCulled={false}
+      visible={props.mapVisible ?? true}
       >
       <bufferGeometry attach="geometry">
         {linesPosAttrib}

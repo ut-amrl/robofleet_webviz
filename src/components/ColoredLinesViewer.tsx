@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 import { Color, Matrix4 } from "three";
 import { fb } from "../schema";
 
-export default function ColoredLinesViewer(props: 
-    {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, lineWidth?: number}) {
+export default function ColoredLinesViewer(props: {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, 
+    lineWidth?: number, visible?: boolean}) {
   const { msg } = props;
 
   const length = msg.linesLength();
@@ -60,6 +60,7 @@ export default function ColoredLinesViewer(props:
     matrixAutoUpdate={false}
     matrixWorldNeedsUpdate={true}
     matrix={props.matrix ?? I}
+    visible={props.visible ?? true}
   >
     <bufferGeometry attach="geometry">
       {positionAttrib}
