@@ -31,7 +31,7 @@ export default function ColoredLinesViewer(props:
       count={length * 2}
       onUpdate={(self) => self.needsUpdate = true}
     />;
-  }, [msg]);
+  }, [msg, length]);
 
   const colorAttrib = useMemo(() => {
     const data = new Float32Array(length * 2 * 3);
@@ -52,7 +52,7 @@ export default function ColoredLinesViewer(props:
       args={[data, 3, false]}
       count={length * 2}
     />;
-  }, [msg]);
+  }, [msg, length]);
 
   const I = new Matrix4();
   return <lineSegments

@@ -1,13 +1,13 @@
-import { Box, Button, CircularProgress, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, LinearProgress } from "@material-ui/core";
+import { Box, Button, CircularProgress, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
-import React, { useState, useCallback, useEffect, useContext } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import NavBar from "./components/NavBar";
 import PercentageDisplay from "./components/PercentageDisplay";
+import AppContext from "./contexts/AppContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import { fb } from "./schema";
 import { matchTopicAnyNamespace } from "./util";
-import NavBar from "./components/NavBar";
-import AppContext from "./contexts/AppContext";
 
 type RobotStatus = {name: string, is_ok: boolean, battery_level: number, status: string, location: string};
 

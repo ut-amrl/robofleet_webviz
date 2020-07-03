@@ -25,7 +25,7 @@ export default function ColoredPointsViewer(props:
       count={length}
       onUpdate={(self) => self.needsUpdate = true}
     />;
-  }, [msg]);
+  }, [msg, length]);
 
   const colorAttrib = useMemo(() => {
     const data = new Float32Array(length * 3);
@@ -46,7 +46,7 @@ export default function ColoredPointsViewer(props:
       args={[data, 3, false]}
       count={length}
     />;
-  }, [msg]);
+  }, [msg, length]);
 
   const I = new Matrix4();
   return <points

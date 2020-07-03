@@ -23,10 +23,10 @@ export default function CameraControls(props: any) {
     args={[camera, gl.domElement]}
 
     target={[0, 0, 0]}
-    enableRotate={false}
+    enableRotate={true}
     enableZoom={true}
     enableDamping
-    dampingFactor={0.1}
+    dampingFactor={0.08}
     screenSpacePanning
     mouseButtons={{
       LEFT: THREE.MOUSE.RIGHT,

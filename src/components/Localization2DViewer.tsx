@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Color } from "three";
 import config from "../config";
 import useRobofleetMsgListener from "../hooks/useRobofleetMsgListener";
 import { fb } from "../schema";
 import { matchTopic } from "../util";
-import { BoxBufferGeometry, CylinderBufferGeometry, Color } from "three";
 import Pose from "./Pose";
 
 export default function Localization2DViewer(props: 
