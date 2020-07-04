@@ -1,6 +1,6 @@
+import React, { Ref, useEffect, useImperativeHandle, useRef } from "react";
 import { useThree } from "react-three-fiber";
 import { Vector3 } from "three";
-import React, { useImperativeHandle, Ref, useCallback, useEffect, useRef } from "react";
 
 export interface CanvasUtilsProps {
 };
@@ -18,7 +18,6 @@ function CanvasUtils(props: CanvasUtilsProps, ref: Ref<CanvasUtilsRef>) {
   if (!three)
     throw new Error("CanvasUtils must be rendered inside a react-three-fiber <Canvas> component.");
   
-  const worldPos = useRef(new Vector3());
   const pointerMoveEvent = useRef<PointerEvent | null>(null);
 
   // https://github.com/react-spring/react-three-fiber/blob/889e5734c5e64c951bde6d9b0b042f99449c3c15/src/canvas.tsx#L290
@@ -46,7 +45,7 @@ function CanvasUtils(props: CanvasUtilsProps, ref: Ref<CanvasUtilsRef>) {
   
   // required reading:
   // https://reactjs.org/docs/hooks-reference.html#useimperativehandle
-  useImperativeHandle(ref, useCallback(() => {
+  useImperativeHandle(ref, () => {
     // you can add more things inside this object
     // you will have to update the interface definition
     const refObj: CanvasUtilsRef = {
@@ -55,7 +54,7 @@ function CanvasUtils(props: CanvasUtilsProps, ref: Ref<CanvasUtilsRef>) {
       }
     };
     return refObj;
-  }, [worldPos.current]));
+  });
   
   // just using this to element to render inside of <Canvas>, no need to
   // generate anything useful here

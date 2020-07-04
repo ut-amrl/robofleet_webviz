@@ -1,9 +1,11 @@
-import { Box, Checkbox, makeStyles, createStyles, Theme, FormControlLabel, FormGroup, List, Snackbar, Switch, Button } from "@material-ui/core";
+import { Box, Button, createStyles, FormControlLabel, FormGroup, List, makeStyles, Snackbar, Switch, Theme } from "@material-ui/core";
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import React, { useCallback, useContext, useState, useRef } from "react";
-import { Canvas, useThree, ReactThreeFiber } from "react-three-fiber";
+import { flatbuffers } from "flatbuffers";
+import React, { useCallback, useContext, useRef, useState } from "react";
+import { Canvas } from "react-three-fiber";
 import * as THREE from "three";
 import CameraControls from "./components/CameraControls";
+import CanvasUtils, { CanvasUtilsRef } from "./components/CanvasUtils";
 import CollapserItem from "./components/CollapserItem";
 import LaserScanViewer from "./components/LaserScanViewer";
 import Localization2DViewer from "./components/Localization2DViewer";
@@ -12,10 +14,8 @@ import VisualizationViewer from "./components/VisualizationViewer";
 import WebSocketContext from "./contexts/WebSocketContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import useStorage from "./hooks/useStorage";
-import { flatbuffers } from "flatbuffers";
 import { fb } from "./schema";
 import { matchTopic } from "./util";
-import CanvasUtils, { CanvasUtilsRef } from "./components/CanvasUtils";
 
 function createPose2DfMsg({namespace, x, y, theta}:
     {namespace: string, x: number, y: number, theta: number}) {
