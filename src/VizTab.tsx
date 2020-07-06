@@ -12,6 +12,7 @@ import Localization2DViewer from "./components/Localization2DViewer";
 import SettingsPanel from "./components/SettingsPanel";
 import VisualizationViewer from "./components/VisualizationViewer";
 import WebSocketContext from "./contexts/WebSocketContext";
+import RobotContext from "./contexts/RobotContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import useStorage from "./hooks/useStorage";
 import { fb } from "./schema";
@@ -47,18 +48,16 @@ function createLocalization2DMsg({namespace, frame="map", map, x, y, theta}:
     fbb.createString(`${namespace}/initialpose`)
   );
 
-  const stampOffset = fb.RosTime.createRosTime(
-    fbb,
-    Math.floor(Date.now() / 1000),
-    0
-  );
-
   const frameOffset = fbb.createString(frame);
 
   fb.std_msgs.Header.startHeader(fbb);
+  fb.std_msgs.Header.addStamp(fbb, fb.RosTime.createRosTime(
+    fbb,
+    Math.floor(Date.now() / 1000),
+    0
+  ));
+
   fb.std_msgs.Header.addFrameId(fbb, frameOffset);
-  fb.std_msgs.Header.addSeq(fbb, 0); // TODO idk
-  fb.std_msgs.Header.addStamp(fbb, stampOffset);
   const headerOffset = fb.std_msgs.Header.endHeader(fbb);
 
   const mapOffset = fbb.createString(map);
@@ -70,7 +69,6 @@ function createLocalization2DMsg({namespace, frame="map", map, x, y, theta}:
     y,
     theta
   );
-
   fb.amrl_msgs.Localization2DMsg.startLocalization2DMsg(fbb);
   fb.amrl_msgs.Localization2DMsg.add_Metadata(fbb, metadataOffset);
   fb.amrl_msgs.Localization2DMsg.addHeader(fbb, headerOffset);
@@ -109,8 +107,10 @@ export default function VizTab(props: {namespace: string}) {
 
   const [locAlertOpen, setLocAlertOpen] = useState(true);
   const [baseLink, setBaseLink] = useState(new THREE.Matrix4());
-  const [clickAction, setClickAction] = useState<ClickAction>("Default");
 
+  const [clickAction, setClickAction] = useState<ClickAction>("Default");
+  const rc = useContext(RobotContext);
+  
   const [locShowMap, setLocShowMap] = useStorage("Localization.showMap", true);
   const [scanShow, setScanShow] = useStorage("LaserScan.show", true);
   const [vizShowPoints, setVizShowPoints] = useStorage("Viz.showPoints", false);
@@ -140,7 +140,7 @@ export default function VizTab(props: {namespace: string}) {
         ws.ws?.send(createLocalization2DMsg({
           namespace: props.namespace,
           frame: "map",
-          map: "n/a", // TODO: map selector?
+          map: rc?.mapName ?? "n/a", // TODO: map selector?
           x: pos?.x ?? 0,
           y: pos?.y ?? 0,
           theta: 0 // TODO: implement drag to set angle
@@ -158,8 +158,6 @@ export default function VizTab(props: {namespace: string}) {
           theta: 0 // TODO: implement drag to set angle
         }));
       }
-      // TODO: remove (fix Z coord)
-      console.log(pos);
     }
   }
 
@@ -214,13 +212,15 @@ export default function VizTab(props: {namespace: string}) {
   // since <Canvas> uses the react-three-fiber reconciler, we must forward
   // any contexts manually :(
   const viewers = <WebSocketContext.Provider value={ws}>
-      <Localization2DViewer
-        namespace={props.namespace}
-        topic="localization"
-        mapColor={0x536dfe}
-        mapVisible={locShowMap}
-        poseColor={0x8ECC47}
-      />
+      <RobotContext.Provider value={rc}>
+        <Localization2DViewer
+          namespace={props.namespace}
+          topic="localization"
+          mapColor={0x536dfe}
+          mapVisible={locShowMap}
+          poseColor={0x8ECC47}
+        />
+      </RobotContext.Provider>
       <LaserScanViewer 
         namespace={props.namespace}
         topic="velodyne_2dscan"
