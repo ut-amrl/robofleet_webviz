@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme: Theme) =>
       cursor: 'crosshair'
     },
     SetNav: {
-      cursor: 'crosshair'
+      cursor: 'pointer'
     },
   })
 );
@@ -177,6 +177,7 @@ export default function VizTab(props: {namespace: string}) {
           <Button 
             onClick={() => setClickAction(a => (a === "Localize") ? "Default" : "Localize")}
             variant="outlined"
+            color={clickAction === 'Localize' ? 'primary' : 'default'}
           >
             Set Pose
           </Button>
@@ -184,6 +185,7 @@ export default function VizTab(props: {namespace: string}) {
           <Button 
             onClick={() => setClickAction(a => (a === "SetNav") ? "Default" : "SetNav")}
             variant="outlined"
+            color={clickAction === 'SetNav' ? 'primary' : 'default'}
           >
             Set NavGoal
           </Button>
