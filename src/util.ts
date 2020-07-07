@@ -16,17 +16,16 @@ export const matchTopic = (namespace: string, topic: string) => new RegExp(`${na
 
 // polyfill for https://www.caniuse.com/#feat=mdn-api_blob_arraybuffer
 let blobToArrayBuffer: (blob: Blob) => Promise<ArrayBuffer>;
-if (Blob.prototype.hasOwnProperty('arrayBuffer')) {
-    // console.log("Using Blob.arrayBuffer()");
-    blobToArrayBuffer = (blob: any) => blob.arrayBuffer();
+if (Blob.prototype.hasOwnProperty("arrayBuffer")) {
+  // console.log("Using Blob.arrayBuffer()");
+  blobToArrayBuffer = (blob: any) => blob.arrayBuffer();
 } else {
-    // console.log("Using FileReader");
-    blobToArrayBuffer = (blob) =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as ArrayBuffer);
-            reader.onerror = (err) => reject(err);
-            reader.readAsArrayBuffer(blob);
-        });
+  // console.log("Using FileReader");
+  blobToArrayBuffer = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = (err) => reject(err);
+    reader.readAsArrayBuffer(blob);
+  });
 }
-export { blobToArrayBuffer };
+export {blobToArrayBuffer};
