@@ -1,25 +1,30 @@
 import React from "react";
 import { Overwrite, ReactThreeFiber } from "react-three-fiber";
-import { MeshBasicMaterial, MeshBasicMaterialParameters, Color } from "three";
+import { MeshBasicMaterial, MeshBasicMaterialParameters, Color, Matrix4, Quaternion, Vector3, Euler } from "three";
 
 type MaterialProps = Overwrite<Partial<MeshBasicMaterial>, ReactThreeFiber.NodeProps<MeshBasicMaterial, [MeshBasicMaterialParameters]>>;
 
 /**
- * A 3D arrow positioned with its tail at (x, y) and its tip pointing in 
- * direction theta. Occupies a 1x1x1 volume. 
+ * A 3D arrow positioned at baseLink. Occupies a 1x1x1 volume. 
  */
-export default function Pose(props: {x: number, y: number, theta: number, 
-    scale?: [number, number, number], materialProps?: MaterialProps}) {
+export default function Pose(props: { baseLink: Matrix4, materialProps?: MaterialProps}) {
   
   const materialProps: MaterialProps = props.materialProps ?? {
     wireframe: true,
     color: new Color(0x8ECC47)
   };
+
+  let pos = new Vector3();
+  let rot = new Quaternion();
+  let scale = new Vector3(1, 1, 1);
+  props.baseLink.decompose(pos, rot, scale);
+  let rotEuler = new Euler();
+  rotEuler.setFromQuaternion(rot);
   
   return <group
-    rotation={[0, 0, props.theta]}
-    position={[props.x, props.y, 0]}
-    scale={props.scale ?? [1, 1, 1]}
+    rotation={rotEuler}
+    position={pos}
+    scale={scale}
   >
     <mesh scale={[0.05, 0.05, 0.05]}>
       <boxGeometry attach="geometry"/>

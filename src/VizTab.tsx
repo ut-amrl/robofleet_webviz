@@ -12,7 +12,6 @@ import Localization2DViewer from "./components/Localization2DViewer";
 import SettingsPanel from "./components/SettingsPanel";
 import VisualizationViewer from "./components/VisualizationViewer";
 import WebSocketContext from "./contexts/WebSocketContext";
-import RobotContext from "./contexts/RobotContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import useStorage from "./hooks/useStorage";
 import { fb } from "./schema";
@@ -107,10 +106,9 @@ export default function VizTab(props: {namespace: string}) {
 
   const [locAlertOpen, setLocAlertOpen] = useState(true);
   const [baseLink, setBaseLink] = useState(new THREE.Matrix4());
-
   const [clickAction, setClickAction] = useState<ClickAction>("Default");
-  const rc = useContext(RobotContext);
-  
+
+  const [mapName, setMapName] = useState("EmptyMap");
   const [locShowMap, setLocShowMap] = useStorage("Localization.showMap", true);
   const [scanShow, setScanShow] = useStorage("LaserScan.show", true);
   const [vizShowPoints, setVizShowPoints] = useStorage("Viz.showPoints", false);
@@ -125,14 +123,12 @@ export default function VizTab(props: {namespace: string}) {
       0
     );
     const rotation = new THREE.Matrix4().makeRotationZ(loc.pose()?.theta() ?? 0);
+    setMapName(loc.map() ?? "EmptyMap");
     setBaseLink(translation.multiply(rotation));
     setLocAlertOpen(false);
   }, []));
 
   const clickCanvas = () => {
-    if (clickAction === "Default") {
-      return;
-    }
     if (clickAction === "Localize") {
       const pos = canvasUtils.current?.worldMousePos;
 
@@ -140,7 +136,7 @@ export default function VizTab(props: {namespace: string}) {
         ws.ws?.send(createLocalization2DMsg({
           namespace: props.namespace,
           frame: "map",
-          map: rc?.mapName ?? "n/a", // TODO: map selector?
+          map: mapName, // TODO: map selector?
           x: pos?.x ?? 0,
           y: pos?.y ?? 0,
           theta: 0 // TODO: implement drag to set angle
@@ -212,15 +208,15 @@ export default function VizTab(props: {namespace: string}) {
   // since <Canvas> uses the react-three-fiber reconciler, we must forward
   // any contexts manually :(
   const viewers = <WebSocketContext.Provider value={ws}>
-      <RobotContext.Provider value={rc}>
-        <Localization2DViewer
-          namespace={props.namespace}
-          topic="localization"
-          mapColor={0x536dfe}
-          mapVisible={locShowMap}
-          poseColor={0x8ECC47}
-        />
-      </RobotContext.Provider>
+      <Localization2DViewer
+        namespace={props.namespace}
+        topic="localization"
+        mapColor={0x536dfe}
+        mapName={mapName ?? "EmptyMap"}
+        mapVisible={locShowMap}
+        baseLink={baseLink}
+        poseColor={0x8ECC47}
+      />
       <LaserScanViewer 
         namespace={props.namespace}
         topic="velodyne_2dscan"

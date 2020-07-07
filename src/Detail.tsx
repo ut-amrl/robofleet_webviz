@@ -10,7 +10,6 @@ import ImageryTab from "./ImageryTab";
 import StatsTab from "./StatsTab";
 import { matchAnyTopic } from "./util";
 import VizTab from "./VizTab";
-import RobotContext from "./contexts/RobotContext";
 
 export function TabHider(props: {id: number, index: number, children: any}) {
   // currently, we only render visible tabls
@@ -37,11 +36,6 @@ export function PauseButton() {
 export default function Detail() {
   const {id} = useParams();
   const namespace = atob(id);
-  const [mapName, setMapName] = useState<string | null>(null);
-  const robotContext = {
-    mapName,
-    setMapName
-  };
   const [tabIndex, setTabIndex] = useState(0);
   const [receivedMsg, setReceivedMsg] = useState(false);
 
@@ -87,13 +81,11 @@ export default function Detail() {
   </>;
 
   return <>
-    <RobotContext.Provider value={robotContext}>
     <NavBar
       title={`${namespace}`}
       navIcon={backIcon}
       tabs={tabs}
       />
     {receivedMsg ? content : loader}
-    </RobotContext.Provider>
   </>;
 }
