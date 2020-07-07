@@ -1,6 +1,6 @@
-import { ListItem, ListItemIcon, ListItemText, Collapse, Divider, makeStyles, Theme, Box } from "@material-ui/core";
-import React, { useState, Ref } from "react";
+import { Box, Collapse, Divider, ListItem, ListItemIcon, ListItemText, makeStyles, Theme } from "@material-ui/core";
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import React, { useState } from "react";
 
 const useStyles = makeStyles((theme: Theme) => ({
   spacer: {

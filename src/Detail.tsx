@@ -81,7 +81,7 @@ export default function Detail() {
   </>;
 
   return <>
-    <NavBar 
+    <NavBar
       title={`${namespace}`}
       navIcon={backIcon}
       tabs={tabs}
