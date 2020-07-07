@@ -2,6 +2,6 @@
 // this ensures that this happens
 // eslint-disable-next-line
 import { flatbuffers } from "flatbuffers" // do not remove
-import { fb } from "./schema_generated";
+import { fb } from './schema_generated';
 
 export { fb };
