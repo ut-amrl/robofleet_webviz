@@ -12,7 +12,6 @@ import Localization2DViewer from "./components/Localization2DViewer";
 import SettingsPanel from "./components/SettingsPanel";
 import VisualizationViewer from "./components/VisualizationViewer";
 import WebSocketContext from "./contexts/WebSocketContext";
-import RobotContext from "./contexts/RobotContext";
 import useRobofleetMsgListener from "./hooks/useRobofleetMsgListener";
 import useStorage from "./hooks/useStorage";
 import { fb } from "./schema";
@@ -106,11 +105,14 @@ export default function VizTab(props: {namespace: string}) {
   const classes = useStyles();
 
   const [locAlertOpen, setLocAlertOpen] = useState(true);
-  const [baseLink, setBaseLink] = useState(new THREE.Matrix4());
+  
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [theta, setTheta] = useState(0);
 
   const [clickAction, setClickAction] = useState<ClickAction>("Default");
-  const rc = useContext(RobotContext);
-  
+
+  const [mapName, setMapName] = useState("EmptyMap");
   const [locShowMap, setLocShowMap] = useStorage("Localization.showMap", true);
   const [scanShow, setScanShow] = useStorage("LaserScan.show", true);
   const [vizShowPoints, setVizShowPoints] = useStorage("Viz.showPoints", false);
@@ -119,20 +121,14 @@ export default function VizTab(props: {namespace: string}) {
   // build base_link transform using Localization2DMsg
   useRobofleetMsgListener(matchTopic(props.namespace, "localization"), useCallback((buf, match) => {
     const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(buf);
-    const translation = new THREE.Matrix4().makeTranslation(
-      loc.pose()?.x() ?? 0,
-      loc.pose()?.y() ?? 0,
-      0
-    );
-    const rotation = new THREE.Matrix4().makeRotationZ(loc.pose()?.theta() ?? 0);
-    setBaseLink(translation.multiply(rotation));
+    setX(loc.pose()?.x() ?? 0);
+    setY(loc.pose()?.y() ?? 0);
+    setTheta(loc.pose()?.theta() ?? 0);
+    setMapName(loc.map() ?? "EmptyMap");
     setLocAlertOpen(false);
   }, []));
 
   const clickCanvas = () => {
-    if (clickAction === "Default") {
-      return;
-    }
     if (clickAction === "Localize") {
       const pos = canvasUtils.current?.worldMousePos;
 
@@ -140,7 +136,7 @@ export default function VizTab(props: {namespace: string}) {
         ws.ws?.send(createLocalization2DMsg({
           namespace: props.namespace,
           frame: "map",
-          map: rc?.mapName ?? "n/a", // TODO: map selector?
+          map: mapName, // TODO: map selector?
           x: pos?.x ?? 0,
           y: pos?.y ?? 0,
           theta: 0 // TODO: implement drag to set angle
@@ -211,16 +207,22 @@ export default function VizTab(props: {namespace: string}) {
   // these viewers will be rendered into the <Canvas>
   // since <Canvas> uses the react-three-fiber reconciler, we must forward
   // any contexts manually :(
+  const translation = new THREE.Matrix4().makeTranslation(x, y, 0);
+  const rotation = new THREE.Matrix4().makeRotationZ(theta);
+  const baseLink = translation.multiply(rotation);
+
   const viewers = <WebSocketContext.Provider value={ws}>
-      <RobotContext.Provider value={rc}>
-        <Localization2DViewer
-          namespace={props.namespace}
-          topic="localization"
-          mapColor={0x536dfe}
-          mapVisible={locShowMap}
-          poseColor={0x8ECC47}
-        />
-      </RobotContext.Provider>
+      <Localization2DViewer
+        namespace={props.namespace}
+        topic="localization"
+        mapColor={0x536dfe}
+        mapName={mapName ?? "EmptyMap"}
+        mapVisible={locShowMap}
+        x={x}
+        y={y}
+        theta={theta}
+        poseColor={0x8ECC47}
+      />
       <LaserScanViewer 
         namespace={props.namespace}
         topic="velodyne_2dscan"
