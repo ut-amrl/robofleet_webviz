@@ -1,9 +1,9 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from 'react';
 
 export interface AppContextValue {
   darkMode: boolean;
   setDarkMode: Dispatch<SetStateAction<boolean>>;
-  paused: boolean,
+  paused: boolean;
   setPaused: Dispatch<SetStateAction<boolean>>;
 }
 

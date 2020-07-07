@@ -1,9 +1,13 @@
-import React, { useMemo } from "react";
-import { Color, Matrix4 } from "three";
-import { fb } from "../schema";
+import React, { useMemo } from 'react';
+import { Color, Matrix4 } from 'three';
+import { fb } from '../schema';
 
-export default function ColoredPointsViewer(props: {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, 
-    pointSize?: number, visible?: boolean}) {
+export default function ColoredPointsViewer(props: {
+  msg: fb.amrl_msgs.VisualizationMsg;
+  matrix?: Matrix4;
+  pointSize?: number;
+  visible?: boolean;
+}) {
   const { msg } = props;
 
   const length = msg.pointsLength();
@@ -19,12 +23,14 @@ export default function ColoredPointsViewer(props: {msg: fb.amrl_msgs.Visualizat
       data[index + 2] = 0;
     }
 
-    return <bufferAttribute
-      attachObject={["attributes", "position"]}
-      args={[data, 3, false]}
-      count={length}
-      onUpdate={(self) => self.needsUpdate = true}
-    />;
+    return (
+      <bufferAttribute
+        attachObject={['attributes', 'position']}
+        args={[data, 3, false]}
+        count={length}
+        onUpdate={(self) => (self.needsUpdate = true)}
+      />
+    );
   }, [msg, length]);
 
   const colorAttrib = useMemo(() => {
@@ -41,28 +47,33 @@ export default function ColoredPointsViewer(props: {msg: fb.amrl_msgs.Visualizat
       data[index + 2] = color.b;
     }
 
-    return <bufferAttribute
-      attachObject={["attributes", "color"]}
-      args={[data, 3, false]}
-      count={length}
-    />;
+    return (
+      <bufferAttribute
+        attachObject={['attributes', 'color']}
+        args={[data, 3, false]}
+        count={length}
+      />
+    );
   }, [msg, length]);
 
   const I = new Matrix4();
-  return <points
-    frustumCulled={false}
-    matrixAutoUpdate={false}
-    matrixWorldNeedsUpdate={true}
-    matrix={props.matrix ?? I}
-    visible={props.visible ?? true}
-  >
-    <bufferGeometry attach="geometry">
-      {positionAttrib}
-      {colorAttrib}
-    </bufferGeometry>
-    <pointsMaterial attach="material"
-      vertexColors={true}
-      size={props.pointSize ?? 4}
-    />
-  </points>; 
+  return (
+    <points
+      frustumCulled={false}
+      matrixAutoUpdate={false}
+      matrixWorldNeedsUpdate={true}
+      matrix={props.matrix ?? I}
+      visible={props.visible ?? true}
+    >
+      <bufferGeometry attach="geometry">
+        {positionAttrib}
+        {colorAttrib}
+      </bufferGeometry>
+      <pointsMaterial
+        attach="material"
+        vertexColors={true}
+        size={props.pointSize ?? 4}
+      />
+    </points>
+  );
 }

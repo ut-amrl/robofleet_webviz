@@ -6,20 +6,24 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const useStyles = makeStyles({
-  root: (props: {value: number}) => {
+  root: (props: { value: number }) => {
     const f = Math.round(props.value * 255);
     return {
-      color: `rgba(${255-f}, ${f}, 50, 0.5)`
+      color: `rgba(${255 - f}, ${f}, 50, 0.5)`,
     };
-  }
+  },
 });
 
-export default function PercentageDisplay(props: {value: number}) {
-  const classes = useStyles({value: props.value});
+export default function PercentageDisplay(props: { value: number }) {
+  const classes = useStyles({ value: props.value });
 
   return (
     <Box position="relative" display="inline-flex">
-      <CircularProgress variant="static" className={classes.root} value={props.value * 100} />
+      <CircularProgress
+        variant="static"
+        className={classes.root}
+        value={props.value * 100}
+      />
       <Box
         top={0}
         left={0}
@@ -30,9 +34,11 @@ export default function PercentageDisplay(props: {value: number}) {
         alignItems="center"
         justifyContent="center"
       >
-        <Typography variant="caption" component="div" color="textSecondary">{`${Math.round(
-          props.value * 100
-        )}%`}</Typography>
+        <Typography
+          variant="caption"
+          component="div"
+          color="textSecondary"
+        >{`${Math.round(props.value * 100)}%`}</Typography>
       </Box>
     </Box>
   );

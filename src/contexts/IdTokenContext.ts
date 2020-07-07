@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from 'react';
 
 export interface IdTokenContextValue {
-  idToken: string | null,
+  idToken: string | null;
   setIdToken: Dispatch<SetStateAction<string | null>>;
 }
 

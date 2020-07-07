@@ -1,9 +1,13 @@
-import React, { useMemo } from "react";
-import { Color, Matrix4 } from "three";
-import { fb } from "../schema";
+import React, { useMemo } from 'react';
+import { Color, Matrix4 } from 'three';
+import { fb } from '../schema';
 
-export default function ColoredLinesViewer(props: {msg: fb.amrl_msgs.VisualizationMsg, matrix?: Matrix4, 
-    lineWidth?: number, visible?: boolean}) {
+export default function ColoredLinesViewer(props: {
+  msg: fb.amrl_msgs.VisualizationMsg;
+  matrix?: Matrix4;
+  lineWidth?: number;
+  visible?: boolean;
+}) {
   const { msg } = props;
 
   const length = msg.linesLength();
@@ -25,12 +29,14 @@ export default function ColoredLinesViewer(props: {msg: fb.amrl_msgs.Visualizati
       data[index + 5] = 0;
     }
 
-    return <bufferAttribute
-      attachObject={["attributes", "position"]}
-      args={[data, 3, false]}
-      count={length * 2}
-      onUpdate={(self) => self.needsUpdate = true}
-    />;
+    return (
+      <bufferAttribute
+        attachObject={['attributes', 'position']}
+        args={[data, 3, false]}
+        count={length * 2}
+        onUpdate={(self) => (self.needsUpdate = true)}
+      />
+    );
   }, [msg, length]);
 
   const colorAttrib = useMemo(() => {
@@ -47,28 +53,33 @@ export default function ColoredLinesViewer(props: {msg: fb.amrl_msgs.Visualizati
       data[index + 2] = data[index + 5] = color.b;
     }
 
-    return <bufferAttribute
-      attachObject={["attributes", "color"]}
-      args={[data, 3, false]}
-      count={length * 2}
-    />;
+    return (
+      <bufferAttribute
+        attachObject={['attributes', 'color']}
+        args={[data, 3, false]}
+        count={length * 2}
+      />
+    );
   }, [msg, length]);
 
   const I = new Matrix4();
-  return <lineSegments
-    frustumCulled={false}
-    matrixAutoUpdate={false}
-    matrixWorldNeedsUpdate={true}
-    matrix={props.matrix ?? I}
-    visible={props.visible ?? true}
-  >
-    <bufferGeometry attach="geometry">
-      {positionAttrib}
-      {colorAttrib}
-    </bufferGeometry>
-    <lineBasicMaterial attach="material"
-      vertexColors={true}
-      linewidth={props.lineWidth ?? 3}
-    />
-  </lineSegments>; 
+  return (
+    <lineSegments
+      frustumCulled={false}
+      matrixAutoUpdate={false}
+      matrixWorldNeedsUpdate={true}
+      matrix={props.matrix ?? I}
+      visible={props.visible ?? true}
+    >
+      <bufferGeometry attach="geometry">
+        {positionAttrib}
+        {colorAttrib}
+      </bufferGeometry>
+      <lineBasicMaterial
+        attach="material"
+        vertexColors={true}
+        linewidth={props.lineWidth ?? 3}
+      />
+    </lineSegments>
+  );
 }
