@@ -32,8 +32,7 @@
     "build": "rescripts build",
     "test": "rescripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint 'src/**/*.{js,ts,tsx}' --fix",
-    "format": "prettier --write \"src/**/*.{js,ts,tsx}\""
+    "lint": "eslint 'src/**/*.{js,ts,tsx}' --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -43,7 +42,18 @@
   },
   "prettier": {
     "singleQuote": true,
-    "semi": true
+    "semi": true,
+    "bracketSpacing": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.+(ts|tsx|js)": [
+      "eslint --fix"
+    ]
   },
   "browserslist": {
     "production": [
@@ -62,6 +72,8 @@
     "@rescripts/rescript-use-eslint-config": "^0.0.11",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
     "prettier": "2.0.5"
   }
 }
