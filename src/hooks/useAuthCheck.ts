@@ -1,27 +1,20 @@
-import { useEffect, useState } from 'react';
-import config from '../config';
+import { useEffect, useState } from "react";
+import config from "../config";
 
-export type Op = 'send' | 'receive';
+export type Op = "send" | "receive";
 
 /**
  * Determine whether this client is authorized to perform a particular action
  * on the Robofleet server.
- *
+ * 
  * @param params.idToken a Google ID token, if available
  * @param params.op the operation being performed on the topic
  * @param params.topic the ROS topic
- * @returns a boolean indicating if the client is authorized, or null if no
+ * @returns a boolean indicating if the client is authorized, or null if no 
  * result is available yet.
  */
-export default function useAuthCheck({
-  idToken,
-  op,
-  topic,
-}: {
-  idToken?: string | null;
-  op: Op;
-  topic: string;
-}) {
+export default function useAuthCheck({idToken, op, topic}: 
+    {idToken?: string | null, op: Op, topic: string}) {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
