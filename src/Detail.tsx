@@ -70,10 +70,16 @@ export default function Detail() {
     topic: `${namespace}/`,
   });
 
+  const backIcon = (
+    <IconButton component={Link} to="/">
+      <ArrowBack />
+    </IconButton>
+  );
+
   if (!authorized) {
     return (
       <>
-        <NavBar title={`${namespace}`}></NavBar>
+        <NavBar title={`${namespace}`} navIcon={backIcon}></NavBar>
         <Backdrop open={!authorized}>
           <Typography variant="subtitle1">
             Authorization check failed. Please sign in or use an authorized
@@ -100,12 +106,6 @@ export default function Detail() {
         </CardContent>
       </Card>
     </Container>
-  );
-
-  const backIcon = (
-    <IconButton component={Link} to="/">
-      <ArrowBack />
-    </IconButton>
   );
 
   const tabs = (
