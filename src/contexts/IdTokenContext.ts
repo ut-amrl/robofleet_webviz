@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
+import { Setter } from '../hooks/useStorage';
 
 export interface IdTokenContextValue {
   idToken: string | null;
-  setIdToken: Dispatch<SetStateAction<string | null>>;
+  setIdToken: Setter<string>;
 }
 
 const IdTokenContext = React.createContext({} as IdTokenContextValue);

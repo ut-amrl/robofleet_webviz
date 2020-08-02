@@ -51,7 +51,7 @@ export default function UserProfileButton() {
     clientId: clientId as string, // if it's null, we won't use the hook
     onLogoutSuccess: () => {
       setSignedIn(false);
-      setIdToken(null);
+      setIdToken('');
     },
   });
 
