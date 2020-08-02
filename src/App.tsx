@@ -1,6 +1,6 @@
 import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import React, { useState } from 'react';
+import React, { useState, useStorage } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import config from './config';
 import WebSocketContext from './contexts/WebSocketContext';
@@ -13,7 +13,7 @@ import IdTokenContext from './contexts/IdTokenContext';
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [paused, setPaused] = useState(false);
-  const [idToken, setIdToken] = useState<string | null>(null);
+  const [idToken, setIdToken] = useStorage('idToken', null);
 
   const theme = createMuiTheme({
     palette: {
