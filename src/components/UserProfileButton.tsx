@@ -29,7 +29,7 @@ export function isGoogleLoginResponse(x: any): x is GoogleLoginResponse {
 }
 
 export default function UserProfileButton() {
-  const { setIdToken } = useContext(IdTokenContext);
+  const { idToken, setIdToken } = useContext(IdTokenContext);
   const ipAddr = useIpAddress();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const [signedIn, setSignedIn] = useState(false);
@@ -39,6 +39,7 @@ export default function UserProfileButton() {
   const { signIn } = useGoogleLogin({
     clientId: clientId as string, // if it's null, we won't use the hook
     responseType: 'id_token',
+    isSignedIn: idToken !== null,
     onSuccess: (res) => {
       if (!isGoogleLoginResponse(res)) return;
       setSignedIn(true);
