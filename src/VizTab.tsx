@@ -12,17 +12,10 @@ import {
 } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { flatbuffers } from 'flatbuffers';
-import React, {
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-  useEffect,
-} from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import * as THREE from 'three';
 import CameraControls from './components/CameraControls';
-import CanvasUtils, { CanvasUtilsRef } from './components/CanvasUtils';
 import CollapserItem from './components/CollapserItem';
 import LaserScanViewer from './components/LaserScanViewer';
 import Localization2DViewer from './components/Localization2DViewer';
@@ -33,6 +26,7 @@ import useRobofleetMsgListener from './hooks/useRobofleetMsgListener';
 import useStorage from './hooks/useStorage';
 import { fb } from './schema';
 import { matchTopic } from './util';
+import PoseSetter from './components/PoseSetter';
 
 function createPose2DfMsg({
   namespace,
@@ -133,7 +127,6 @@ export default function VizTab(props: { namespace: string }) {
   type ClickAction = 'Default' | 'Localize' | 'SetNav';
 
   const ws = useContext(WebSocketContext);
-  const canvasUtils = useRef<CanvasUtilsRef>(null);
   const classes = useStyles();
 
   const [locAlertOpen, setLocAlertOpen] = useState(true);
@@ -164,80 +157,6 @@ export default function VizTab(props: { namespace: string }) {
       setLocAlertOpen(false);
     }, [])
   );
-
-  useEffect(function setupCommandControls() {
-    const dragStart = new THREE.Vector3();
-    let dragging = false;
-    let poseTheta: number;
-
-    const mouseDownHandler = () => {
-      if (clickAction === 'Default') return;
-
-      dragging = true;
-      dragStart.copy(canvasUtils.current?.worldMousePos!);
-    };
-
-    const mouseUpHandler = () => {
-      if (clickAction === 'Default') return;
-
-      dragging = false;
-      // viz.phantomPose.visible = false;
-
-      if (clickAction === 'SetNav') {
-        if (ws?.connected) {
-          ws.ws?.send(
-            createPose2DfMsg({
-              namespace: props.namespace,
-              x: dragStart.x,
-              y: dragStart.y,
-              theta: poseTheta,
-            })
-          );
-        }
-        setClickAction('Default');
-      } else if (clickAction === 'Localize') {
-        if (ws?.connected) {
-          ws.ws?.send(
-            createLocalization2DMsg({
-              namespace: props.namespace,
-              frame: 'map',
-              map: mapName, // TODO: map selector?
-              x: dragStart.x,
-              y: dragStart.y,
-              theta: poseTheta,
-            })
-          );
-        }
-        setClickAction('Default');
-      }
-    };
-
-    const mouseMoveHandler = (event: MouseEvent) => {
-      if (clickAction == 'Default') return;
-      if (!dragging) return;
-      event.stopPropagation();
-
-      const pos = canvasUtils.current?.worldMousePos!;
-      const dragDx = pos.clone().sub(dragStart);
-      poseTheta = Math.atan2(dragDx.y, dragDx.x);
-
-      // const pose = new THREE.Matrix4().makeTranslation(dragStart.x, dragStart.y, 0);
-      // pose.multiply(new THREE.Matrix4().makeRotationZ(theta));
-      // viz.phantomPose.visible = true;
-      // viz.phantomPose.matrixAutoUpdate = false;
-      // viz.phantomPose.matrix.copy(pose);
-    };
-
-    document.body.addEventListener('mousedown', mouseDownHandler);
-    document.body.addEventListener('mouseup', mouseUpHandler);
-    document.body.addEventListener('mousemove', mouseMoveHandler);
-
-    return () => {
-      document.body.removeEventListener('mousedown', mouseDownHandler);
-      document.body.removeEventListener('mouseup', mouseUpHandler);
-      document.body.removeEventListener('mousemove', mouseMoveHandler);
-    };
-  });
 
   // settings panel and FAB
   const settingsPanel = (
@@ -351,6 +270,38 @@ export default function VizTab(props: { namespace: string }) {
     </WebSocketContext.Provider>
   );
 
+  const handlePoseSet = (poseX: number, poseY: number, poseTheta: number) => {
+    if (clickAction === 'Default') return;
+
+    if (clickAction === 'SetNav') {
+      if (ws?.connected) {
+        ws.ws?.send(
+          createPose2DfMsg({
+            namespace: props.namespace,
+            x: poseX,
+            y: poseY,
+            theta: poseTheta,
+          })
+        );
+      }
+      setClickAction('Default');
+    } else if (clickAction === 'Localize') {
+      if (ws?.connected) {
+        ws.ws?.send(
+          createLocalization2DMsg({
+            namespace: props.namespace,
+            frame: 'map',
+            map: mapName, // TODO: map selector?
+            x: poseX,
+            y: poseY,
+            theta: poseTheta,
+          })
+        );
+      }
+      setClickAction('Default');
+    }
+  };
+
   // only close a snackbar if the close button was pressed
   const handleSnackbarClose = (
     event?: React.SyntheticEvent,
@@ -374,8 +325,11 @@ export default function VizTab(props: { namespace: string }) {
           pixelRatio={window.devicePixelRatio}
           className={classes[clickAction]}
         >
-          <CanvasUtils ref={canvasUtils} />
           <CameraControls />
+          <PoseSetter
+            enabled={clickAction !== 'Default'}
+            callback={handlePoseSet}
+          />
           {viewers}
         </Canvas>
       </Box>
