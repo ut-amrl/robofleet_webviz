@@ -5,8 +5,8 @@ import Pose from './Pose';
 import { Color } from 'three';
 
 /**
- * A 3D arrow positioned with its tail at (x, y) and its tip pointing in
- * direction theta. Occupies a 1x1x1 volume.
+ * Sets up listeners for mouse events to handle setting poses from the Viz controls.
+ * Supports click+drag to set a pose, while visualizing a phantom pose.
  */
 export default function PoseSetter(props: {
   enabled: boolean;
@@ -43,7 +43,7 @@ export default function PoseSetter(props: {
   }, [getNdcMousePos, three.camera]);
 
   // Handle pose setting mouse events
-  const mouseDownHandler = useCallback(() => {
+  const pointerDownHandler = useCallback(() => {
     if (!props.enabled) {
       return;
     }
@@ -52,7 +52,7 @@ export default function PoseSetter(props: {
     setPoseLoc(getWorldMousePos());
   }, [getWorldMousePos, props.enabled]);
 
-  const mouseMoveHandler = useCallback(
+  const poseUpdateHandler = useCallback(
     (event: MouseEvent) => {
       if (!props.enabled) {
         return;
@@ -67,7 +67,7 @@ export default function PoseSetter(props: {
     [dragging, getWorldMousePos, poseLoc, props.enabled]
   );
 
-  const mouseUpHandler = useCallback(() => {
+  const pointerUpHandler = useCallback(() => {
     setDragging(false);
     if (!props.enabled) {
       return;
@@ -84,39 +84,37 @@ export default function PoseSetter(props: {
     function setupMouseHandlers() {
       document
         .querySelector('canvas')
-        ?.addEventListener('mousedown', mouseDownHandler);
+        ?.addEventListener('pointerdown', pointerDownHandler);
       document
         .querySelector('canvas')
-        ?.addEventListener('mouseup', mouseUpHandler);
+        ?.addEventListener('pointerUp', pointerUpHandler);
       document
         .querySelector('canvas')
         ?.addEventListener('pointermove', pointerMoveHandler);
       document
         .querySelector('canvas')
-        ?.addEventListener('mousemove', mouseMoveHandler);
+        ?.addEventListener('pointermove', poseUpdateHandler);
 
       return () => {
         document
           .querySelector('canvas')
-          ?.removeEventListener('mousedown', mouseDownHandler);
+          ?.removeEventListener('pointerdown', pointerDownHandler);
         document
           .querySelector('canvas')
-          ?.removeEventListener('mouseup', mouseUpHandler);
-        document
-          .querySelector('canvas')
-          ?.removeEventListener('mousemove', mouseMoveHandler);
+          ?.removeEventListener('pointerUp', pointerUpHandler);
         document
           .querySelector('canvas')
           ?.removeEventListener('pointermove', pointerMoveHandler);
+        document
+          .querySelector('canvas')
+          ?.removeEventListener('pointermove', poseUpdateHandler);
       };
     },
     [
-      props.enabled,
-      dragging,
-      mouseDownHandler,
-      mouseUpHandler,
+      pointerDownHandler,
+      pointerUpHandler,
       pointerMoveHandler,
-      mouseMoveHandler,
+      poseUpdateHandler,
     ]
   ); // this should really open happen once
 
