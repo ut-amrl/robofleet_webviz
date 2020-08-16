@@ -52,6 +52,17 @@ export default function PoseSetter(props: {
     setPoseLoc(getWorldMousePos());
   }, [getWorldMousePos, props.enabled]);
 
+  const mouseMoveHandler = useCallback(
+    (event: MouseEvent) => {
+      if (!props.enabled) {
+        return;
+      }
+      if (!dragging) return;
+      event.stopPropagation(); // to stop the canvas from dragging around while setting pose
+    },
+    [dragging, props.enabled]
+  );
+
   const poseUpdateHandler = useCallback(
     (event: MouseEvent) => {
       if (!props.enabled) {
@@ -87,7 +98,10 @@ export default function PoseSetter(props: {
         ?.addEventListener('pointerdown', pointerDownHandler);
       document
         .querySelector('canvas')
-        ?.addEventListener('pointerUp', pointerUpHandler);
+        ?.addEventListener('pointerup', pointerUpHandler);
+      document
+        .querySelector('canvas')
+        ?.addEventListener('mousemove', mouseMoveHandler);
       document
         .querySelector('canvas')
         ?.addEventListener('pointermove', pointerMoveHandler);
@@ -101,7 +115,10 @@ export default function PoseSetter(props: {
           ?.removeEventListener('pointerdown', pointerDownHandler);
         document
           .querySelector('canvas')
-          ?.removeEventListener('pointerUp', pointerUpHandler);
+          ?.removeEventListener('pointerup', pointerUpHandler);
+        document
+          .querySelector('canvas')
+          ?.removeEventListener('mousemove', mouseMoveHandler);
         document
           .querySelector('canvas')
           ?.removeEventListener('pointermove', pointerMoveHandler);
@@ -115,6 +132,7 @@ export default function PoseSetter(props: {
       pointerUpHandler,
       pointerMoveHandler,
       poseUpdateHandler,
+      mouseMoveHandler,
     ]
   ); // this should really open happen once
 
