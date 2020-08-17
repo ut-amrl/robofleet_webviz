@@ -12,11 +12,10 @@ import {
 } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { flatbuffers } from 'flatbuffers';
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import * as THREE from 'three';
 import CameraControls from './components/CameraControls';
-import CanvasUtils, { CanvasUtilsRef } from './components/CanvasUtils';
 import CollapserItem from './components/CollapserItem';
 import LaserScanViewer from './components/LaserScanViewer';
 import Localization2DViewer from './components/Localization2DViewer';
@@ -27,6 +26,7 @@ import useRobofleetMsgListener from './hooks/useRobofleetMsgListener';
 import useStorage from './hooks/useStorage';
 import { fb } from './schema';
 import { matchTopic } from './util';
+import PoseSetter from './components/PoseSetter';
 
 function createPose2DfMsg({
   namespace,
@@ -127,7 +127,6 @@ export default function VizTab(props: { namespace: string }) {
   type ClickAction = 'Default' | 'Localize' | 'SetNav';
 
   const ws = useContext(WebSocketContext);
-  const canvasUtils = useRef<CanvasUtilsRef>(null);
   const classes = useStyles();
 
   const [locAlertOpen, setLocAlertOpen] = useState(true);
@@ -158,39 +157,6 @@ export default function VizTab(props: { namespace: string }) {
       setLocAlertOpen(false);
     }, [])
   );
-
-  const clickCanvas = () => {
-    if (clickAction === 'Localize') {
-      const pos = canvasUtils.current?.worldMousePos;
-
-      if (ws?.connected) {
-        ws.ws?.send(
-          createLocalization2DMsg({
-            namespace: props.namespace,
-            frame: 'map',
-            map: mapName, // TODO: map selector?
-            x: pos?.x ?? 0,
-            y: pos?.y ?? 0,
-            theta: 0, // TODO: implement drag to set angle
-          })
-        );
-      }
-    }
-    if (clickAction === 'SetNav') {
-      const pos = canvasUtils.current?.worldMousePos;
-
-      if (ws?.connected) {
-        ws.ws?.send(
-          createPose2DfMsg({
-            namespace: props.namespace,
-            x: pos?.x ?? 0,
-            y: pos?.y ?? 0,
-            theta: 0, // TODO: implement drag to set angle
-          })
-        );
-      }
-    }
-  };
 
   // settings panel and FAB
   const settingsPanel = (
@@ -304,6 +270,38 @@ export default function VizTab(props: { namespace: string }) {
     </WebSocketContext.Provider>
   );
 
+  const handlePoseSet = (poseX: number, poseY: number, poseTheta: number) => {
+    if (clickAction === 'Default') return;
+
+    if (clickAction === 'SetNav') {
+      if (ws?.connected) {
+        ws.ws?.send(
+          createPose2DfMsg({
+            namespace: props.namespace,
+            x: poseX,
+            y: poseY,
+            theta: poseTheta,
+          })
+        );
+      }
+      setClickAction('Default');
+    } else if (clickAction === 'Localize') {
+      if (ws?.connected) {
+        ws.ws?.send(
+          createLocalization2DMsg({
+            namespace: props.namespace,
+            frame: 'map',
+            map: mapName, // TODO: map selector?
+            x: poseX,
+            y: poseY,
+            theta: poseTheta,
+          })
+        );
+      }
+      setClickAction('Default');
+    }
+  };
+
   // only close a snackbar if the close button was pressed
   const handleSnackbarClose = (
     event?: React.SyntheticEvent,
@@ -325,11 +323,13 @@ export default function VizTab(props: { namespace: string }) {
         <Canvas
           orthographic={true}
           pixelRatio={window.devicePixelRatio}
-          onClick={clickCanvas}
           className={classes[clickAction]}
         >
-          <CanvasUtils ref={canvasUtils} />
-          <CameraControls />
+          <CameraControls enabled={clickAction === 'Default'} />
+          <PoseSetter
+            enabled={clickAction !== 'Default'}
+            callback={handlePoseSet}
+          />
           {viewers}
         </Canvas>
       </Box>
