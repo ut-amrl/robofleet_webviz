@@ -325,7 +325,7 @@ export default function VizTab(props: { namespace: string }) {
           pixelRatio={window.devicePixelRatio}
           className={classes[clickAction]}
         >
-          <CameraControls />
+          <CameraControls enabled={clickAction === 'Default'} />
           <PoseSetter
             enabled={clickAction !== 'Default'}
             callback={handlePoseSet}
