@@ -123,6 +123,9 @@ const useStyles = makeStyles((theme: Theme) =>
     SetNav: {
       cursor: 'pointer',
     },
+    VizControl: {
+      margin: theme.spacing(2, 0),
+    },
   })
 );
 
@@ -190,7 +193,7 @@ export default function VizTab(props: { namespace: string }) {
     <SettingsPanel>
       <List>
         <CollapserItem label="Localization">
-          <FormGroup row>
+          <FormGroup row className={classes['VizControl']}>
             <FormControlLabel
               control={
                 <Switch
@@ -201,11 +204,12 @@ export default function VizTab(props: { namespace: string }) {
               label={`Show Map`}
             />
           </FormGroup>
-          <FormGroup row>
+          <FormGroup row className={classes['VizControl']}>
             <Select
               defaultValue={mapName}
               onChange={(event) => setMapName(event.target.value as string)}
               autoWidth={true}
+              margin="none"
             >
               {mapOptions.map((option) => (
                 <MenuItem value={option.name} key={option.name}>
@@ -214,7 +218,7 @@ export default function VizTab(props: { namespace: string }) {
               ))}
             </Select>
           </FormGroup>
-          <FormGroup row>
+          <FormGroup row className={classes['VizControl']}>
             <Button
               onClick={() =>
                 setClickAction((a) =>
