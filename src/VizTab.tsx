@@ -144,7 +144,12 @@ export default function VizTab(props: { namespace: string }) {
   const [clickAction, setClickAction] = useState<ClickAction>('Default');
 
   const [mapName, setMapName] = useState('EmptyMap');
-  const [mapOptions, setMapOptions] = useState([{ name: 'EmptyMap' }]);
+  const [chosenMap, setChosenMap] = useState<string | undefined>(undefined);
+  const [mapOptions, setMapOptions] = useState([
+    { name: 'EmptyMap' },
+    { name: 'GDC1' },
+    { name: 'GDC3' },
+  ]);
   const [locShowMap, setLocShowMap] = useStorage('Localization.showMap', true);
   const [scanShow, setScanShow] = useStorage('LaserScan.show', true);
   const [vizShowPoints, setVizShowPoints] = useStorage('Viz.showPoints', false);
@@ -176,7 +181,7 @@ export default function VizTab(props: { namespace: string }) {
         try {
           let maps = await res.json();
           setMapOptions(
-            maps.flatMap((map: string) => ({
+            maps.map((map: string) => ({
               name: map,
             }))
           );
@@ -207,7 +212,7 @@ export default function VizTab(props: { namespace: string }) {
           <FormGroup row className={classes['VizControl']}>
             <Select
               defaultValue={mapName}
-              onChange={(event) => setMapName(event.target.value as string)}
+              onChange={(event) => setChosenMap(event.target.value as string)}
               autoWidth={true}
               margin="none"
             >
@@ -290,7 +295,7 @@ export default function VizTab(props: { namespace: string }) {
         namespace={props.namespace}
         topic="localization"
         mapColor={0x536dfe}
-        mapName={mapName ?? 'EmptyMap'}
+        mapName={chosenMap ?? mapName ?? 'EmptyMap'}
         mapVisible={locShowMap}
         x={x}
         y={y}
@@ -335,12 +340,13 @@ export default function VizTab(props: { namespace: string }) {
           createLocalization2DMsg({
             namespace: props.namespace,
             frame: 'map',
-            map: mapName,
+            map: chosenMap ?? mapName,
             x: poseX,
             y: poseY,
             theta: poseTheta,
           })
         );
+        setChosenMap(undefined);
       }
       setClickAction('Default');
     }
