@@ -145,11 +145,7 @@ export default function VizTab(props: { namespace: string }) {
 
   const [mapName, setMapName] = useState('EmptyMap');
   const [chosenMap, setChosenMap] = useState<string | undefined>(undefined);
-  const [mapOptions, setMapOptions] = useState([
-    { name: 'EmptyMap' },
-    { name: 'GDC1' },
-    { name: 'GDC3' },
-  ]);
+  const [mapOptions, setMapOptions] = useState([{ name: 'EmptyMap' }]);
   const [locShowMap, setLocShowMap] = useStorage('Localization.showMap', true);
   const [scanShow, setScanShow] = useStorage('LaserScan.show', true);
   const [vizShowPoints, setVizShowPoints] = useStorage('Viz.showPoints', false);
