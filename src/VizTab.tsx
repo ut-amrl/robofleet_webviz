@@ -9,10 +9,12 @@ import {
   Snackbar,
   Switch,
   Theme,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { flatbuffers } from 'flatbuffers';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import { Canvas } from 'react-three-fiber';
 import * as THREE from 'three';
 import CameraControls from './components/CameraControls';
@@ -27,6 +29,7 @@ import useStorage from './hooks/useStorage';
 import { fb } from './schema';
 import { matchTopic } from './util';
 import PoseSetter from './components/PoseSetter';
+import config from './config';
 
 function createPose2DfMsg({
   namespace,
@@ -120,6 +123,9 @@ const useStyles = makeStyles((theme: Theme) =>
     SetNav: {
       cursor: 'pointer',
     },
+    VizControl: {
+      margin: theme.spacing(2, 0),
+    },
   })
 );
 
@@ -138,6 +144,8 @@ export default function VizTab(props: { namespace: string }) {
   const [clickAction, setClickAction] = useState<ClickAction>('Default');
 
   const [mapName, setMapName] = useState('EmptyMap');
+  const [chosenMap, setChosenMap] = useState<string | undefined>(undefined);
+  const [mapOptions, setMapOptions] = useState([{ name: 'EmptyMap' }]);
   const [locShowMap, setLocShowMap] = useStorage('Localization.showMap', true);
   const [scanShow, setScanShow] = useStorage('LaserScan.show', true);
   const [vizShowPoints, setVizShowPoints] = useStorage('Viz.showPoints', false);
@@ -146,24 +154,47 @@ export default function VizTab(props: { namespace: string }) {
   // build base_link transform using Localization2DMsg
   useRobofleetMsgListener(
     matchTopic(props.namespace, 'localization'),
-    useCallback((buf, match) => {
-      const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(
-        buf
-      );
-      setX(loc.pose()?.x() ?? 0);
-      setY(loc.pose()?.y() ?? 0);
-      setTheta(loc.pose()?.theta() ?? 0);
-      setMapName(loc.map() ?? 'EmptyMap');
-      setLocAlertOpen(false);
-    }, [])
+    useCallback(
+      (buf, match) => {
+        const loc = fb.amrl_msgs.Localization2DMsg.getRootAsLocalization2DMsg(
+          buf
+        );
+        setX(loc.pose()?.x() ?? 0);
+        setY(loc.pose()?.y() ?? 0);
+        setTheta(loc.pose()?.theta() ?? 0);
+        setMapName(loc.map() ?? mapName);
+        setLocAlertOpen(false);
+      },
+      [mapName]
+    )
   );
+
+  // Loading map names
+  useEffect(() => {
+    const loadMapDir = async () => {
+      const res = await fetch(config.mapDirUrl);
+      if (res.ok) {
+        try {
+          let maps = await res.json();
+          setMapOptions(
+            maps.map((map: string) => ({
+              name: map,
+            }))
+          );
+        } catch (err) {
+          console.error(`Unable to fetch map directory`, err);
+        }
+      }
+    };
+    loadMapDir();
+  }, []);
 
   // settings panel and FAB
   const settingsPanel = (
     <SettingsPanel>
       <List>
         <CollapserItem label="Localization">
-          <FormGroup row>
+          <FormGroup row className={classes['VizControl']}>
             <FormControlLabel
               control={
                 <Switch
@@ -171,10 +202,24 @@ export default function VizTab(props: { namespace: string }) {
                   onClick={() => setLocShowMap((s) => !s)}
                 />
               }
-              label="Show map"
+              label={`Show Map`}
             />
           </FormGroup>
-          <FormGroup row>
+          <FormGroup row className={classes['VizControl']}>
+            <Select
+              defaultValue={mapName}
+              onChange={(event) => setChosenMap(event.target.value as string)}
+              autoWidth={true}
+              margin="none"
+            >
+              {mapOptions.map((option) => (
+                <MenuItem value={option.name} key={option.name}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormGroup>
+          <FormGroup row className={classes['VizControl']}>
             <Button
               onClick={() =>
                 setClickAction((a) =>
@@ -246,7 +291,7 @@ export default function VizTab(props: { namespace: string }) {
         namespace={props.namespace}
         topic="localization"
         mapColor={0x536dfe}
-        mapName={mapName ?? 'EmptyMap'}
+        mapName={chosenMap ?? mapName ?? 'EmptyMap'}
         mapVisible={locShowMap}
         x={x}
         y={y}
@@ -291,12 +336,13 @@ export default function VizTab(props: { namespace: string }) {
           createLocalization2DMsg({
             namespace: props.namespace,
             frame: 'map',
-            map: mapName, // TODO: map selector?
+            map: chosenMap ?? mapName,
             x: poseX,
             y: poseY,
             theta: poseTheta,
           })
         );
+        setChosenMap(undefined);
       }
       setClickAction('Default');
     }
