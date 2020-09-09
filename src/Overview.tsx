@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& td': {
       color: theme.palette.grey[400],
     },
+    backgroundColor: theme.palette.background.default,
   },
 }));
 
