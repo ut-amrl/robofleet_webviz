@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   inactive: {
     '& td': {
       color: theme.palette.grey[400],
-    }
+    },
   },
 }));
 
