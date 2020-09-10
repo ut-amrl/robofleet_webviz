@@ -53,7 +53,9 @@ type StaticRobotInfo = {
 
 const useStyles = makeStyles((theme: Theme) => ({
   inactive: {
-    backgroundColor: theme.palette.background.default,
+    '& td': {
+      color: theme.palette.grey[400],
+    },
   },
 }));
 
