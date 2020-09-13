@@ -207,7 +207,7 @@ export default function VizTab(props: { namespace: string }) {
           </FormGroup>
           <FormGroup row className={classes['VizControl']}>
             <Select
-              defaultValue={mapName}
+              value={chosenMap ?? mapName}
               onChange={(event) => setChosenMap(event.target.value as string)}
               autoWidth={true}
               margin="none"
