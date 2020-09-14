@@ -31,11 +31,14 @@ import { fb } from './schema';
 import { matchTopicAnyNamespace } from './util';
 import config from './config';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 =======
 import IdTokenContext from './contexts/IdTokenContext';
+=======
+>>>>>>> remove unused var
 import moment from 'moment';
 >>>>>>> add static robot listing to overview
 
@@ -62,16 +65,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& td': {
       color: theme.palette.grey[400],
     },
-<<<<<<< HEAD
-    backgroundColor: theme.palette.background.default,
-=======
->>>>>>> fix styling
   },
 }));
 
 export default function Overview() {
   const { setPaused } = useContext(AppContext);
-  const { idToken } = useContext(IdTokenContext);
   const [data, setData] = useState({} as { [name: string]: RobotStatus });
   const classes = useStyles();
 
@@ -111,7 +109,6 @@ export default function Overview() {
         },
       });
 
-<<<<<<< HEAD
       if (res.ok) {
         try {
           let robotInfo = await res.json();
@@ -137,27 +134,6 @@ export default function Overview() {
           console.error(`Failed to fetch static robot info`, err);
         }
       }
-=======
-      let robotInfo = await res.json();
-      robotInfo.forEach((robot: StaticRobotInfo) => {
-        const name = '/' + robot.name;
-        if (!data[name]) {
-          // don't overwrite any live robot data with this static info
-          setData((data) => ({
-            ...data,
-            [name]: {
-              name: name,
-              is_ok: true,
-              battery_level: 0,
-              status: robot.lastStatus,
-              location: robot.lastLocation,
-              is_active: false,
-              last_updated: moment(robot.lastUpdated).fromNow(),
-            },
-          }));
-        }
-      });
->>>>>>> add static robot listing to overview
     })();
   }, [data]);
 
