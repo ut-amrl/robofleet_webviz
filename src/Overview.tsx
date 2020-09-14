@@ -30,7 +30,6 @@ import useRobofleetMsgListener from './hooks/useRobofleetMsgListener';
 import { fb } from './schema';
 import { matchTopicAnyNamespace } from './util';
 import config from './config';
-import IdTokenContext from './contexts/IdTokenContext';
 import moment from 'moment';
 
 type RobotStatus = {
@@ -61,7 +60,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function Overview() {
   const { setPaused } = useContext(AppContext);
-  const { idToken } = useContext(IdTokenContext);
   const [data, setData] = useState({} as { [name: string]: RobotStatus });
   const classes = useStyles();
 
