@@ -30,7 +30,9 @@ import useRobofleetMsgListener from './hooks/useRobofleetMsgListener';
 import { fb } from './schema';
 import { matchTopicAnyNamespace } from './util';
 import config from './config';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 type RobotStatus = {
   name: string;
@@ -99,25 +101,31 @@ export default function Overview() {
         },
       });
 
-      let robotInfo = await res.json();
-      robotInfo.forEach((robot: StaticRobotInfo) => {
-        const name = '/' + robot.name;
-        if (!data[name]) {
-          // don't overwrite any live robot data with this static info
-          setData((data) => ({
-            ...data,
-            [name]: {
-              name: name,
-              is_ok: true,
-              battery_level: 0,
-              status: robot.lastStatus,
-              location: robot.lastLocation,
-              is_active: false,
-              last_updated: moment(robot.lastUpdated).fromNow(),
-            },
-          }));
+      if (res.ok) {
+        try {
+          let robotInfo = await res.json();
+          robotInfo.forEach((robot: StaticRobotInfo) => {
+            const name = '/' + robot.name;
+            if (!data[name]) {
+              // don't overwrite any live robot data with this static info
+              setData((data) => ({
+                ...data,
+                [name]: {
+                  name: name,
+                  is_ok: true,
+                  battery_level: 0,
+                  status: robot.lastStatus,
+                  location: robot.lastLocation,
+                  is_active: false,
+                  last_updated: dayjs(robot.lastUpdated).fromNow(),
+                },
+              }));
+            }
+          });
+        } catch (err) {
+          console.error(`Failed to fetch static robot info`, err);
         }
-      });
+      }
     })();
   }, [data]);
 
@@ -137,7 +145,12 @@ export default function Overview() {
         </Button>
       );
     } else {
-      detailsContent = `Last Seen: \n ${obj.last_updated}`;
+      detailsContent = (
+        <Box>
+          <div>Last seen:</div>
+          <div>{obj.last_updated}</div>
+        </Box>
+      );
     }
 
     return (
@@ -151,9 +164,7 @@ export default function Overview() {
         </TableCell>
         <TableCell align="center">{obj.status}</TableCell>
         <TableCell align="center">{obj.location}</TableCell>
-        <TableCell style={{ whiteSpace: 'pre-line' }} align="center">
-          {detailsContent}
-        </TableCell>
+        <TableCell align="center">{detailsContent}</TableCell>
       </TableRow>
     );
   });
