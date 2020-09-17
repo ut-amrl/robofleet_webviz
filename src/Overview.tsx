@@ -30,17 +30,9 @@ import useRobofleetMsgListener from './hooks/useRobofleetMsgListener';
 import { fb } from './schema';
 import { matchTopicAnyNamespace } from './util';
 import config from './config';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-=======
-import IdTokenContext from './contexts/IdTokenContext';
-=======
->>>>>>> remove unused var
-import moment from 'moment';
->>>>>>> add static robot listing to overview
 
 type RobotStatus = {
   name: string;
@@ -153,16 +145,12 @@ export default function Overview() {
         </Button>
       );
     } else {
-<<<<<<< HEAD
       detailsContent = (
         <Box>
           <div>Last seen:</div>
           <div>{obj.last_updated}</div>
         </Box>
       );
-=======
-      detailsContent = `Last Seen: \n ${obj.last_updated}`;
->>>>>>> add static robot listing to overview
     }
 
     return (
@@ -176,13 +164,7 @@ export default function Overview() {
         </TableCell>
         <TableCell align="center">{obj.status}</TableCell>
         <TableCell align="center">{obj.location}</TableCell>
-<<<<<<< HEAD
         <TableCell align="center">{detailsContent}</TableCell>
-=======
-        <TableCell style={{ whiteSpace: 'pre-line' }} align="center">
-          {detailsContent}
-        </TableCell>
->>>>>>> add static robot listing to overview
       </TableRow>
     );
   });
