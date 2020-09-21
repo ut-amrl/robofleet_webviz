@@ -4005,6 +4005,150 @@ export namespace fb.geometry_msgs {
  * @constructor
  */
 export namespace fb.geometry_msgs {
+  export class PoseStamped {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns PoseStamped
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): PoseStamped {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param PoseStamped= obj
+     * @returns PoseStamped
+     */
+    static getRootAsPoseStamped(
+      bb: flatbuffers.ByteBuffer,
+      obj?: PoseStamped
+    ): PoseStamped {
+      return (obj || new PoseStamped()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param PoseStamped= obj
+     * @returns PoseStamped
+     */
+    static getSizePrefixedRootAsPoseStamped(
+      bb: flatbuffers.ByteBuffer,
+      obj?: PoseStamped
+    ): PoseStamped {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new PoseStamped()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param fb.std_msgs.Header= obj
+     * @returns fb.std_msgs.Header|null
+     */
+    header(obj?: fb.std_msgs.Header): fb.std_msgs.Header | null {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset
+        ? (obj || new fb.std_msgs.Header()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param fb.geometry_msgs.Pose= obj
+     * @returns fb.geometry_msgs.Pose|null
+     */
+    pose(obj?: fb.geometry_msgs.Pose): fb.geometry_msgs.Pose | null {
+      var offset = this.bb!.__offset(this.bb_pos, 8);
+      return offset
+        ? (obj || new fb.geometry_msgs.Pose()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startPoseStamped(builder: flatbuffers.Builder) {
+      builder.startObject(3);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset headerOffset
+     */
+    static addHeader(
+      builder: flatbuffers.Builder,
+      headerOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(1, headerOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset poseOffset
+     */
+    static addPose(
+      builder: flatbuffers.Builder,
+      poseOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(2, poseOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endPoseStamped(builder: flatbuffers.Builder): flatbuffers.Offset {
+      var offset = builder.endObject();
+      builder.requiredField(offset, 6); // header
+      builder.requiredField(offset, 8); // pose
+      return offset;
+    }
+  }
+}
+/**
+ * @constructor
+ */
+export namespace fb.geometry_msgs {
   export class PoseWithCovariance {
     bb: flatbuffers.ByteBuffer | null = null;
 
