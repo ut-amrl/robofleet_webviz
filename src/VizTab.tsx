@@ -31,30 +31,70 @@ import { matchTopic } from './util';
 import PoseSetter from './components/PoseSetter';
 import config from './config';
 
-function createPose2DfMsg({
+function createPoseStampedMsg({
   namespace,
+  topic,
+  frame = 'map',
   x,
   y,
   theta,
 }: {
   namespace: string;
+  topic: string;
+  frame: string;
   x: number;
   y: number;
   theta: number;
 }) {
   const fbb = new flatbuffers.Builder();
-  const pose = fb.amrl_msgs.Pose2Df.createPose2Df(
+
+  const metadataOffset = fb.MsgMetadata.createMsgMetadata(
     fbb,
-    fb.MsgMetadata.createMsgMetadata(
-      fbb,
-      fbb.createString('amrl_msgs/Pose2Df'),
-      fbb.createString(`${namespace}/move_base_simple/goal`)
-    ),
+    fbb.createString('geometry_msgs/PoseStamped'),
+    fbb.createString(`${namespace}/${topic}`)
+  );
+
+  const frameOffset = fbb.createString(frame);
+
+  fb.std_msgs.Header.startHeader(fbb);
+  fb.std_msgs.Header.addStamp(
+    fbb,
+    fb.RosTime.createRosTime(fbb, Math.floor(Date.now() / 1000), 0)
+  );
+
+  fb.std_msgs.Header.addFrameId(fbb, frameOffset);
+  const headerOffset = fb.std_msgs.Header.endHeader(fbb);
+
+  const positionOffset = fb.geometry_msgs.Vector3.createVector3(
+    fbb,
+    0,
     x,
     y,
-    theta
+    0
   );
-  fbb.finish(pose);
+  const z = Math.sin(theta / 2);
+  const w = Math.cos(theta / 2);
+  const orientationOffset = fb.geometry_msgs.Quaternion.createQuaternion(
+    fbb,
+    0,
+    0,
+    0,
+    z,
+    w
+  );
+
+  fb.geometry_msgs.Pose.startPose(fbb);
+  fb.geometry_msgs.Pose.addPosition(fbb, positionOffset);
+  fb.geometry_msgs.Pose.addOrientation(fbb, orientationOffset);
+  const poseOffset = fb.geometry_msgs.Pose.endPose(fbb);
+
+  fb.geometry_msgs.PoseStamped.startPoseStamped(fbb);
+  fb.geometry_msgs.PoseStamped.add_Metadata(fbb, metadataOffset);
+  fb.geometry_msgs.PoseStamped.addHeader(fbb, headerOffset);
+  fb.geometry_msgs.PoseStamped.addPose(fbb, poseOffset);
+  const stampedOffset = fb.geometry_msgs.PoseStamped.endPoseStamped(fbb);
+
+  fbb.finish(stampedOffset);
   return fbb.asUint8Array();
 }
 
@@ -321,8 +361,10 @@ export default function VizTab(props: { namespace: string }) {
     if (clickAction === 'SetNav') {
       if (ws?.connected) {
         ws.ws?.send(
-          createPose2DfMsg({
+          createPoseStampedMsg({
             namespace: props.namespace,
+            topic: 'move_base_simple/goal',
+            frame: 'map',
             x: poseX,
             y: poseY,
             theta: poseTheta,
