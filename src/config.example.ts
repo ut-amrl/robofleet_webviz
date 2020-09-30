@@ -2,6 +2,8 @@ export default {
   serverUrl: 'ws://localhost:8080',
   mapUrl: (mapName: string) =>
     `https://amrl.cs.utexas.edu/amrl_maps/${mapName}/${mapName}.vectormap.json`,
+  navGraphUrl: (mapName: string) =>
+    `https://amrl.cs.utexas.edu/amrl_maps/${mapName}/${mapName}.vectormap.json`,
   mapDirUrl: `https://amrl.cs.utexas.edu/amrl_maps/map_directory.json`,
   // get a Google Client OAuth ID as documented here:
   // https://developers.google.com/identity/sign-in/web/sign-in#create_authorization_credentials

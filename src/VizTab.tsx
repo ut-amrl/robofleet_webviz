@@ -325,6 +325,8 @@ export default function VizTab(props: { namespace: string }) {
   const rotation = new THREE.Matrix4().makeRotationZ(theta);
   const baseLink = translation.multiply(rotation);
 
+  // TODO fix navGraphVisible (should probably have its own toggle switch)
+  // Kavan, feel free to change the nav graph color
   const viewers = (
     <WebSocketContext.Provider value={ws}>
       <Localization2DViewer
@@ -337,6 +339,8 @@ export default function VizTab(props: { namespace: string }) {
         y={y}
         theta={theta}
         poseColor={0x8ecc47}
+        navGraphColor={0x5d6b75}
+        navGraphVisible={locShowMap}
       />
       <LaserScanViewer
         namespace={props.namespace}
