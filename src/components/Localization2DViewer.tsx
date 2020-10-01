@@ -47,45 +47,63 @@ export default function Localization2DViewer(props: {
     };
 
     const loadNavGraph = async () => {
-      let nav_graph_nodes = [];
+      let nav_graph_text = '';
       const res = await fetch(config.navGraphUrl(props.mapName));
       if (res.ok) {
         try {
-          console.log(await res);
-          nav_graph_nodes = await res.json(); // TODO this won't work - need to get text file lines
+          nav_graph_text = await res.text();
         } catch (err) {
           console.error(`Bad nav graph data for "${props.mapName}"`, err);
+          return;
         }
       }
 
-      // TODO parse this from file (should be list of lists,
-      // with big list containing all edges and inner lists containing the start node and end node index of the edge)
-      // Sort indices before putting them in and then dedupe if edge is already there
-      const edgeData = [
-        [0, 1],
-        [1, 2],
-      ];
+      interface graphNode {
+        id: number;
+        x: number;
+        y: number;
+        neighbors: Array<number>;
+      }
 
-      // TODO parse this from file
-      // Should be dictionary linking node id (I'm assuming this is the first entry in a line of the navigation graph file)
-      // to the position of the node
-      const nodePosData = {
-        0: { x: 131.42, y: -245.77 },
-        1: { x: 131.76, y: -252.18 },
-        2: { x: 84, y: -255.22 },
-      };
+      let nodes = new Map<number, graphNode>();
 
-      // Create list of line segments based on the edge data
-      // Note: I'm assuming the 3rd and 6th entries are supposed to be 0 based on the map visualization, but I wasn't exactly sure where these were coming from (z?)
-      const edgeSegmentsData = new Float32Array( // TODO this doesn't work. There's some issue with the typing and accessing the node pos data
-        edgeData.flatMap((edge) => [
-          nodePosData[edge[0]].x,
-          nodePosData[edge[0]].y,
-          0,
-          nodePosData[edge[1]].x,
-          nodePosData[edge[1]].y,
-          0,
-        ])
+      nav_graph_text.split('\n').map((nodeText) => {
+        let node_info = nodeText.split(', ');
+        let neighbors = [];
+        for (
+          let neighbor_idx = 0;
+          neighbor_idx < parseInt(node_info[3], 10);
+          neighbor_idx++
+        ) {
+          neighbors.push(parseInt(node_info[neighbor_idx + 4]));
+        }
+        let node_id = parseInt(node_info[0], 10);
+        nodes.set(node_id, {
+          id: node_id,
+          x: parseFloat(node_info[1]),
+          y: parseFloat(node_info[2]),
+          neighbors: neighbors,
+        } as graphNode);
+      });
+
+      let edges: number[][] = [];
+
+      for (let node_id of nodes.keys()) {
+        let node = nodes.get(node_id)!;
+        node.neighbors.forEach((neigbhor: number) => {
+          if (neigbhor > node_id) {
+            edges.push([
+              node.x,
+              node.y,
+              nodes.get(neigbhor)!.x,
+              nodes.get(neigbhor)!.y,
+            ]);
+          }
+        });
+      }
+
+      const edgeSegmentsData = new Float32Array(
+        edges.flatMap((edge) => [edge[0], edge[1], 0, edge[2], edge[3], 0])
       );
 
       setNavGraphLinesData(edgeSegmentsData);
