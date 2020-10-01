@@ -187,6 +187,10 @@ export default function VizTab(props: { namespace: string }) {
   const [chosenMap, setChosenMap] = useState<string | undefined>(undefined);
   const [mapOptions, setMapOptions] = useState([{ name: 'EmptyMap' }]);
   const [locShowMap, setLocShowMap] = useStorage('Localization.showMap', true);
+  const [locShowNavMap, setLocShowNavMap] = useStorage(
+    'Localization.showNavMap',
+    true
+  );
   const [scanShow, setScanShow] = useStorage('LaserScan.show', true);
   const [vizShowPoints, setVizShowPoints] = useStorage('Viz.showPoints', false);
   const [vizShowLines, setVizShowLines] = useStorage('Viz.showLines', false);
@@ -243,6 +247,15 @@ export default function VizTab(props: { namespace: string }) {
                 />
               }
               label={`Show Map`}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={locShowNavMap}
+                  onClick={() => setLocShowNavMap((s) => !s)}
+                />
+              }
+              label={`Show Nav Graph`}
             />
           </FormGroup>
           <FormGroup row className={classes['VizControl']}>
@@ -325,8 +338,6 @@ export default function VizTab(props: { namespace: string }) {
   const rotation = new THREE.Matrix4().makeRotationZ(theta);
   const baseLink = translation.multiply(rotation);
 
-  // TODO fix navGraphVisible (should probably have its own toggle switch)
-  // Kavan, feel free to change the nav graph color
   const viewers = (
     <WebSocketContext.Provider value={ws}>
       <Localization2DViewer
@@ -340,7 +351,7 @@ export default function VizTab(props: { namespace: string }) {
         theta={theta}
         poseColor={0x8ecc47}
         navGraphColor={0x5d6b75}
-        navGraphVisible={locShowMap}
+        navGraphVisible={locShowNavMap}
       />
       <LaserScanViewer
         namespace={props.namespace}
