@@ -67,6 +67,7 @@ export default function Localization2DViewer(props: {
 
       let nodes = new Map<number, graphNode>();
 
+      // Collect information about nodes
       nav_graph_text.split('\n').map((nodeText) => {
         let node_info = nodeText.split(', ');
         let neighbors = [];
@@ -88,9 +89,11 @@ export default function Localization2DViewer(props: {
 
       let edges: number[][] = [];
 
+      // Create list of edges with coordinates [x1, y1, x2, y2]
       for (let node_id of nodes.keys()) {
         let node = nodes.get(node_id)!;
         node.neighbors.forEach((neigbhor: number) => {
+          // We only add edges from the smaller neighbor to the larger one, since all our edges are represented twice.
           if (neigbhor > node_id) {
             edges.push([
               node.x,
@@ -102,6 +105,7 @@ export default function Localization2DViewer(props: {
         });
       }
 
+      // Set up the edges for drawing
       const edgeSegmentsData = new Float32Array(
         edges.flatMap((edge) => [edge[0], edge[1], 0, edge[2], edge[3], 0])
       );
