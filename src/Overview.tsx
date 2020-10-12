@@ -157,7 +157,7 @@ export default function Overview() {
     if (obj.battery_level >= 0) {
       batteryContent = <PercentageDisplay value={obj.battery_level} />;
     } else {
-      batteryContent = 'Unknown';
+      batteryContent = 'unknown';
     }
 
     return (
