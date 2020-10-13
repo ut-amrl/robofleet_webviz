@@ -113,8 +113,8 @@ export default function Overview() {
                 [name]: {
                   name: name,
                   is_ok: true,
-                  battery_level: 0,
-                  status: robot.lastStatus,
+                  battery_level: -1,
+                  status: 'offline', // TODO incorporate last status
                   location: robot.lastLocation,
                   is_active: false,
                   last_updated: dayjs(robot.lastUpdated).fromNow(),
@@ -153,15 +153,20 @@ export default function Overview() {
       );
     }
 
+    let batteryContent: ReactElement | string;
+    if (obj.battery_level >= 0) {
+      batteryContent = <PercentageDisplay value={obj.battery_level} />;
+    } else {
+      batteryContent = 'unknown';
+    }
+
     return (
       <TableRow key={name} className={obj.is_active ? '' : classes.inactive}>
         <TableCell align="left">{name}</TableCell>
         <TableCell align="center">
           {obj.is_ok ? <Check /> : <Clear color="error" />}
         </TableCell>
-        <TableCell align="center">
-          <PercentageDisplay value={obj.battery_level} />
-        </TableCell>
+        <TableCell align="center">{batteryContent}</TableCell>
         <TableCell align="center">{obj.status}</TableCell>
         <TableCell align="center">{obj.location}</TableCell>
         <TableCell align="center">{detailsContent}</TableCell>
