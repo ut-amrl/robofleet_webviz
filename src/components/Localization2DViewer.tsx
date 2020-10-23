@@ -47,70 +47,39 @@ export default function Localization2DViewer(props: {
     };
 
     const loadNavGraph = async () => {
-      let nav_graph_text = '';
+      let nav_graph_text: any;
       const res = await fetch(config.navGraphUrl(props.mapName));
       if (res.ok) {
         try {
-          nav_graph_text = await res.text();
+          nav_graph_text = await res.json();
         } catch (err) {
           console.error(`Bad nav graph data for "${props.mapName}"`, err);
+          setNavGraphLinesData(new Float32Array(0));
           return;
         }
-      }
 
-      interface graphNode {
-        id: number;
-        x: number;
-        y: number;
-        neighbors: Array<number>;
-      }
-
-      let nodes = new Map<number, graphNode>();
-
-      // Collect information about nodes
-      nav_graph_text.split('\n').map((nodeText) => {
-        let node_info = nodeText.split(', ');
-        let neighbors = [];
-        for (
-          let neighbor_idx = 0;
-          neighbor_idx < parseInt(node_info[3], 10);
-          neighbor_idx++
-        ) {
-          neighbors.push(parseInt(node_info[neighbor_idx + 4]));
+        let nodeMap = new Map();
+        for (let node of nav_graph_text.nodes) {
+          console.log(node);
+          nodeMap.set(node.id, node);
         }
-        let node_id = parseInt(node_info[0], 10);
-        nodes.set(node_id, {
-          id: node_id,
-          x: parseFloat(node_info[1]),
-          y: parseFloat(node_info[2]),
-          neighbors: neighbors,
-        } as graphNode);
-      });
 
-      let edges: number[][] = [];
+        // Set up the edges for drawing
+        const edgeSegmentsData = new Float32Array(
+          nav_graph_text.edges.flatMap((edge: any) => [
+            nodeMap.get(edge.s0_id).loc.x,
+            nodeMap.get(edge.s0_id).loc.y,
+            0,
+            nodeMap.get(edge.s1_id).loc.x,
+            nodeMap.get(edge.s1_id).loc.y,
+            0,
+          ])
+        );
 
-      // Create list of edges with coordinates [x1, y1, x2, y2]
-      for (let node_id of nodes.keys()) {
-        let node = nodes.get(node_id)!;
-        node.neighbors.forEach((neigbhor: number) => {
-          // We only add edges from the smaller neighbor to the larger one, since all our edges are represented twice.
-          if (neigbhor > node_id) {
-            edges.push([
-              node.x,
-              node.y,
-              nodes.get(neigbhor)!.x,
-              nodes.get(neigbhor)!.y,
-            ]);
-          }
-        });
+        setNavGraphLinesData(edgeSegmentsData);
+      } else {
+        setNavGraphLinesData(new Float32Array(0));
       }
-
-      // Set up the edges for drawing
-      const edgeSegmentsData = new Float32Array(
-        edges.flatMap((edge) => [edge[0], edge[1], 0, edge[2], edge[3], 0])
-      );
-
-      setNavGraphLinesData(edgeSegmentsData);
     };
     loadMap();
     loadNavGraph();
