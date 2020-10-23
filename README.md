@@ -12,6 +12,9 @@ The web visualizer must be configured before building.
 
 ## Building
 
+### yarn install
+Install needed dependencies.
+
 ### `yarn start`
 
 Runs the app in the development mode.<br />
