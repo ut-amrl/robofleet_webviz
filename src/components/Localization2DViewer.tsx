@@ -60,7 +60,6 @@ export default function Localization2DViewer(props: {
 
         let nodeMap = new Map();
         for (let node of nav_graph_text.nodes) {
-          console.log(node);
           nodeMap.set(node.id, node);
         }
 
