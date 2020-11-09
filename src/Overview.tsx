@@ -55,7 +55,7 @@ type StaticRobotInfo = {
 const useStyles = makeStyles((theme: Theme) => ({
   inactive: {
     '& td': {
-      color: theme.palette.grey[400],
+      color: theme.palette.text.secondary,
     },
   },
 }));
@@ -114,7 +114,7 @@ export default function Overview() {
                   name: name,
                   is_ok: true,
                   battery_level: -1,
-                  status: 'offline', // TODO incorporate last status
+                  status: robot.lastStatus, // TODO incorporate last status
                   location: robot.lastLocation,
                   is_active: false,
                   last_updated: dayjs(robot.lastUpdated).fromNow(),
@@ -153,6 +153,30 @@ export default function Overview() {
       );
     }
 
+    let statusContent: ReactElement | string;
+    if (obj.is_active) {
+      statusContent = obj.status;
+    } else {
+      statusContent = (
+        <Box>
+          <div>Last seen:</div>
+          <div>{obj.status}</div>
+        </Box>
+      );
+    }
+
+    let locationContent: ReactElement | string;
+    if (obj.is_active) {
+      locationContent = obj.location;
+    } else {
+      locationContent = (
+        <Box>
+          <div>Last seen:</div>
+          <div>{obj.location}</div>
+        </Box>
+      );
+    }
+
     let batteryContent: ReactElement | string;
     if (obj.battery_level >= 0) {
       batteryContent = <PercentageDisplay value={obj.battery_level} />;
@@ -167,8 +191,8 @@ export default function Overview() {
           {obj.is_ok ? <Check /> : <Clear color="error" />}
         </TableCell>
         <TableCell align="center">{batteryContent}</TableCell>
-        <TableCell align="center">{obj.status}</TableCell>
-        <TableCell align="center">{obj.location}</TableCell>
+        <TableCell align="center">{statusContent}</TableCell>
+        <TableCell align="center">{locationContent}</TableCell>
         <TableCell align="center">{detailsContent}</TableCell>
       </TableRow>
     );
