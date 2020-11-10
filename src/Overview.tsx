@@ -103,31 +103,29 @@ export default function Overview() {
 
       if (res.ok) {
         try {
-          let robotInfo = await res.json();
-          robotInfo.forEach((robot: StaticRobotInfo) => {
+          const robotInfo = (await res.json()) as Array<StaticRobotInfo>;
+          robotInfo.forEach((robot) => {
             const name = '/' + robot.name;
-            if (!data[name]) {
+            setData((data) => ({
+              [name]: {
+                name,
+                is_ok: true,
+                battery_level: -1,
+                status: robot.lastStatus,
+                location: robot.lastLocation,
+                is_active: false,
+                last_updated: dayjs(robot.lastUpdated).fromNow(),
+              },
               // don't overwrite any live robot data with this static info
-              setData((data) => ({
-                ...data,
-                [name]: {
-                  name: name,
-                  is_ok: true,
-                  battery_level: -1,
-                  status: robot.lastStatus, // TODO incorporate last status
-                  location: robot.lastLocation,
-                  is_active: false,
-                  last_updated: dayjs(robot.lastUpdated).fromNow(),
-                },
-              }));
-            }
+              ...data,
+            }));
           });
         } catch (err) {
           console.error(`Failed to fetch static robot info`, err);
         }
       }
     })();
-  }, [data]);
+  }, []);
 
   const items = Object.entries(data).map(([name, obj]) => {
     let detailsContent: ReactElement | string;
