@@ -95,7 +95,7 @@ export default function ImageryTab(props: { namespace: string }) {
   }
   const [observedImages, setObservedImages] = useState({} as ImageMap);
 
-  const imageTopicCallback = useCallback(
+  const compressedImageTopicCallback = useCallback(
     (buf, match) => {
       (async () => {
         const topic = match[0] as string;
@@ -121,13 +121,8 @@ export default function ImageryTab(props: { namespace: string }) {
 
   // TODO: Use a standard prefix for image topics so we only need to call this once
   useRobofleetMsgListener(
-    matchTopic(props.namespace, 'stereo/left/image_raw/compressed'),
-    imageTopicCallback
-  );
-
-  useRobofleetMsgListener(
-    matchTopic(props.namespace, 'stereo/right/image_raw/compressed'),
-    imageTopicCallback
+    matchTopic(props.namespace, 'stereo/(.*)/image_raw/compressed'),
+    compressedImageTopicCallback
   );
 
   const startPreviews = () => setEnablePreviews(true);
