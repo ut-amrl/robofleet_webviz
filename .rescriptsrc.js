@@ -1,5 +1,6 @@
 const path = require('path');
-const { edit, getPaths } = require('@rescripts/utilities');
+const { edit, getPaths, appendWebpackPlugin } = require('@rescripts/utilities');
+const { ESBuildPlugin } = require('esbuild-loader');
 
 // test a Webpack "test" rule against a string
 const doTest = (test, matchStr) => {
@@ -29,34 +30,20 @@ module.exports = [
         ]
     }],
     (config) => {
-        // don't load generated schema with babel-loader
+        config = appendWebpackPlugin(new ESBuildPlugin(), config);
         config = edit(
             (rule) => {
-                if (!rule.hasOwnProperty("exclude"))
-                    rule.exclude = [];
-                rule.exclude.push(path.resolve(__dirname, "src/schema_generated.ts"));
+                console.log(rule);
+                rule.loader = require.resolve("esbuild-loader");
+                rule.options = {
+                    loader: "tsx"
+                };
+                console.log(rule);
                 return rule;
             },
             getPaths(isTsRule, config),
             config,
         );
-        
-        // load generated schema with ts-loader
-        config = edit(
-            (module) => {
-                module.rules.unshift({
-                    include: [path.resolve(__dirname, "src/schema_generated.ts")],
-                    loader: require.resolve("ts-loader"),
-                    options: {
-                        configFile: "tsconfig.tsc.json"
-                    }
-                });
-                return module;
-            },
-            getPaths(x => x.rules, config),
-            config
-        );
-
         return config;
     }
 ];
