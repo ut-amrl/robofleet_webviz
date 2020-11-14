@@ -145,6 +145,23 @@ export default function Overview() {
     })();
   }, []);
 
+  const tableHead = (
+    <TableHead>
+      <TableRow>
+        <TableCell align="left">Name</TableCell>
+        <TableCell style={{ width: '3em' }} align="center">
+          OK
+        </TableCell>
+        <TableCell style={{ width: '5em' }} align="center">
+          Battery
+        </TableCell>
+        <TableCell align="center">Status</TableCell>
+        <TableCell align="center">Location</TableCell>
+        <TableCell align="center">Last seen</TableCell>
+      </TableRow>
+    </TableHead>
+  );
+
   const sortedData = useMemo(
     () =>
       Object.entries(data).sort(
@@ -215,20 +232,7 @@ export default function Overview() {
         </Typography>
         <TableContainer component={Paper}>
           <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Name</TableCell>
-                <TableCell style={{ width: '3em' }} align="center">
-                  OK
-                </TableCell>
-                <TableCell style={{ width: '5em' }} align="center">
-                  Battery
-                </TableCell>
-                <TableCell align="center">Status</TableCell>
-                <TableCell align="center">Location</TableCell>
-                <TableCell align="center">Last seen</TableCell>
-              </TableRow>
-            </TableHead>
+            {tableHead}
             <TableBody>{items}</TableBody>
           </Table>
         </TableContainer>
