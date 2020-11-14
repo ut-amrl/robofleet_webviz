@@ -20,6 +20,7 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useMemo,
   ReactElement,
 } from 'react';
 import { Link } from 'react-router-dom';
@@ -144,7 +145,15 @@ export default function Overview() {
     })();
   }, []);
 
-  const items = Object.entries(data).map(([name, obj]) => {
+  const sortedData = useMemo(
+    () =>
+      Object.entries(data).sort(
+        ([_, a], [__, b]) => Number(b.is_active) - Number(a.is_active)
+      ),
+    [data]
+  );
+
+  const items = sortedData.map(([name, obj]) => {
     let batteryContent: ReactElement | string;
     if (obj.battery_level >= 0) {
       batteryContent = <PercentageDisplay value={obj.battery_level} />;
