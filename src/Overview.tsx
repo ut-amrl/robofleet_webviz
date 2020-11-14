@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   Paper,
   Table,
@@ -229,18 +228,6 @@ export default function Overview() {
             </TableHead>
             <TableBody>{items}</TableBody>
           </Table>
-          <div
-            style={{ padding: '1em', display: 'flex', alignItems: 'center' }}
-          >
-            <CircularProgress variant="indeterminate" disableShrink size={16} />
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              style={{ marginLeft: '1em' }}
-            >
-              Watching for new robots
-            </Typography>
-          </div>
         </TableContainer>
       </Container>
     </>
