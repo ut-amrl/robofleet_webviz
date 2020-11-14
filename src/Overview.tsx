@@ -14,6 +14,7 @@ import {
   Theme,
 } from '@material-ui/core';
 import { Check, Clear } from '@material-ui/icons';
+import SyncDisabled from '@material-ui/icons/SyncDisabled';
 import React, {
   useCallback,
   useContext,
@@ -58,6 +59,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
+
+const MaybeDisconnectedLabel = (props: {
+  label: ReactElement | string;
+  disconnected: boolean;
+}) => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="center"
+    >
+      {props.disconnected && <SyncDisabled fontSize="small" />}
+      <div>{props.label}</div>
+    </Box>
+  );
+};
 
 export default function Overview() {
   const { setPaused } = useContext(AppContext);
@@ -127,53 +145,6 @@ export default function Overview() {
   }, []);
 
   const items = Object.entries(data).map(([name, obj]) => {
-    let detailsContent: ReactElement | string;
-    if (obj.is_active) {
-      const href = `/robot/${btoa(name)}`;
-      detailsContent = (
-        <Button
-          component={Link}
-          to={href}
-          size="small"
-          variant="outlined"
-          color="primary"
-        >
-          View
-        </Button>
-      );
-    } else {
-      detailsContent = (
-        <Box>
-          <div>Last seen:</div>
-          <div>{obj.last_updated}</div>
-        </Box>
-      );
-    }
-
-    let statusContent: ReactElement | string;
-    if (obj.is_active) {
-      statusContent = obj.status;
-    } else {
-      statusContent = (
-        <Box>
-          <div>Last seen:</div>
-          <div>{obj.status}</div>
-        </Box>
-      );
-    }
-
-    let locationContent: ReactElement | string;
-    if (obj.is_active) {
-      locationContent = obj.location;
-    } else {
-      locationContent = (
-        <Box>
-          <div>Last seen:</div>
-          <div>{obj.location}</div>
-        </Box>
-      );
-    }
-
     let batteryContent: ReactElement | string;
     if (obj.battery_level >= 0) {
       batteryContent = <PercentageDisplay value={obj.battery_level} />;
@@ -181,16 +152,42 @@ export default function Overview() {
       batteryContent = 'unknown';
     }
 
+    const nameContent = obj.is_active ? (
+      <Button
+        component={Link}
+        to={`/robot/${btoa(name)}`}
+        style={{ textTransform: 'none' }}
+        variant="outlined"
+        disabled={!obj.is_active}
+      >
+        {name}
+      </Button>
+    ) : (
+      <Typography variant="button" style={{ textTransform: 'none' }}>
+        {name} (Offline)
+      </Typography>
+    );
+
     return (
       <TableRow key={name} className={obj.is_active ? '' : classes.inactive}>
-        <TableCell align="left">{name}</TableCell>
+        <TableCell align="left">{nameContent}</TableCell>
         <TableCell align="center">
           {obj.is_ok ? <Check /> : <Clear color="error" />}
         </TableCell>
         <TableCell align="center">{batteryContent}</TableCell>
-        <TableCell align="center">{statusContent}</TableCell>
-        <TableCell align="center">{locationContent}</TableCell>
-        <TableCell align="center">{detailsContent}</TableCell>
+        <TableCell align="center">
+          <MaybeDisconnectedLabel
+            label={obj.status}
+            disconnected={!obj.is_active}
+          />
+        </TableCell>
+        <TableCell align="center">
+          <MaybeDisconnectedLabel
+            label={obj.location}
+            disconnected={!obj.is_active}
+          />
+        </TableCell>
+        <TableCell align="center">{obj.last_updated}</TableCell>
       </TableRow>
     );
   });
@@ -201,11 +198,11 @@ export default function Overview() {
       <Box height="2em" />
       <Container component="main" maxWidth="md">
         <Typography
-          variant="h3"
+          variant="h4"
           component="h2"
           style={{ marginBottom: '0.25em' }}
         >
-          Overview
+          Robots
         </Typography>
         <TableContainer component={Paper}>
           <Table size="small">
@@ -220,10 +217,7 @@ export default function Overview() {
                 </TableCell>
                 <TableCell align="center">Status</TableCell>
                 <TableCell align="center">Location</TableCell>
-                <TableCell
-                  style={{ width: '120px' }}
-                  align="center"
-                ></TableCell>
+                <TableCell align="center">Last seen</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>{items}</TableBody>
