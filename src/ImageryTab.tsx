@@ -14,7 +14,9 @@ import {
 import { Close } from '@material-ui/icons';
 import React, { useState, useCallback } from 'react';
 import ImageViewer from './components/ImageViewer';
-import useRobofleetMsgListener, { RobofleetMsgListener } from './hooks/useRobofleetMsgListener';
+import useRobofleetMsgListener, {
+  RobofleetMsgListener,
+} from './hooks/useRobofleetMsgListener';
 import { fb } from './schema';
 import { matchTopic } from './util';
 
@@ -119,9 +121,8 @@ export default function ImageryTab(props: { namespace: string }) {
     [observedTopics, observedImages]
   );
 
-  // TODO: Use a standard prefix for image topics so we only need to call this once
   useRobofleetMsgListener(
-    matchTopic(props.namespace, 'stereo/(.*)/image_raw/compressed'),
+    matchTopic(props.namespace, 'image_compressed/.+'),
     compressedImageTopicCallback
   );
 
