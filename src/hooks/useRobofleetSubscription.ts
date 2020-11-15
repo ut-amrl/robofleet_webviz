@@ -1,5 +1,5 @@
 import { flatbuffers } from 'flatbuffers';
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useCallback } from 'react';
 import WebSocketContext from '../contexts/WebSocketContext';
 import { fb } from '../schema';
 
@@ -49,7 +49,6 @@ export default function useRobofleetSubscription(
   topicRegex: RegExp,
   { enabled = true }: { enabled?: boolean } = {}
 ) {
-  const [shouldBeSubscribed, setShouldBeSubscribed] = useState(enabled);
   const ws = useContext(WebSocketContext);
   if (ws === null) {
     throw new Error('No WebSocketContext provided.');
@@ -78,20 +77,9 @@ export default function useRobofleetSubscription(
   // subscribe if should be subscribed, unsubscribe on cleanup if subscribed.
   useEffect(() => {
     if (!ws.connected) return;
-
-    if (shouldBeSubscribed) subscribe();
-    else unsubscribe();
-
-    if (shouldBeSubscribed) return () => unsubscribe();
-  }, [shouldBeSubscribed, ws.connected, subscribe, unsubscribe]);
-
-  // unsubscribe on disable
-  useEffect(() => {
-    if (!enabled) setShouldBeSubscribed(false);
-  }, [enabled]);
-
-  // subscribe if enabled
-  useEffect(() => {
-    if (enabled) setShouldBeSubscribed(true);
-  }, [enabled]);
+    if (enabled) {
+      subscribe();
+      return () => unsubscribe();
+    }
+  }, [enabled, ws.connected, subscribe, unsubscribe]);
 }
