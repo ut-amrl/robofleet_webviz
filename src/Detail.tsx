@@ -5,6 +5,7 @@ import {
   CardContent,
   CircularProgress,
   Container,
+  Fade,
   IconButton,
   Tab,
   Tabs,
@@ -77,10 +78,22 @@ export default function Detail() {
   );
 
   if (!authorized) {
+    const isLoading = authorized === null;
     return (
       <>
         <NavBar title={`${namespace}`} navIcon={backIcon}></NavBar>
-        <Backdrop open={!authorized}>
+        <Fade
+          in={isLoading}
+          style={{
+            transitionDelay: isLoading ? '500ms' : '0ms',
+          }}
+          unmountOnExit
+        >
+          <Backdrop open={true}>
+            <CircularProgress />
+          </Backdrop>
+        </Fade>
+        <Backdrop open={authorized === false}>
           <Typography variant="subtitle1">
             Authorization check failed. Please sign in or use an authorized
             client to view robot details.
