@@ -16,7 +16,7 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack, Pause, PlayArrow } from '@material-ui/icons';
 import React, { useCallback, useContext, useState, ReactElement } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import AppContext from './contexts/AppContext';
@@ -57,10 +57,11 @@ export function PauseButton() {
 }
 
 export default function Detail() {
-  const { id } = useParams();
-  const namespace = atob(id);
+  const params = useParams<{ id: string; tab: string | undefined }>();
+  const history = useHistory();
+  const namespace = atob(params.id);
   const { idToken } = useContext(IdTokenContext);
-  const [tabIndex, setTabIndex] = useState(0);
+  const tabIndex = params.tab ? Number.parseInt(params.tab) : 0;
   const [receivedMsg, setReceivedMsg] = useState(false);
 
   // subscribe to all messages until we receive something
@@ -142,7 +143,7 @@ export default function Detail() {
     <>
       <Tabs
         value={tabIndex}
-        onChange={(_, index) => setTabIndex(index)}
+        onChange={(_, index) => history.push(`/robot/${params.id}/${index}`)}
         style={{ flexGrow: 1 }}
       >
         <Tab label="Viz" />
@@ -156,13 +157,11 @@ export default function Detail() {
   const content = (
     <>
       <TabHider
-        key={0}
         id={0}
         index={tabIndex}
         render={(hidden) => <VizTab namespace={namespace} enabled={!hidden} />}
       />
       <TabHider
-        key={1}
         id={1}
         index={tabIndex}
         render={(hidden) => (
@@ -170,7 +169,6 @@ export default function Detail() {
         )}
       />
       <TabHider
-        key={2}
         id={2}
         index={tabIndex}
         render={(hidden) => (
