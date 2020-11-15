@@ -231,7 +231,7 @@ export default function Overview() {
           Robots
         </Typography>
         <TableContainer component={Paper}>
-          <Table size="small">
+          <Table>
             {tableHead}
             <TableBody>{items}</TableBody>
           </Table>
