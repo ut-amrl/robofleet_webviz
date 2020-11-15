@@ -14,7 +14,7 @@ import {
 import { Close } from '@material-ui/icons';
 import React, { useState, useCallback } from 'react';
 import ImageViewer from './components/ImageViewer';
-import useRobofleetMsgListener from './hooks/useRobofleetMsgListener';
+import useRobofleetMsgListener, { RobofleetMsgListener } from './hooks/useRobofleetMsgListener';
 import { fb } from './schema';
 import { matchTopic } from './util';
 
@@ -95,10 +95,10 @@ export default function ImageryTab(props: { namespace: string }) {
   }
   const [observedImages, setObservedImages] = useState({} as ImageMap);
 
-  const compressedImageTopicCallback = useCallback(
+  const compressedImageTopicCallback: RobofleetMsgListener = useCallback(
     (buf, match) => {
       (async () => {
-        const topic = match[0] as string;
+        const topic = match[0];
         const ci = fb.sensor_msgs.CompressedImage.getRootAsCompressedImage(buf);
         const blob = new Blob([ci.dataArray() ?? new Uint8Array()], {
           type: `image/${ci.format()}`,
