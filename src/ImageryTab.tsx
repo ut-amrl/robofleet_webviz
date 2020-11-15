@@ -89,11 +89,11 @@ export function ImageCard(props: {
 
 export default function ImageryTab(props: { namespace: string }) {
   const [enablePreviews, setEnablePreviews] = useState(true);
-  const [observedTopics, setObservedTopics] = useState([] as Array<string>);
+  const [observedTopics, setObservedTopics] = useState<Array<string>>([]);
   interface ImageMap {
     [topic: string]: ImageBitmap;
   }
-  const [observedImages, setObservedImages] = useState({} as ImageMap);
+  const [observedImages, setObservedImages] = useState<ImageMap>({});
 
   const compressedImageTopicCallback: RobofleetMsgListener = useCallback(
     (buf, match) => {
