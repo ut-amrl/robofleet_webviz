@@ -11,6 +11,7 @@ import {
   Tabs,
   Typography,
   Backdrop,
+  LinearProgress,
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack, Pause, PlayArrow } from '@material-ui/icons';
@@ -78,6 +79,34 @@ export default function Detail() {
     </IconButton>
   );
 
+  const loader = (
+    <Container maxWidth="md">
+      <Fade
+        in={!receivedMsg}
+        style={{ transitionDelay: !receivedMsg ? '1000ms' : '0' }}
+      >
+        <div>
+          <Box height="2em" />
+          <Card>
+            <CardContent style={{ display: 'flex', flexDirection: 'column' }}>
+              <Box>
+                <Typography variant="h5" component="h2">
+                  Waiting for data
+                </Typography>
+                <Typography variant="body1" component="h2">
+                  This robot may be offline.
+                </Typography>
+              </Box>
+              <Box marginTop={3}>
+                <LinearProgress />
+              </Box>
+            </CardContent>
+          </Card>
+        </div>
+      </Fade>
+    </Container>
+  );
+
   if (!authorized) {
     const isLoading = authorized === null;
     return (
@@ -85,9 +114,7 @@ export default function Detail() {
         <NavBar title={`${namespace}`} navIcon={backIcon}></NavBar>
         <Fade
           in={isLoading}
-          style={{
-            transitionDelay: isLoading ? '500ms' : '0ms',
-          }}
+          style={{ transitionDelay: isLoading ? '500ms' : '0ms' }}
           unmountOnExit
         >
           <Backdrop open={true}>
@@ -106,24 +133,6 @@ export default function Detail() {
       </>
     );
   }
-
-  const loader = (
-    <Container maxWidth="md">
-      <Box height="2em" />
-      <Card>
-        <CardContent style={{ display: 'flex' }}>
-          <CircularProgress
-            variant="indeterminate"
-            size={32}
-            style={{ marginRight: '1rem' }}
-          />
-          <Typography variant="h5" component="h2">
-            Waiting for data...
-          </Typography>
-        </CardContent>
-      </Card>
-    </Container>
-  );
 
   const tabs = (
     <>
