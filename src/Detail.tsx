@@ -12,6 +12,7 @@ import {
   Typography,
   Backdrop,
 } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack, Pause, PlayArrow } from '@material-ui/icons';
 import React, { useCallback, useContext, useState } from 'react';
 import { useParams } from 'react-router';
@@ -94,10 +95,13 @@ export default function Detail() {
           </Backdrop>
         </Fade>
         <Backdrop open={authorized === false}>
-          <Typography variant="subtitle1">
-            Authorization check failed. Please sign in or use an authorized
-            client to view robot details.
-          </Typography>
+          <Box maxWidth="40em">
+            <Alert severity="error">
+              <AlertTitle>Not authorized</AlertTitle>
+              You can view this robot if you sign in with an authorized account
+              or view this page from an authorized IP address.
+            </Alert>
+          </Box>
         </Backdrop>
       </>
     );
