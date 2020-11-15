@@ -26,6 +26,7 @@ enum ImageType {
 }
 
 export function ImageCard(props: {
+  enabled: boolean;
   namespace: string;
   topic: string;
   data: flatbuffers.ByteBuffer;
@@ -34,6 +35,7 @@ export function ImageCard(props: {
   onClose?: () => void;
   onOpen?: () => void;
 }) {
+  const { enabled } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const smallWidth = useMediaQuery('(max-width: 800px)');
@@ -90,7 +92,7 @@ export function ImageCard(props: {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        {imageViewerContent(dialogOpen, true)}
+        {imageViewerContent(enabled && dialogOpen, true)}
       </DialogContent>
     </Dialog>
   );
@@ -99,7 +101,7 @@ export function ImageCard(props: {
     <Card style={{ maxWidth: '350px' }}>
       <CardActionArea onClick={handleOpen}>
         <CardContent>
-          {imageViewerContent(props.enablePreviews ?? false, false)}
+          {imageViewerContent(enabled && (props.enablePreviews ?? false), false)}
           <Typography variant="body2" color="textSecondary" component="p">
             {props.topic}
           </Typography>
@@ -116,7 +118,11 @@ export function ImageCard(props: {
   );
 }
 
-export default function ImageryTab(props: { namespace: string }) {
+export default function ImageryTab(props: {
+  enabled: boolean;
+  namespace: string;
+}) {
+  const { enabled } = props;
   const [enablePreviews, setEnablePreviews] = useState(true);
   interface ImageMap {
     [topic: string]: {
@@ -180,6 +186,7 @@ export default function ImageryTab(props: { namespace: string }) {
       const { type, data } = observedImages[topic];
       return (
         <ImageCard
+          enabled={enabled}
           namespace={props.namespace}
           topic={topic}
           key={topic}

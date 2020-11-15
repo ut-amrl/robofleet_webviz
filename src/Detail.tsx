@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { ArrowBack, Pause, PlayArrow } from '@material-ui/icons';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, ReactElement } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import NavBar from './components/NavBar';
@@ -28,12 +28,16 @@ import VizTab from './VizTab';
 import IdTokenContext from './contexts/IdTokenContext';
 import useAuthCheck from './hooks/useAuthCheck';
 
-export function TabHider(props: { id: number; index: number; children: any }) {
-  // currently, we only render visible tabls
-  // alternatively, just hide invisible ones for less tab-switch latency but higher resource usage.
-  // alternatively, support disabling updates for all child components somehow.
-  const visible = props.index === props.id;
-  return visible ? props.children : <></>;
+export function TabHider(props: {
+  id: number;
+  index: number;
+  render: (hidden: boolean) => ReactElement;
+}) {
+  const hidden = props.index !== props.id;
+  const tabContent = props.render(hidden);
+  return (
+    <div style={{ display: hidden ? 'none' : undefined }}>{tabContent}</div>
+  );
 }
 
 export function PauseButton() {
@@ -151,15 +155,28 @@ export default function Detail() {
 
   const content = (
     <>
-      <TabHider id={0} index={tabIndex}>
-        <VizTab namespace={namespace} />
-      </TabHider>
-      <TabHider id={1} index={tabIndex}>
-        <ImageryTab namespace={namespace} />
-      </TabHider>
-      <TabHider id={2} index={tabIndex}>
-        <StatsTab namespace={namespace} />
-      </TabHider>
+      <TabHider
+        key={0}
+        id={0}
+        index={tabIndex}
+        render={(hidden) => <VizTab namespace={namespace} enabled={!hidden} />}
+      />
+      <TabHider
+        key={1}
+        id={1}
+        index={tabIndex}
+        render={(hidden) => (
+          <ImageryTab namespace={namespace} enabled={!hidden} />
+        )}
+      />
+      <TabHider
+        key={2}
+        id={2}
+        index={tabIndex}
+        render={(hidden) => (
+          <StatsTab namespace={namespace} enabled={!hidden} />
+        )}
+      />
     </>
   );
 

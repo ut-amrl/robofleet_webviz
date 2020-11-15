@@ -169,8 +169,9 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function VizTab(props: { namespace: string }) {
+export default function VizTab(props: { namespace: string; enabled: boolean }) {
   type ClickAction = 'Default' | 'Localize' | 'SetNav';
+  const { enabled } = props;
 
   const ws = useContext(WebSocketContext);
   const classes = useStyles();
@@ -210,7 +211,8 @@ export default function VizTab(props: { namespace: string }) {
         setLocAlertOpen(false);
       },
       [mapName]
-    )
+    ),
+    { enabled }
   );
 
   // Loading map names
@@ -354,6 +356,7 @@ export default function VizTab(props: { namespace: string }) {
         navGraphVisible={locShowNavMap}
       />
       <LaserScanViewer
+        enabled={enabled}
         namespace={props.namespace}
         topic="velodyne_2dscan"
         matrix={baseLink}
@@ -361,6 +364,7 @@ export default function VizTab(props: { namespace: string }) {
         visible={scanShow}
       />
       <VisualizationViewer
+        enabled={enabled}
         namespace={props.namespace}
         topic="visualization"
         baseLinkMatrix={baseLink}
