@@ -9,12 +9,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   makeStyles,
   Theme,
 } from '@material-ui/core';
 import { Check, Clear } from '@material-ui/icons';
-import SyncDisabled from '@material-ui/icons/SyncDisabled';
+import CloudOff from '@material-ui/icons/CloudOff';
 import React, {
   useCallback,
   useContext,
@@ -65,17 +66,23 @@ const MaybeDisconnectedLabel = (props: {
   label: ReactElement | string;
   disconnected: boolean;
 }) => {
-  return (
-    <Box
-      display="flex"
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="center"
-    >
-      {props.disconnected && <SyncDisabled fontSize="small" />}
-      <div>{props.label}</div>
-    </Box>
-  );
+  if (props.disconnected) {
+    return (
+      <Tooltip arrow title="Offline, showing saved data.">
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <CloudOff fontSize="small" />
+          <Box marginRight={1} />
+          {props.label}
+        </Box>
+      </Tooltip>
+    );
+  }
+  return <>{props.label}</>;
 };
 
 export default function Overview() {
