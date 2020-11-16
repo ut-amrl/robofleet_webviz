@@ -127,6 +127,78 @@ export namespace fb.sensor_msgs.NavSatFixConstants {
 }
 
 /**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum int8 {
+    value = 1,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum uint8 {
+    value = 2,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum int16 {
+    value = 3,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum uint16 {
+    value = 4,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum int32 {
+    value = 5,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum uint32 {
+    value = 6,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum float32 {
+    value = 7,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.sensor_msgs.PointFieldConstants {
+  export enum float64 {
+    value = 8,
+  }
+}
+
+/**
  * @constructor
  */
 export namespace fb {
@@ -3529,6 +3601,536 @@ export namespace fb.sensor_msgs {
       builder.requiredField(offset, 6); // header
       builder.requiredField(offset, 8); // format
       builder.requiredField(offset, 10); // data
+      return offset;
+    }
+  }
+}
+/**
+ * @constructor
+ */
+export namespace fb.sensor_msgs {
+  export class PointField {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns PointField
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): PointField {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param PointField= obj
+     * @returns PointField
+     */
+    static getRootAsPointField(
+      bb: flatbuffers.ByteBuffer,
+      obj?: PointField
+    ): PointField {
+      return (obj || new PointField()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param PointField= obj
+     * @returns PointField
+     */
+    static getSizePrefixedRootAsPointField(
+      bb: flatbuffers.ByteBuffer,
+      obj?: PointField
+    ): PointField {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new PointField()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param flatbuffers.Encoding= optionalEncoding
+     * @returns string|Uint8Array|null
+     */
+    name(): string | null;
+    name(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
+    name(optionalEncoding?: any): string | Uint8Array | null {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset
+        ? this.bb!.__string(this.bb_pos + offset, optionalEncoding)
+        : null;
+    }
+
+    /**
+     * @returns number
+     */
+    offset(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 8);
+      return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns number
+     */
+    datatype(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 10);
+      return offset ? this.bb!.readUint8(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns number
+     */
+    count(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 12);
+      return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startPointField(builder: flatbuffers.Builder) {
+      builder.startObject(5);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset nameOffset
+     */
+    static addName(
+      builder: flatbuffers.Builder,
+      nameOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(1, nameOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number offset
+     */
+    static addOffset(builder: flatbuffers.Builder, offset: number) {
+      builder.addFieldInt32(2, offset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number datatype
+     */
+    static addDatatype(builder: flatbuffers.Builder, datatype: number) {
+      builder.addFieldInt8(3, datatype, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number count
+     */
+    static addCount(builder: flatbuffers.Builder, count: number) {
+      builder.addFieldInt32(4, count, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endPointField(builder: flatbuffers.Builder): flatbuffers.Offset {
+      var offset = builder.endObject();
+      builder.requiredField(offset, 6); // name
+      return offset;
+    }
+
+    static createPointField(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset,
+      nameOffset: flatbuffers.Offset,
+      offset: number,
+      datatype: number,
+      count: number
+    ): flatbuffers.Offset {
+      PointField.startPointField(builder);
+      PointField.add_Metadata(builder, _metadataOffset);
+      PointField.addName(builder, nameOffset);
+      PointField.addOffset(builder, offset);
+      PointField.addDatatype(builder, datatype);
+      PointField.addCount(builder, count);
+      return PointField.endPointField(builder);
+    }
+  }
+}
+/**
+ * @constructor
+ */
+export namespace fb.sensor_msgs {
+  export class PointCloud2 {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns PointCloud2
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): PointCloud2 {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param PointCloud2= obj
+     * @returns PointCloud2
+     */
+    static getRootAsPointCloud2(
+      bb: flatbuffers.ByteBuffer,
+      obj?: PointCloud2
+    ): PointCloud2 {
+      return (obj || new PointCloud2()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param PointCloud2= obj
+     * @returns PointCloud2
+     */
+    static getSizePrefixedRootAsPointCloud2(
+      bb: flatbuffers.ByteBuffer,
+      obj?: PointCloud2
+    ): PointCloud2 {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new PointCloud2()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param fb.std_msgs.Header= obj
+     * @returns fb.std_msgs.Header|null
+     */
+    header(obj?: fb.std_msgs.Header): fb.std_msgs.Header | null {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset
+        ? (obj || new fb.std_msgs.Header()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @returns number
+     */
+    height(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 8);
+      return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns number
+     */
+    width(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 10);
+      return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @param number index
+     * @param fb.sensor_msgs.PointField= obj
+     * @returns fb.sensor_msgs.PointField
+     */
+    fields(
+      index: number,
+      obj?: fb.sensor_msgs.PointField
+    ): fb.sensor_msgs.PointField | null {
+      var offset = this.bb!.__offset(this.bb_pos, 12);
+      return offset
+        ? (obj || new fb.sensor_msgs.PointField()).__init(
+            this.bb!.__indirect(
+              this.bb!.__vector(this.bb_pos + offset) + index * 4
+            ),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @returns number
+     */
+    fieldsLength(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 12);
+      return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns boolean
+     */
+    isBigendian(): boolean {
+      var offset = this.bb!.__offset(this.bb_pos, 14);
+      return offset ? !!this.bb!.readInt8(this.bb_pos + offset) : false;
+    }
+
+    /**
+     * @returns number
+     */
+    pointStep(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 16);
+      return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns number
+     */
+    rowStep(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 18);
+      return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @param number index
+     * @returns number
+     */
+    data(index: number): number | null {
+      var offset = this.bb!.__offset(this.bb_pos, 20);
+      return offset
+        ? this.bb!.readUint8(this.bb!.__vector(this.bb_pos + offset) + index)
+        : 0;
+    }
+
+    /**
+     * @returns number
+     */
+    dataLength(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 20);
+      return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns Uint8Array
+     */
+    dataArray(): Uint8Array | null {
+      var offset = this.bb!.__offset(this.bb_pos, 20);
+      return offset
+        ? new Uint8Array(
+            this.bb!.bytes().buffer,
+            this.bb!.bytes().byteOffset +
+              this.bb!.__vector(this.bb_pos + offset),
+            this.bb!.__vector_len(this.bb_pos + offset)
+          )
+        : null;
+    }
+
+    /**
+     * @returns boolean
+     */
+    isDense(): boolean {
+      var offset = this.bb!.__offset(this.bb_pos, 22);
+      return offset ? !!this.bb!.readInt8(this.bb_pos + offset) : false;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startPointCloud2(builder: flatbuffers.Builder) {
+      builder.startObject(10);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset headerOffset
+     */
+    static addHeader(
+      builder: flatbuffers.Builder,
+      headerOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(1, headerOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number height
+     */
+    static addHeight(builder: flatbuffers.Builder, height: number) {
+      builder.addFieldInt32(2, height, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number width
+     */
+    static addWidth(builder: flatbuffers.Builder, width: number) {
+      builder.addFieldInt32(3, width, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset fieldsOffset
+     */
+    static addFields(
+      builder: flatbuffers.Builder,
+      fieldsOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(4, fieldsOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param Array.<flatbuffers.Offset> data
+     * @returns flatbuffers.Offset
+     */
+    static createFieldsVector(
+      builder: flatbuffers.Builder,
+      data: flatbuffers.Offset[]
+    ): flatbuffers.Offset {
+      builder.startVector(4, data.length, 4);
+      for (var i = data.length - 1; i >= 0; i--) {
+        builder.addOffset(data[i]);
+      }
+      return builder.endVector();
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number numElems
+     */
+    static startFieldsVector(builder: flatbuffers.Builder, numElems: number) {
+      builder.startVector(4, numElems, 4);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param boolean isBigendian
+     */
+    static addIsBigendian(builder: flatbuffers.Builder, isBigendian: boolean) {
+      builder.addFieldInt8(5, +isBigendian, +false);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number pointStep
+     */
+    static addPointStep(builder: flatbuffers.Builder, pointStep: number) {
+      builder.addFieldInt32(6, pointStep, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number rowStep
+     */
+    static addRowStep(builder: flatbuffers.Builder, rowStep: number) {
+      builder.addFieldInt32(7, rowStep, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset dataOffset
+     */
+    static addData(
+      builder: flatbuffers.Builder,
+      dataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(8, dataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param Array.<number> data
+     * @returns flatbuffers.Offset
+     */
+    static createDataVector(
+      builder: flatbuffers.Builder,
+      data: number[] | Uint8Array
+    ): flatbuffers.Offset {
+      builder.startVector(1, data.length, 1);
+      for (var i = data.length - 1; i >= 0; i--) {
+        builder.addInt8(data[i]);
+      }
+      return builder.endVector();
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number numElems
+     */
+    static startDataVector(builder: flatbuffers.Builder, numElems: number) {
+      builder.startVector(1, numElems, 1);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param boolean isDense
+     */
+    static addIsDense(builder: flatbuffers.Builder, isDense: boolean) {
+      builder.addFieldInt8(9, +isDense, +false);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endPointCloud2(builder: flatbuffers.Builder): flatbuffers.Offset {
+      var offset = builder.endObject();
+      builder.requiredField(offset, 6); // header
+      builder.requiredField(offset, 12); // fields
+      builder.requiredField(offset, 20); // data
       return offset;
     }
   }
