@@ -140,9 +140,12 @@ export default function PointCloudViewer(props: {
   );
 
   const T = useMemo(() => {
-    const rot = new Matrix4().makeRotationAxis(
+    let rot = new Matrix4().makeRotationAxis(
       new Vector3(1, 0, 0),
       -Math.PI / 3
+    );
+    rot = rot.multiply(
+      new Matrix4().makeRotationAxis(new Vector3(0, 0, 1), Math.PI / 2)
     );
     return rot.multiplyScalar(point_cloud_scale);
   }, [point_cloud_scale]);
