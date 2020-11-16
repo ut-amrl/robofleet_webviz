@@ -12,12 +12,18 @@ import {
   useMediaQuery,
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
-import React, { useState } from 'react';
-import CompressedImageViewer from './components/CompressedImageViewer';
+import React, { useState, useCallback } from 'react';
+import ImageViewer from './components/ImageViewer';
+import useRobofleetMsgListener, {
+  RobofleetMsgListener,
+} from './hooks/useRobofleetMsgListener';
+import { fb } from './schema';
+import { matchTopic } from './util';
 
 export function ImageCard(props: {
   namespace: string;
   topic: string;
+  image: ImageBitmap;
   enablePreviews?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
@@ -54,11 +60,7 @@ export function ImageCard(props: {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <CompressedImageViewer
-          namespace={props.namespace}
-          topic={props.topic}
-          enabled={dialogOpen}
-        />
+        <ImageViewer image={props.image} enabled={dialogOpen} />
       </DialogContent>
     </Dialog>
   );
@@ -67,9 +69,8 @@ export function ImageCard(props: {
     <Card style={{ maxWidth: '350px' }}>
       <CardActionArea onClick={handleOpen}>
         <CardContent>
-          <CompressedImageViewer
-            namespace={props.namespace}
-            topic={props.topic}
+          <ImageViewer
+            image={props.image}
             enabled={props.enablePreviews ?? false}
           />
           <Typography variant="body2" color="textSecondary" component="p">
@@ -90,14 +91,62 @@ export function ImageCard(props: {
 
 export default function ImageryTab(props: { namespace: string }) {
   const [enablePreviews, setEnablePreviews] = useState(true);
+  const [observedTopics, setObservedTopics] = useState<Array<string>>([]);
+  interface ImageMap {
+    [topic: string]: ImageBitmap;
+  }
+  const [observedImages, setObservedImages] = useState<ImageMap>({});
 
-  const topics = [
-    'stereo/left/image_raw/compressed',
-    'stereo/right/image_raw/compressed',
-  ];
+  const compressedImageTopicCallback: RobofleetMsgListener = useCallback(
+    (buf, match) => {
+      (async () => {
+        const topic = match[0];
+        const ci = fb.sensor_msgs.CompressedImage.getRootAsCompressedImage(buf);
+        const blob = new Blob([ci.dataArray() ?? new Uint8Array()], {
+          type: `image/${ci.format()}`,
+        });
+
+        const bmp = await window.createImageBitmap(blob);
+
+        setObservedImages({
+          ...observedImages,
+          [topic]: bmp,
+        });
+
+        if (!observedTopics.includes(topic)) {
+          setObservedTopics([...observedTopics, topic]);
+        }
+      })();
+    },
+    [observedTopics, observedImages]
+  );
+
+  useRobofleetMsgListener(
+    matchTopic(props.namespace, 'image_compressed/.+'),
+    compressedImageTopicCallback
+  );
 
   const startPreviews = () => setEnablePreviews(true);
   const stopPreviews = () => setEnablePreviews(false);
+
+  let imageContent: Array<JSX.Element> | string;
+
+  if (observedTopics.length > 0) {
+    imageContent = observedTopics.map((topic) => (
+      <ImageCard
+        namespace={props.namespace}
+        topic={topic}
+        key={topic}
+        enablePreviews={enablePreviews}
+        image={observedImages[topic]}
+        onOpen={stopPreviews}
+        onClose={startPreviews}
+      />
+    ));
+  } else {
+    imageContent = 'No image topics observed.';
+  }
+
   return (
     <Container maxWidth="lg">
       <Box height="2em" />
@@ -107,15 +156,7 @@ export default function ImageryTab(props: { namespace: string }) {
         flexWrap="wrap"
         justifyContent="space-around"
       >
-        {topics.map((topic) => (
-          <ImageCard
-            namespace={props.namespace}
-            topic={topic}
-            enablePreviews={enablePreviews}
-            onOpen={stopPreviews}
-            onClose={startPreviews}
-          />
-        ))}
+        {imageContent}
       </Box>
     </Container>
   );
