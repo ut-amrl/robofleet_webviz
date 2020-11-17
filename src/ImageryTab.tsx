@@ -14,16 +14,22 @@ import {
 import { Close } from '@material-ui/icons';
 import React, { useState, useCallback } from 'react';
 import ImageViewer from './components/ImageViewer';
+import PointCloudViewer from './components/PointCloudViewer';
 import useRobofleetMsgListener, {
   RobofleetMsgListener,
 } from './hooks/useRobofleetMsgListener';
-import { fb } from './schema';
 import { matchTopic } from './util';
+
+enum ImageType {
+  CompressedImage,
+  PointCloud2,
+}
 
 export function ImageCard(props: {
   namespace: string;
   topic: string;
-  image: ImageBitmap;
+  data: flatbuffers.ByteBuffer;
+  type: ImageType;
   enablePreviews?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
@@ -42,6 +48,30 @@ export function ImageCard(props: {
     setDialogOpen(false);
     if (props.onClose) props.onClose();
   };
+  let imageViewerContent: (
+    enabled: boolean,
+    large: boolean
+  ) => JSX.Element | undefined;
+
+  if (props.type === ImageType.CompressedImage) {
+    imageViewerContent = (enabled: boolean) => (
+      <ImageViewer data={props.data} enabled={enabled} />
+    );
+  } else if (props.type === ImageType.PointCloud2) {
+    imageViewerContent = (enabled: boolean, large: boolean) => (
+      <PointCloudViewer
+        data={props.data}
+        enabled={enabled}
+        point_skip_ratio={1}
+        point_cloud_scale={30}
+        max_intensity={100.0}
+        large={large}
+      />
+    );
+  } else {
+    throw Error(`Invalid type ${props.type}`);
+  }
+
   const dialog = (
     <Dialog
       maxWidth={false}
@@ -60,7 +90,7 @@ export function ImageCard(props: {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <ImageViewer image={props.image} enabled={dialogOpen} />
+        {imageViewerContent(dialogOpen, true)}
       </DialogContent>
     </Dialog>
   );
@@ -69,10 +99,7 @@ export function ImageCard(props: {
     <Card style={{ maxWidth: '350px' }}>
       <CardActionArea onClick={handleOpen}>
         <CardContent>
-          <ImageViewer
-            image={props.image}
-            enabled={props.enablePreviews ?? false}
-          />
+          {imageViewerContent(props.enablePreviews ?? false, false)}
           <Typography variant="body2" color="textSecondary" component="p">
             {props.topic}
           </Typography>
@@ -91,9 +118,11 @@ export function ImageCard(props: {
 
 export default function ImageryTab(props: { namespace: string }) {
   const [enablePreviews, setEnablePreviews] = useState(true);
-  const [observedTopics, setObservedTopics] = useState<Array<string>>([]);
   interface ImageMap {
-    [topic: string]: ImageBitmap;
+    [topic: string]: {
+      type: ImageType;
+      data: flatbuffers.ByteBuffer;
+    };
   }
   const [observedImages, setObservedImages] = useState<ImageMap>({});
 
@@ -101,24 +130,34 @@ export default function ImageryTab(props: { namespace: string }) {
     (buf, match) => {
       (async () => {
         const topic = match[0];
-        const ci = fb.sensor_msgs.CompressedImage.getRootAsCompressedImage(buf);
-        const blob = new Blob([ci.dataArray() ?? new Uint8Array()], {
-          type: `image/${ci.format()}`,
-        });
-
-        const bmp = await window.createImageBitmap(blob);
 
         setObservedImages({
           ...observedImages,
-          [topic]: bmp,
+          [topic]: {
+            type: ImageType.CompressedImage,
+            data: buf,
+          },
         });
-
-        if (!observedTopics.includes(topic)) {
-          setObservedTopics([...observedTopics, topic]);
-        }
       })();
     },
-    [observedTopics, observedImages]
+    [observedImages]
+  );
+
+  const pointcloudTopicCallback: RobofleetMsgListener = useCallback(
+    (buf, match) => {
+      (async () => {
+        const topic = match[0];
+
+        setObservedImages({
+          ...observedImages,
+          [topic]: {
+            type: ImageType.PointCloud2,
+            data: buf,
+          },
+        });
+      })();
+    },
+    [observedImages]
   );
 
   useRobofleetMsgListener(
@@ -126,23 +165,32 @@ export default function ImageryTab(props: { namespace: string }) {
     compressedImageTopicCallback
   );
 
+  useRobofleetMsgListener(
+    matchTopic(props.namespace, 'pointcloud'),
+    pointcloudTopicCallback
+  );
+
   const startPreviews = () => setEnablePreviews(true);
   const stopPreviews = () => setEnablePreviews(false);
 
   let imageContent: Array<JSX.Element> | string;
 
-  if (observedTopics.length > 0) {
-    imageContent = observedTopics.map((topic) => (
-      <ImageCard
-        namespace={props.namespace}
-        topic={topic}
-        key={topic}
-        enablePreviews={enablePreviews}
-        image={observedImages[topic]}
-        onOpen={stopPreviews}
-        onClose={startPreviews}
-      />
-    ));
+  if (Object.keys(observedImages).length > 0) {
+    imageContent = Object.keys(observedImages).map((topic) => {
+      const { type, data } = observedImages[topic];
+      return (
+        <ImageCard
+          namespace={props.namespace}
+          topic={topic}
+          key={topic}
+          enablePreviews={enablePreviews}
+          data={data}
+          type={type}
+          onOpen={stopPreviews}
+          onClose={startPreviews}
+        />
+      );
+    });
   } else {
     imageContent = 'No image topics observed.';
   }
