@@ -1,18 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import { Matrix4, Vector3 } from 'three';
 import { fb } from '../schema';
 
-const getFloatFromDataArray = (
-  arr: Uint8Array,
-  start: number,
-  end: number,
-  little_endian: boolean
-) => {
-  let view = new DataView(arr.slice(start, end).buffer);
-
-  return view.getFloat32(0, little_endian);
-};
+const FLOAT32 = 7;
 
 export default function PointCloudViewer(props: {
   data: flatbuffers.ByteBuffer;
@@ -44,13 +35,25 @@ export default function PointCloudViewer(props: {
     let intensityOffset: number | undefined;
 
     for (let i = 0; i < cloud.fieldsLength(); i++) {
-      if (cloud.fields(i)?.name() === 'x') {
+      if (
+        cloud.fields(i)?.name() === 'x' &&
+        cloud.fields(i)?.datatype() === FLOAT32
+      ) {
         xOffset = cloud.fields(i)?.offset();
-      } else if (cloud.fields(i)?.name() === 'y') {
+      } else if (
+        cloud.fields(i)?.name() === 'y' &&
+        cloud.fields(i)?.datatype() === FLOAT32
+      ) {
         yOffset = cloud.fields(i)?.offset();
-      } else if (cloud.fields(i)?.name() === 'z') {
+      } else if (
+        cloud.fields(i)?.name() === 'z' &&
+        cloud.fields(i)?.datatype() === FLOAT32
+      ) {
         zOffset = cloud.fields(i)?.offset();
-      } else if (cloud.fields(i)?.name() === 'intensity') {
+      } else if (
+        cloud.fields(i)?.name() === 'intensity' &&
+        cloud.fields(i)?.datatype() === FLOAT32
+      ) {
         intensityOffset = cloud.fields(i)?.offset();
       }
     }
@@ -60,7 +63,9 @@ export default function PointCloudViewer(props: {
       yOffset === undefined ||
       zOffset === undefined
     ) {
-      console.warn('Unable to find required fields in point cloud data.');
+      console.warn(
+        'Unable to find required fields in point cloud data, or they did not have the correct datatype.'
+      );
       return;
     }
 
@@ -69,40 +74,28 @@ export default function PointCloudViewer(props: {
     num_points = num_points / point_skip_ratio;
     const points = new Float32Array(num_points * 3);
     const pointIntensity = new Float32Array(num_points * 3);
+    let dataView = new DataView(cloud.dataArray()!.buffer);
+    const little_endian = !cloud.isBigendian();
 
     for (let i = 0; i < num_points; i += point_skip_ratio) {
       const cloud_idx = i * step;
       const point_idx = i * 3;
 
       // assume fields are of length 4, and are float datatype
-      points[point_idx + 0] = getFloatFromDataArray(
-        cloud.dataArray()!,
-        cloud_idx + xOffset,
-        cloud_idx + xOffset + 4,
-        !cloud.isBigendian()
-      );
-      points[point_idx + 1] = getFloatFromDataArray(
-        cloud.dataArray()!,
-        cloud_idx + yOffset,
-        cloud_idx + yOffset + 4,
-        !cloud.isBigendian()
-      );
-      points[point_idx + 2] = getFloatFromDataArray(
-        cloud.dataArray()!,
-        cloud_idx + zOffset,
-        cloud_idx + zOffset + 4,
-        !cloud.isBigendian()
-      );
+      // Note: We need  to use the `subarray` method to figure out the right byte offset because of JS type buffer issues.
+      let bo = cloud.dataArray()!.subarray(cloud_idx + xOffset).byteOffset;
+      points[point_idx + 0] = dataView.getFloat32(bo, little_endian);
+      bo = cloud.dataArray()!.subarray(cloud_idx + yOffset).byteOffset;
+      points[point_idx + 1] = dataView.getFloat32(bo, little_endian);
+      bo = cloud.dataArray()!.subarray(cloud_idx + zOffset).byteOffset;
+      points[point_idx + 2] = dataView.getFloat32(bo, little_endian);
       if (intensityOffset) {
         pointIntensity[point_idx + 0] = 0.75;
         pointIntensity[point_idx + 1] = 0.75;
+        bo = cloud.dataArray()!.subarray(cloud_idx + intensityOffset)
+          .byteOffset;
         pointIntensity[point_idx + 2] =
-          getFloatFromDataArray(
-            cloud.dataArray()!,
-            cloud_idx + intensityOffset,
-            cloud_idx + intensityOffset + 4,
-            !cloud.isBigendian()
-          ) / max_intensity;
+          dataView.getFloat32(bo, little_endian) / max_intensity;
       }
     }
     setPointData(points);
