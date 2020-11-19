@@ -7,13 +7,14 @@ import ColoredLinesViewer from './ColoredLinesViewer';
 import ColoredPointsViewer from './ColoredPointsViewer';
 
 export default function VisualizationViewer(props: {
+  enabled: boolean;
   namespace: string;
   topic: string;
   baseLinkMatrix: Matrix4;
   pointsVisible?: boolean;
   linesVisible?: boolean;
 }) {
-  const { namespace, topic, baseLinkMatrix } = props;
+  const { enabled, namespace, topic, baseLinkMatrix } = props;
   const [mapMsg, setMapMsg] = useState<fb.amrl_msgs.VisualizationMsg | null>(
     null
   );
@@ -33,7 +34,8 @@ export default function VisualizationViewer(props: {
       if (frame === 'base_link') {
         setBaseLinkMsg(msg);
       }
-    }, [])
+    }, []),
+    { enabled }
   );
 
   return (

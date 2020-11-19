@@ -10,6 +10,7 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  CardMedia,
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import React, { useState, useCallback } from 'react';
@@ -26,6 +27,7 @@ enum ImageType {
 }
 
 export function ImageCard(props: {
+  enabled: boolean;
   namespace: string;
   topic: string;
   data: flatbuffers.ByteBuffer;
@@ -34,6 +36,7 @@ export function ImageCard(props: {
   onClose?: () => void;
   onOpen?: () => void;
 }) {
+  const { enabled } = props;
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const smallWidth = useMediaQuery('(max-width: 800px)');
@@ -90,7 +93,7 @@ export function ImageCard(props: {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        {imageViewerContent(dialogOpen, true)}
+        {imageViewerContent(enabled && dialogOpen, true)}
       </DialogContent>
     </Dialog>
   );
@@ -98,9 +101,14 @@ export function ImageCard(props: {
   const card = (
     <Card style={{ maxWidth: '350px' }}>
       <CardActionArea onClick={handleOpen}>
+        <CardMedia>
+          {imageViewerContent(
+            enabled && (props.enablePreviews ?? false),
+            false
+          )}
+        </CardMedia>
         <CardContent>
-          {imageViewerContent(props.enablePreviews ?? false, false)}
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" component="p">
             {props.topic}
           </Typography>
         </CardContent>
@@ -116,7 +124,11 @@ export function ImageCard(props: {
   );
 }
 
-export default function ImageryTab(props: { namespace: string }) {
+export default function ImageryTab(props: {
+  enabled: boolean;
+  namespace: string;
+}) {
+  const { enabled } = props;
   const [enablePreviews, setEnablePreviews] = useState(true);
   interface ImageMap {
     [topic: string]: {
@@ -129,7 +141,7 @@ export default function ImageryTab(props: { namespace: string }) {
   const compressedImageTopicCallback: RobofleetMsgListener = useCallback(
     (buf, match) => {
       (async () => {
-        const topic = match[0];
+        const topic = match[1];
 
         setObservedImages({
           ...observedImages,
@@ -146,7 +158,7 @@ export default function ImageryTab(props: { namespace: string }) {
   const pointcloudTopicCallback: RobofleetMsgListener = useCallback(
     (buf, match) => {
       (async () => {
-        const topic = match[0];
+        const topic = match[1];
 
         setObservedImages({
           ...observedImages,
@@ -161,12 +173,12 @@ export default function ImageryTab(props: { namespace: string }) {
   );
 
   useRobofleetMsgListener(
-    matchTopic(props.namespace, 'image_compressed/.+'),
+    matchTopic(props.namespace, '(image_compressed/.+)'),
     compressedImageTopicCallback
   );
 
   useRobofleetMsgListener(
-    matchTopic(props.namespace, 'pointcloud'),
+    matchTopic(props.namespace, '(pointcloud)'),
     pointcloudTopicCallback
   );
 
@@ -180,6 +192,7 @@ export default function ImageryTab(props: { namespace: string }) {
       const { type, data } = observedImages[topic];
       return (
         <ImageCard
+          enabled={enabled}
           namespace={props.namespace}
           topic={topic}
           key={topic}
@@ -203,6 +216,7 @@ export default function ImageryTab(props: { namespace: string }) {
         flexDirection="row"
         flexWrap="wrap"
         justifyContent="space-around"
+        alignItems="start"
       >
         {imageContent}
       </Box>

@@ -4,8 +4,11 @@ import { fb } from '../schema';
 import { matchTopic } from '../util';
 import useRobofleetMsgListener from '../hooks/useRobofleetMsgListener';
 
-export default function OdometryViewer(props: { namespace: string }) {
-  const { namespace } = props;
+export default function OdometryViewer(props: {
+  namespace: string;
+  enabled: boolean;
+}) {
+  const { namespace, enabled } = props;
   const [loaded, setLoaded] = useState(false);
   const [pos, setPos] = useState([0, 0, 0]);
   const [vel, setVel] = useState([0, 0, 0]);
@@ -25,7 +28,8 @@ export default function OdometryViewer(props: { namespace: string }) {
         odom.twist()?.twist()?.linear()?.y() ?? 0,
         odom.twist()?.twist()?.linear()?.z() ?? 0,
       ]);
-    }, [])
+    }, []),
+    { enabled }
   );
 
   const positionDisplay = (

@@ -5,6 +5,7 @@ import { fb } from '../schema';
 import { matchTopic } from '../util';
 
 export default function LaserScanViewer(props: {
+  enabled: boolean;
   namespace: string;
   topic: string;
   color: any;
@@ -12,6 +13,7 @@ export default function LaserScanViewer(props: {
   pointSize?: number;
   visible?: boolean;
 }) {
+  const { enabled } = props;
   const [pointsData, setPointsData] = useState(new Float32Array(0));
 
   useRobofleetMsgListener(
@@ -29,7 +31,8 @@ export default function LaserScanViewer(props: {
         posData[idx + 2] = 0;
       }
       setPointsData(posData);
-    }, [])
+    }, []),
+    { enabled }
   );
 
   const pointsPosAttrib = useMemo(

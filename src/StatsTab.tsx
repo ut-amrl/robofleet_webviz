@@ -2,7 +2,10 @@ import { Box, Card, CardContent, Container } from '@material-ui/core';
 import React from 'react';
 import OdometryViewer from './components/OdometryViewer';
 
-export default function StatsTab(props: any) {
+export default function StatsTab(props: {
+  namespace: string;
+  enabled: boolean;
+}) {
   return (
     <Container maxWidth="md">
       <Box height="2em" />

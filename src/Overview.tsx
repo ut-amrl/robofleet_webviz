@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   Paper,
   Table,
@@ -10,16 +9,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   makeStyles,
   Theme,
 } from '@material-ui/core';
 import { Check, Clear } from '@material-ui/icons';
+import CloudOff from '@material-ui/icons/CloudOff';
 import React, {
   useCallback,
   useContext,
   useEffect,
   useState,
+  useMemo,
   ReactElement,
 } from 'react';
 import { Link } from 'react-router-dom';
@@ -59,6 +61,29 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
+
+const MaybeDisconnectedLabel = (props: {
+  label: ReactElement | string;
+  disconnected: boolean;
+}) => {
+  if (props.disconnected) {
+    return (
+      <Tooltip arrow title="Offline, showing saved data.">
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <CloudOff fontSize="small" />
+          <Box marginRight={1} />
+          {props.label}
+        </Box>
+      </Tooltip>
+    );
+  }
+  return <>{props.label}</>;
+};
 
 export default function Overview() {
   const { setPaused } = useContext(AppContext);
@@ -127,54 +152,32 @@ export default function Overview() {
     })();
   }, []);
 
-  const items = Object.entries(data).map(([name, obj]) => {
-    let detailsContent: ReactElement | string;
-    if (obj.is_active) {
-      const href = `/robot/${btoa(name)}`;
-      detailsContent = (
-        <Button
-          component={Link}
-          to={href}
-          size="small"
-          variant="outlined"
-          color="primary"
-        >
-          View
-        </Button>
-      );
-    } else {
-      detailsContent = (
-        <Box>
-          <div>Last seen:</div>
-          <div>{obj.last_updated}</div>
-        </Box>
-      );
-    }
+  const tableHead = (
+    <TableHead>
+      <TableRow>
+        <TableCell align="left">Name</TableCell>
+        <TableCell style={{ width: '3em' }} align="center">
+          OK
+        </TableCell>
+        <TableCell style={{ width: '6.5em' }} align="center">
+          Battery
+        </TableCell>
+        <TableCell align="center">Status</TableCell>
+        <TableCell align="center">Location</TableCell>
+        <TableCell align="center">Last seen</TableCell>
+      </TableRow>
+    </TableHead>
+  );
 
-    let statusContent: ReactElement | string;
-    if (obj.is_active) {
-      statusContent = obj.status;
-    } else {
-      statusContent = (
-        <Box>
-          <div>Last seen:</div>
-          <div>{obj.status}</div>
-        </Box>
-      );
-    }
+  const sortedData = useMemo(
+    () =>
+      Object.entries(data).sort(
+        ([_, a], [__, b]) => Number(b.is_active) - Number(a.is_active)
+      ),
+    [data]
+  );
 
-    let locationContent: ReactElement | string;
-    if (obj.is_active) {
-      locationContent = obj.location;
-    } else {
-      locationContent = (
-        <Box>
-          <div>Last seen:</div>
-          <div>{obj.location}</div>
-        </Box>
-      );
-    }
-
+  const items = sortedData.map(([name, obj]) => {
     let batteryContent: ReactElement | string;
     if (obj.battery_level >= 0) {
       batteryContent = <PercentageDisplay value={obj.battery_level} />;
@@ -182,16 +185,39 @@ export default function Overview() {
       batteryContent = 'unknown';
     }
 
+    const nameContent = (
+      <Button
+        component={Link}
+        to={`/robot/${btoa(name)}`}
+        style={{ textTransform: 'none' }}
+        variant={obj.is_active ? 'outlined' : 'text'}
+        disabled={!obj.is_active}
+        startIcon={!obj.is_active && <CloudOff />}
+      >
+        {name}
+      </Button>
+    );
+
     return (
       <TableRow key={name} className={obj.is_active ? '' : classes.inactive}>
-        <TableCell align="left">{name}</TableCell>
+        <TableCell align="left">{nameContent}</TableCell>
         <TableCell align="center">
           {obj.is_ok ? <Check /> : <Clear color="error" />}
         </TableCell>
         <TableCell align="center">{batteryContent}</TableCell>
-        <TableCell align="center">{statusContent}</TableCell>
-        <TableCell align="center">{locationContent}</TableCell>
-        <TableCell align="center">{detailsContent}</TableCell>
+        <TableCell align="center">
+          <MaybeDisconnectedLabel
+            label={obj.status}
+            disconnected={!obj.is_active}
+          />
+        </TableCell>
+        <TableCell align="center">
+          <MaybeDisconnectedLabel
+            label={obj.location}
+            disconnected={!obj.is_active}
+          />
+        </TableCell>
+        <TableCell align="center">{obj.last_updated}</TableCell>
       </TableRow>
     );
   });
@@ -202,45 +228,17 @@ export default function Overview() {
       <Box height="2em" />
       <Container component="main" maxWidth="md">
         <Typography
-          variant="h3"
+          variant="h4"
           component="h2"
           style={{ marginBottom: '0.25em' }}
         >
-          Overview
+          Robots
         </Typography>
         <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Name</TableCell>
-                <TableCell style={{ width: '3em' }} align="center">
-                  OK
-                </TableCell>
-                <TableCell style={{ width: '5em' }} align="center">
-                  Battery
-                </TableCell>
-                <TableCell align="center">Status</TableCell>
-                <TableCell align="center">Location</TableCell>
-                <TableCell
-                  style={{ width: '120px' }}
-                  align="center"
-                ></TableCell>
-              </TableRow>
-            </TableHead>
+          <Table>
+            {tableHead}
             <TableBody>{items}</TableBody>
           </Table>
-          <div
-            style={{ padding: '1em', display: 'flex', alignItems: 'center' }}
-          >
-            <CircularProgress variant="indeterminate" disableShrink size={16} />
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              style={{ marginLeft: '1em' }}
-            >
-              Watching for new robots
-            </Typography>
-          </div>
         </TableContainer>
       </Container>
     </>

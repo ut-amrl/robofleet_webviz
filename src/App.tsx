@@ -2,7 +2,12 @@ import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import useStorage from './hooks/useStorage';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom';
 import config from './config';
 import WebSocketContext from './contexts/WebSocketContext';
 import Detail from './Detail';
@@ -50,11 +55,10 @@ function App() {
             <IdTokenContext.Provider value={idTokenContext}>
               <CssBaseline />
               <Switch>
-                <Route exact path="/">
-                  <Overview />
-                </Route>
-                <Route exact path="/robot/:id">
-                  <Detail />
+                <Route exact path="/robot/:id/:tab?" component={Detail} />
+                <Route exact path="/" component={Overview} />
+                <Route>
+                  <Redirect to="/" />
                 </Route>
               </Switch>
             </IdTokenContext.Provider>
