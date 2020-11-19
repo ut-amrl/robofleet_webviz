@@ -10,6 +10,7 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  CardMedia,
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import React, { useState, useCallback } from 'react';
@@ -100,9 +101,14 @@ export function ImageCard(props: {
   const card = (
     <Card style={{ maxWidth: '350px' }}>
       <CardActionArea onClick={handleOpen}>
+        <CardMedia>
+          {imageViewerContent(
+            enabled && (props.enablePreviews ?? false),
+            false
+          )}
+        </CardMedia>
         <CardContent>
-          {imageViewerContent(enabled && (props.enablePreviews ?? false), false)}
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" component="p">
             {props.topic}
           </Typography>
         </CardContent>
@@ -135,7 +141,7 @@ export default function ImageryTab(props: {
   const compressedImageTopicCallback: RobofleetMsgListener = useCallback(
     (buf, match) => {
       (async () => {
-        const topic = match[0];
+        const topic = match[1];
 
         setObservedImages({
           ...observedImages,
@@ -152,7 +158,7 @@ export default function ImageryTab(props: {
   const pointcloudTopicCallback: RobofleetMsgListener = useCallback(
     (buf, match) => {
       (async () => {
-        const topic = match[0];
+        const topic = match[1];
 
         setObservedImages({
           ...observedImages,
@@ -167,12 +173,12 @@ export default function ImageryTab(props: {
   );
 
   useRobofleetMsgListener(
-    matchTopic(props.namespace, 'image_compressed/.+'),
+    matchTopic(props.namespace, '(image_compressed/.+)'),
     compressedImageTopicCallback
   );
 
   useRobofleetMsgListener(
-    matchTopic(props.namespace, 'pointcloud'),
+    matchTopic(props.namespace, '(pointcloud)'),
     pointcloudTopicCallback
   );
 
@@ -210,6 +216,7 @@ export default function ImageryTab(props: {
         flexDirection="row"
         flexWrap="wrap"
         justifyContent="space-around"
+        alignItems="start"
       >
         {imageContent}
       </Box>
