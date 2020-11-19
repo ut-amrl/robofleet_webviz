@@ -159,7 +159,7 @@ export default function Overview() {
         <TableCell style={{ width: '3em' }} align="center">
           OK
         </TableCell>
-        <TableCell style={{ width: '5em' }} align="center">
+        <TableCell style={{ width: '6.5em' }} align="center">
           Battery
         </TableCell>
         <TableCell align="center">Status</TableCell>
@@ -185,20 +185,17 @@ export default function Overview() {
       batteryContent = 'unknown';
     }
 
-    const nameContent = obj.is_active ? (
+    const nameContent = (
       <Button
         component={Link}
         to={`/robot/${btoa(name)}`}
         style={{ textTransform: 'none' }}
-        variant="outlined"
+        variant={obj.is_active ? 'outlined' : 'text'}
         disabled={!obj.is_active}
+        startIcon={!obj.is_active && <CloudOff />}
       >
         {name}
       </Button>
-    ) : (
-      <Typography variant="button" style={{ textTransform: 'none' }}>
-        {name} (Offline)
-      </Typography>
     );
 
     return (
