@@ -122,11 +122,11 @@ export default function Detail() {
           style={{ transitionDelay: isLoading ? '500ms' : '0ms' }}
           unmountOnExit
         >
-          <Backdrop open={true}>
+          <Backdrop invisible open>
             <CircularProgress />
           </Backdrop>
         </Fade>
-        <Backdrop open={authorized === false}>
+        <Backdrop invisible open={authorized === false}>
           <Box maxWidth="40em">
             <Alert severity="error">
               <AlertTitle>Not authorized</AlertTitle>
