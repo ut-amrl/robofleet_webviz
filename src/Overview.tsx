@@ -60,6 +60,12 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: theme.palette.text.secondary,
     },
   },
+  button: {
+    '&$disabled': {
+      color: theme.palette.text.secondary,
+    },
+  },
+  disabled: {},
 }));
 
 const MaybeDisconnectedLabel = (props: {
@@ -187,6 +193,7 @@ export default function Overview() {
 
     const nameContent = (
       <Button
+        classes={{ root: classes.button, disabled: classes.disabled }}
         component={Link}
         to={`/robot/${btoa(name)}`}
         style={{ textTransform: 'none' }}
