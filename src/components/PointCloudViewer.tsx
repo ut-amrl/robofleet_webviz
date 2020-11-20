@@ -144,7 +144,10 @@ export default function PointCloudViewer(props: {
   }, [point_cloud_scale]);
 
   return (
-    <Canvas style={{ height: large ? 600 : 200, width: large ? 960 : 320 }}>
+    <Canvas
+      style={{ height: large ? 600 : 200, width: large ? 960 : 320 }}
+      colorManagement={false}
+    >
       <points
         frustumCulled={false}
         matrixAutoUpdate={false}
