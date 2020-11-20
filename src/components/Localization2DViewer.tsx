@@ -117,12 +117,8 @@ export default function Localization2DViewer(props: {
   return (
     <>
       <lineSegments frustumCulled={false} visible={props.mapVisible ?? true}>
-        <bufferGeometry attach="geometry">{linesPosAttrib}</bufferGeometry>
-        <lineBasicMaterial
-          attach="material"
-          color={props.mapColor}
-          linewidth={1}
-        />
+        <bufferGeometry>{linesPosAttrib}</bufferGeometry>
+        <lineBasicMaterial color={props.mapColor} linewidth={1} />
       </lineSegments>
       <Pose
         x={props.x}
@@ -137,14 +133,8 @@ export default function Localization2DViewer(props: {
         frustumCulled={false}
         visible={props.navGraphVisible ?? true}
       >
-        <bufferGeometry attach="geometry">
-          {navGraphLinesPosAttrib}
-        </bufferGeometry>
-        <lineBasicMaterial
-          attach="material"
-          color={props.navGraphColor}
-          linewidth={2}
-        />
+        <bufferGeometry>{navGraphLinesPosAttrib}</bufferGeometry>
+        <lineBasicMaterial color={props.navGraphColor} linewidth={2} />
       </lineSegments>
     </>
   );

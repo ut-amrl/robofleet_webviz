@@ -65,15 +65,11 @@ export default function ColoredPointsViewer(props: {
       matrix={props.matrix ?? I}
       visible={props.visible ?? true}
     >
-      <bufferGeometry attach="geometry">
+      <bufferGeometry>
         {positionAttrib}
         {colorAttrib}
       </bufferGeometry>
-      <pointsMaterial
-        attach="material"
-        vertexColors={true}
-        size={props.pointSize ?? 4}
-      />
+      <pointsMaterial vertexColors={true} size={props.pointSize ?? 4} />
     </points>
   );
 }

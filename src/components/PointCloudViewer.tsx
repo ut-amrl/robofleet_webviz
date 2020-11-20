@@ -155,12 +155,11 @@ export default function PointCloudViewer(props: {
         matrix={T}
         visible={true}
       >
-        <bufferGeometry attach="geometry">
+        <bufferGeometry>
           {pointsPosAttrib}
           {pointsColorAttrib}
         </bufferGeometry>
         <pointsMaterial
-          attach="material"
           vertexColors={true}
           size={0.25}
           sizeAttenuation={false}

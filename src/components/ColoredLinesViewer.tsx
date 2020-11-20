@@ -71,15 +71,11 @@ export default function ColoredLinesViewer(props: {
       matrix={props.matrix ?? I}
       visible={props.visible ?? true}
     >
-      <bufferGeometry attach="geometry">
+      <bufferGeometry>
         {positionAttrib}
         {colorAttrib}
       </bufferGeometry>
-      <lineBasicMaterial
-        attach="material"
-        vertexColors={true}
-        linewidth={props.lineWidth ?? 3}
-      />
+      <lineBasicMaterial vertexColors={true} linewidth={props.lineWidth ?? 3} />
     </lineSegments>
   );
 }
