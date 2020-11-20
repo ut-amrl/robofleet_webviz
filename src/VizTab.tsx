@@ -430,6 +430,7 @@ export default function VizTab(props: { namespace: string; enabled: boolean }) {
         <Canvas
           orthographic={true}
           pixelRatio={window.devicePixelRatio}
+          colorManagement={false}
           className={classes[clickAction]}
         >
           <CameraControls enabled={clickAction === 'Default'} />

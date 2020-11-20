@@ -61,12 +61,8 @@ export default function LaserScanViewer(props: {
         matrix={props.matrix ?? I}
         visible={props.visible ?? true}
       >
-        <bufferGeometry attach="geometry">{pointsPosAttrib}</bufferGeometry>
-        <pointsMaterial
-          attach="material"
-          color={props.color}
-          size={props.pointSize ?? 4}
-        />
+        <bufferGeometry>{pointsPosAttrib}</bufferGeometry>
+        <pointsMaterial color={props.color} size={props.pointSize ?? 4} />
       </points>
     </>
   );

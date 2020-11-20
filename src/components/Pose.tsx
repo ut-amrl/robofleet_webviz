@@ -30,19 +30,19 @@ export default function Pose(props: {
       scale={props.scale ?? [1, 1, 1]}
     >
       <mesh scale={[0.05, 0.05, 0.05]}>
-        <boxGeometry attach="geometry" />
-        <meshBasicMaterial attach="material" color={0xff0000} />
+        <boxGeometry />
+        <meshBasicMaterial color={0xff0000} />
       </mesh>
       <group position={[0.75, 0, 0]}>
         <mesh rotation={[0, 0, -Math.PI / 2]} scale={[0.5, 0.5, 0.5]}>
-          <coneBufferGeometry attach="geometry" />
-          <meshBasicMaterial attach="material" {...materialProps} />
+          <coneBufferGeometry />
+          <meshBasicMaterial {...materialProps} />
         </mesh>
       </group>
       <group position={[0.25, 0, 0]}>
         <mesh rotation={[0, 0, -Math.PI / 2]} scale={[0.2, 0.5, 0.2]}>
-          <cylinderBufferGeometry attach="geometry" />
-          <meshBasicMaterial attach="material" {...materialProps} />
+          <cylinderBufferGeometry />
+          <meshBasicMaterial {...materialProps} />
         </mesh>
       </group>
     </group>

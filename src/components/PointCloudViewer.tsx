@@ -144,7 +144,10 @@ export default function PointCloudViewer(props: {
   }, [point_cloud_scale]);
 
   return (
-    <Canvas style={{ height: large ? 600 : 200, width: large ? 960 : 320 }}>
+    <Canvas
+      style={{ height: large ? 600 : 200, width: large ? 960 : 320 }}
+      colorManagement={false}
+    >
       <points
         frustumCulled={false}
         matrixAutoUpdate={false}
@@ -152,12 +155,11 @@ export default function PointCloudViewer(props: {
         matrix={T}
         visible={true}
       >
-        <bufferGeometry attach="geometry">
+        <bufferGeometry>
           {pointsPosAttrib}
           {pointsColorAttrib}
         </bufferGeometry>
         <pointsMaterial
-          attach="material"
           vertexColors={true}
           size={0.25}
           sizeAttenuation={false}
