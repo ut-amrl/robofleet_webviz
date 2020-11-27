@@ -34,6 +34,7 @@ import { matchTopicAnyNamespace } from './util';
 import config from './config';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import WorldMapViewer from './components/WorldMapViewer';
 dayjs.extend(relativeTime);
 
 type RobotStatus = {
@@ -247,6 +248,8 @@ export default function Overview() {
             <TableBody>{items}</TableBody>
           </Table>
         </TableContainer>
+        <Box marginBottom={4} />
+        <WorldMapViewer />
       </Container>
     </>
   );
