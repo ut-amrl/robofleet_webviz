@@ -99,7 +99,7 @@ export function ImageCard(props: {
   );
 
   const card = (
-    <Card style={{ maxWidth: '350px' }}>
+    <Card style={{ minWidth: '350px' }}>
       <CardActionArea onClick={handleOpen}>
         <CardMedia>
           {imageViewerContent(
@@ -191,17 +191,19 @@ export default function ImageryTab(props: {
     imageContent = Object.keys(observedImages).map((topic) => {
       const { type, data } = observedImages[topic];
       return (
-        <ImageCard
-          enabled={enabled}
-          namespace={props.namespace}
-          topic={topic}
-          key={topic}
-          enablePreviews={enablePreviews}
-          data={data}
-          type={type}
-          onOpen={stopPreviews}
-          onClose={startPreviews}
-        />
+        <Box key={topic} flexBasis={0} flexGrow={1} flexShrink={1}>
+          <ImageCard
+            enabled={enabled}
+            namespace={props.namespace}
+            topic={topic}
+            key={topic}
+            enablePreviews={enablePreviews}
+            data={data}
+            type={type}
+            onOpen={stopPreviews}
+            onClose={startPreviews}
+          />
+        </Box>
       );
     });
   } else {
@@ -214,7 +216,7 @@ export default function ImageryTab(props: {
       <Box
         display="flex"
         flexDirection="row"
-        flexWrap="wrap"
+        // flexWrap=
         justifyContent="space-around"
         alignItems="start"
       >

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import { Matrix4, Vector3 } from 'three';
 import { fb } from '../schema';
+import CameraControls from './CameraControls';
 
 const FLOAT32 = 7;
 
@@ -148,6 +149,7 @@ export default function PointCloudViewer(props: {
       style={{ height: large ? 600 : 200, width: large ? 960 : 320 }}
       colorManagement={false}
     >
+      {large ? <CameraControls enableRotate={true} /> : null}
       <points
         frustumCulled={false}
         matrixAutoUpdate={false}
