@@ -191,7 +191,13 @@ export default function ImageryTab(props: {
     imageContent = Object.keys(observedImages).map((topic) => {
       const { type, data } = observedImages[topic];
       return (
-        <Box key={topic} flexBasis={0} flexGrow={1} flexShrink={1}>
+        <Box
+          key={topic}
+          flexBasis={0}
+          flexGrow={1}
+          flexShrink={1}
+          padding="8px"
+        >
           <ImageCard
             enabled={enabled}
             namespace={props.namespace}
@@ -216,7 +222,7 @@ export default function ImageryTab(props: {
       <Box
         display="flex"
         flexDirection="row"
-        // flexWrap=
+        flexWrap="wrap"
         justifyContent="space-around"
         alignItems="start"
       >

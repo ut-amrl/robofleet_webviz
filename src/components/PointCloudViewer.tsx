@@ -146,7 +146,7 @@ export default function PointCloudViewer(props: {
 
   return (
     <Canvas
-      style={{ height: large ? 600 : 200, width: large ? 960 : 320 }}
+      style={large ? { height: 600, width: 960 } : {}}
       colorManagement={false}
     >
       {large ? <CameraControls enableRotate={true} /> : null}
