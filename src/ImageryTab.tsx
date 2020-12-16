@@ -202,7 +202,6 @@ export default function ImageryTab(props: {
             enabled={enabled}
             namespace={props.namespace}
             topic={topic}
-            key={topic}
             enablePreviews={enablePreviews}
             data={data}
             type={type}
