@@ -77,13 +77,8 @@ export default function useWebSocket({
   const reconnect = useCallback(() => {
     ws.current = new WebSocket(url);
     ws.current.onopen = () => {
-      const waitForConnected = setInterval(() => {
-        if (!(ws.current?.readyState === WebSocket.CONNECTING)) {
-          state.current = 'connected';
-          clearInterval(waitForConnected);
-          setConnected(true);
-        }
-      }, 5);
+      state.current = 'connected';
+      setConnected(true);
     };
     ws.current.onclose = () => {
       state.current = 'disconnected';
