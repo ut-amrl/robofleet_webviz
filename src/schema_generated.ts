@@ -532,6 +532,131 @@ export namespace fb {
 /**
  * @constructor
  */
+export namespace fb.std_msgs {
+  export class String {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns String
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): String {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param String= obj
+     * @returns String
+     */
+    static getRootAsString(bb: flatbuffers.ByteBuffer, obj?: String): String {
+      return (obj || new String()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param String= obj
+     * @returns String
+     */
+    static getSizePrefixedRootAsString(
+      bb: flatbuffers.ByteBuffer,
+      obj?: String
+    ): String {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new String()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param flatbuffers.Encoding= optionalEncoding
+     * @returns string|Uint8Array|null
+     */
+    data(): string | null;
+    data(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
+    data(optionalEncoding?: any): string | Uint8Array | null {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset
+        ? this.bb!.__string(this.bb_pos + offset, optionalEncoding)
+        : null;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startString(builder: flatbuffers.Builder) {
+      builder.startObject(2);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset dataOffset
+     */
+    static addData(
+      builder: flatbuffers.Builder,
+      dataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(1, dataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endString(builder: flatbuffers.Builder): flatbuffers.Offset {
+      var offset = builder.endObject();
+      builder.requiredField(offset, 6); // data
+      return offset;
+    }
+
+    static createString(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset,
+      dataOffset: flatbuffers.Offset
+    ): flatbuffers.Offset {
+      String.startString(builder);
+      String.add_Metadata(builder, _metadataOffset);
+      String.addData(builder, dataOffset);
+      return String.endString(builder);
+    }
+  }
+}
+/**
+ * @constructor
+ */
 export namespace fb.amrl_msgs {
   export class RobofleetStatus {
     bb: flatbuffers.ByteBuffer | null = null;
