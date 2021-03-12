@@ -14,7 +14,7 @@ import {
   makeStyles,
   Theme,
 } from '@material-ui/core';
-import { Check, Clear } from '@material-ui/icons';
+import { Check, Clear, Delete } from '@material-ui/icons';
 import CloudOff from '@material-ui/icons/CloudOff';
 import React, {
   useCallback,
@@ -34,6 +34,8 @@ import { matchTopicAnyNamespace } from './util';
 import config from './config';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import IdTokenContext from './contexts/IdTokenContext';
+
 dayjs.extend(relativeTime);
 
 type RobotStatus = {
@@ -94,7 +96,34 @@ const MaybeDisconnectedLabel = (props: {
 export default function Overview() {
   const { setPaused } = useContext(AppContext);
   const [data, setData] = useState({} as { [name: string]: RobotStatus });
+  const [manageMode, setManageMode] = useState(false);
+  const { idToken } = useContext(IdTokenContext);
   const classes = useStyles();
+
+  const handleRemove = useCallback(
+    async (event, name, obj) => {
+      console.log('removing ', name, obj);
+      const baseUrl = new URL(config.serverUrl);
+      baseUrl.protocol = window.location.protocol;
+      const url = new URL('robots', baseUrl).toString();
+
+      try {
+        await fetch(url, {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            ...(idToken && { id_token: idToken }),
+          }),
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [idToken]
+  );
 
   useEffect(() => {
     setPaused(false);
@@ -171,6 +200,7 @@ export default function Overview() {
         <TableCell align="center">Status</TableCell>
         <TableCell align="center">Location</TableCell>
         <TableCell align="center">Last seen</TableCell>
+        {manageMode ? <TableCell align="center"></TableCell> : null}
       </TableRow>
     </TableHead>
   );
@@ -205,6 +235,17 @@ export default function Overview() {
       </Button>
     );
 
+    const removalContent = obj.is_active ? null : (
+      <Button
+        onClick={(event) => handleRemove(event, name, obj)}
+        style={{ textTransform: 'none' }}
+        variant={'outlined'}
+        startIcon={<Delete />}
+      >
+        Remove
+      </Button>
+    );
+
     return (
       <TableRow key={name} className={obj.is_active ? '' : classes.inactive}>
         <TableCell align="left">{nameContent}</TableCell>
@@ -225,6 +266,9 @@ export default function Overview() {
           />
         </TableCell>
         <TableCell align="center">{obj.last_updated}</TableCell>
+        {manageMode ? (
+          <TableCell align="center">{removalContent}</TableCell>
+        ) : null}
       </TableRow>
     );
   });
@@ -234,13 +278,29 @@ export default function Overview() {
       <NavBar />
       <Box height="2em" />
       <Container component="main" maxWidth="md">
-        <Typography
-          variant="h4"
-          component="h2"
-          style={{ marginBottom: '0.25em' }}
+        <Box
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
         >
-          Robots
-        </Typography>
+          <Typography
+            variant="h4"
+            component="h2"
+            style={{ marginBottom: '0.25em' }}
+          >
+            Robots
+          </Typography>
+          <Button
+            style={{ marginBottom: '1em' }}
+            variant="contained"
+            color={manageMode ? 'primary' : 'default'}
+            onClick={(e) => setManageMode(!manageMode)}
+          >
+            Manage
+          </Button>
+        </Box>
         <TableContainer component={Paper}>
           <Table>
             {tableHead}
