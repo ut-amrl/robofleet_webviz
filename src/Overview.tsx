@@ -100,12 +100,48 @@ export default function Overview() {
   const { idToken } = useContext(IdTokenContext);
   const classes = useStyles();
 
+  const updateRobotList = useCallback(async () => {
+    const baseUrl = new URL(config.serverUrl);
+    baseUrl.protocol = window.location.protocol;
+    const url = new URL('robots', baseUrl).toString();
+    const res = await fetch(url, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.ok) {
+      try {
+        const robotInfo = (await res.json()) as Array<StaticRobotInfo>;
+        robotInfo.forEach((robot) => {
+          const name = '/' + robot.name;
+          setData((data) => ({
+            [name]: {
+              name,
+              is_ok: true,
+              battery_level: -1,
+              status: robot.lastStatus,
+              location: robot.lastLocation,
+              is_active: false,
+              last_updated: dayjs(robot.lastUpdated).fromNow(),
+            },
+            // don't overwrite any live robot data with this static info
+            ...data,
+          }));
+        });
+      } catch (err) {
+        console.error(`Failed to fetch static robot info`, err);
+      }
+    }
+  }, []);
+
   const handleRemove = useCallback(
     async (event, name, obj) => {
       console.log('removing ', name, obj);
       const baseUrl = new URL(config.serverUrl);
       baseUrl.protocol = window.location.protocol;
-      const url = new URL('robots', baseUrl).toString();
+      const url = new URL('robots/delete', baseUrl).toString();
 
       try {
         await fetch(url, {
@@ -118,11 +154,16 @@ export default function Overview() {
             ...(idToken && { id_token: idToken }),
           }),
         });
+
+        const newData = data;
+        delete newData[name];
+
+        setData(newData);
       } catch (e) {
         console.log(e);
       }
     },
-    [idToken]
+    [idToken, data]
   );
 
   useEffect(() => {
@@ -131,61 +172,32 @@ export default function Overview() {
 
   useRobofleetMsgListener(
     matchTopicAnyNamespace('status'),
-    useCallback((buf, match) => {
-      const name = match[1];
-      const status = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(buf);
-      setData((data) => ({
-        ...data,
-        [name]: {
-          name: name,
-          is_ok: status.isOk(),
-          battery_level: status.batteryLevel(),
-          status: status.status() ?? '',
-          location: status.location() ?? '',
-          is_active: true,
-          last_updated: 'now',
-        },
-      }));
-    }, [])
+    useCallback(
+      (buf, match) => {
+        const name = match[1];
+        const status = fb.amrl_msgs.RobofleetStatus.getRootAsRobofleetStatus(
+          buf
+        );
+        setData({
+          ...data,
+          [name]: {
+            name: name,
+            is_ok: status.isOk(),
+            battery_level: status.batteryLevel(),
+            status: status.status() ?? '',
+            location: status.location() ?? '',
+            is_active: true,
+            last_updated: 'now',
+          },
+        });
+      },
+      [data]
+    )
   );
 
   useEffect(() => {
-    (async () => {
-      const baseUrl = new URL(config.serverUrl);
-      baseUrl.protocol = window.location.protocol;
-      const url = new URL('robots', baseUrl).toString();
-      const res = await fetch(url, {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (res.ok) {
-        try {
-          const robotInfo = (await res.json()) as Array<StaticRobotInfo>;
-          robotInfo.forEach((robot) => {
-            const name = '/' + robot.name;
-            setData((data) => ({
-              [name]: {
-                name,
-                is_ok: true,
-                battery_level: -1,
-                status: robot.lastStatus,
-                location: robot.lastLocation,
-                is_active: false,
-                last_updated: dayjs(robot.lastUpdated).fromNow(),
-              },
-              // don't overwrite any live robot data with this static info
-              ...data,
-            }));
-          });
-        } catch (err) {
-          console.error(`Failed to fetch static robot info`, err);
-        }
-      }
-    })();
-  }, []);
+    updateRobotList();
+  }, [updateRobotList]);
 
   const tableHead = (
     <TableHead>
