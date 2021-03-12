@@ -17,9 +17,12 @@ import AppContext from './contexts/AppContext';
 import IdTokenContext from './contexts/IdTokenContext';
 
 function App() {
-  const [darkMode, setDarkMode] = useStorage('App.darkMode', true);
+  const [darkMode, setDarkMode] = useStorage('RobofleetWebviz.darkMode', true);
   const [paused, setPaused] = useState(false);
-  const [idToken, setIdToken] = useState<string | null>(null);
+  const [idToken, setIdToken] = useStorage<string | null>(
+    'RobofleetWebviz.idToken',
+    null
+  );
 
   const theme = createMuiTheme({
     palette: {
