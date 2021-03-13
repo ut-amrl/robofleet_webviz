@@ -114,57 +114,56 @@ export default function Overview() {
     if (res.ok) {
       try {
         const robotInfo = (await res.json()) as Array<StaticRobotInfo>;
+        const staticData = {} as { [name: string]: RobotStatus };
         robotInfo.forEach((robot) => {
           const name = '/' + robot.name;
-          setData((data) => ({
-            [name]: {
-              name,
-              is_ok: true,
-              battery_level: -1,
-              status: robot.lastStatus,
-              location: robot.lastLocation,
-              is_active: false,
-              last_updated: dayjs(robot.lastUpdated).fromNow(),
-            },
-            // don't overwrite any live robot data with this static info
-            ...data,
-          }));
+          staticData[name] = {
+            name,
+            is_ok: true,
+            battery_level: -1,
+            status: robot.lastStatus,
+            location: robot.lastLocation,
+            is_active: false,
+            last_updated: dayjs(robot.lastUpdated).fromNow(),
+          };
+        });
+
+        setData({
+          ...staticData,
+          ...data,
         });
       } catch (err) {
         console.error(`Failed to fetch static robot info`, err);
       }
     }
-  }, []);
+  }, [data]);
 
-  const handleRemove = useCallback(
-    async (event, name, obj) => {
-      console.log('removing ', name, obj);
-      const baseUrl = new URL(config.serverUrl);
-      baseUrl.protocol = window.location.protocol;
-      const url = new URL('robots/delete', baseUrl).toString();
+  async function handleRemove(name: string, obj: any) {
+    console.log('removing ', name, obj);
+    const baseUrl = new URL(config.serverUrl);
+    baseUrl.protocol = window.location.protocol;
+    const url = new URL('robots/delete', baseUrl).toString();
 
-      try {
-        await fetch(url, {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name,
-            ...(idToken && { id_token: idToken }),
-          }),
-        });
+    try {
+      await fetch(url, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          ...(idToken && { id_token: idToken }),
+        }),
+      });
 
-        const newData = data;
-        delete newData[name];
+      const newData = data;
+      delete newData[name];
 
-        setData(newData);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    [idToken, data]
-  );
+      setData(newData);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   useEffect(() => {
     setPaused(false);
@@ -249,7 +248,7 @@ export default function Overview() {
 
     const removalContent = obj.is_active ? null : (
       <Button
-        onClick={(event) => handleRemove(event, name, obj)}
+        onClick={() => handleRemove(name, obj)}
         style={{ textTransform: 'none' }}
         variant={'outlined'}
         startIcon={<Delete />}
