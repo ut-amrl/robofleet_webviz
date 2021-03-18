@@ -130,13 +130,12 @@ export default function Overview() {
 
         setData({
           ...staticData,
-          ...data,
         });
       } catch (err) {
         console.error(`Failed to fetch static robot info`, err);
       }
     }
-  }, [data]);
+  }, []);
 
   async function handleRemove(name: string, obj: any) {
     console.log('removing ', name, obj);
