@@ -21,6 +21,42 @@ export namespace fb.amrl_msgs.RobofleetSubscriptionConstants {
 /**
  * @enum {number}
  */
+export namespace fb.amrl_msgs.ElevatorStatusConstants {
+  export enum door_open {
+    value = 1,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.amrl_msgs.ElevatorStatusConstants {
+  export enum door_closed {
+    value = 0,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.amrl_msgs.ElevatorStatusConstants {
+  export enum door_transition {
+    value = 2,
+  }
+}
+
+/**
+ * @enum {number}
+ */
+export namespace fb.amrl_msgs.ElevatorStatusConstants {
+  export enum floor_transition {
+    value = 0,
+  }
+}
+
+/**
+ * @enum {number}
+ */
 export namespace fb.sensor_msgs.NavSatStatusConstants {
   export enum status_no_fix {
     value = -1,
@@ -532,131 +568,6 @@ export namespace fb {
 /**
  * @constructor
  */
-export namespace fb.std_msgs {
-  export class String {
-    bb: flatbuffers.ByteBuffer | null = null;
-
-    bb_pos: number = 0;
-    /**
-     * @param number i
-     * @param flatbuffers.ByteBuffer bb
-     * @returns String
-     */
-    __init(i: number, bb: flatbuffers.ByteBuffer): String {
-      this.bb_pos = i;
-      this.bb = bb;
-      return this;
-    }
-
-    /**
-     * @param flatbuffers.ByteBuffer bb
-     * @param String= obj
-     * @returns String
-     */
-    static getRootAsString(bb: flatbuffers.ByteBuffer, obj?: String): String {
-      return (obj || new String()).__init(
-        bb.readInt32(bb.position()) + bb.position(),
-        bb
-      );
-    }
-
-    /**
-     * @param flatbuffers.ByteBuffer bb
-     * @param String= obj
-     * @returns String
-     */
-    static getSizePrefixedRootAsString(
-      bb: flatbuffers.ByteBuffer,
-      obj?: String
-    ): String {
-      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
-      return (obj || new String()).__init(
-        bb.readInt32(bb.position()) + bb.position(),
-        bb
-      );
-    }
-
-    /**
-     * @param fb.MsgMetadata= obj
-     * @returns fb.MsgMetadata|null
-     */
-    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
-      var offset = this.bb!.__offset(this.bb_pos, 4);
-      return offset
-        ? (obj || new fb.MsgMetadata()).__init(
-            this.bb!.__indirect(this.bb_pos + offset),
-            this.bb!
-          )
-        : null;
-    }
-
-    /**
-     * @param flatbuffers.Encoding= optionalEncoding
-     * @returns string|Uint8Array|null
-     */
-    data(): string | null;
-    data(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
-    data(optionalEncoding?: any): string | Uint8Array | null {
-      var offset = this.bb!.__offset(this.bb_pos, 6);
-      return offset
-        ? this.bb!.__string(this.bb_pos + offset, optionalEncoding)
-        : null;
-    }
-
-    /**
-     * @param flatbuffers.Builder builder
-     */
-    static startString(builder: flatbuffers.Builder) {
-      builder.startObject(2);
-    }
-
-    /**
-     * @param flatbuffers.Builder builder
-     * @param flatbuffers.Offset _metadataOffset
-     */
-    static add_Metadata(
-      builder: flatbuffers.Builder,
-      _metadataOffset: flatbuffers.Offset
-    ) {
-      builder.addFieldOffset(0, _metadataOffset, 0);
-    }
-
-    /**
-     * @param flatbuffers.Builder builder
-     * @param flatbuffers.Offset dataOffset
-     */
-    static addData(
-      builder: flatbuffers.Builder,
-      dataOffset: flatbuffers.Offset
-    ) {
-      builder.addFieldOffset(1, dataOffset, 0);
-    }
-
-    /**
-     * @param flatbuffers.Builder builder
-     * @returns flatbuffers.Offset
-     */
-    static endString(builder: flatbuffers.Builder): flatbuffers.Offset {
-      var offset = builder.endObject();
-      builder.requiredField(offset, 6); // data
-      return offset;
-    }
-
-    static createString(
-      builder: flatbuffers.Builder,
-      _metadataOffset: flatbuffers.Offset,
-      dataOffset: flatbuffers.Offset
-    ): flatbuffers.Offset {
-      String.startString(builder);
-      String.add_Metadata(builder, _metadataOffset);
-      String.addData(builder, dataOffset);
-      return String.endString(builder);
-    }
-  }
-}
-/**
- * @constructor
- */
 export namespace fb.amrl_msgs {
   export class RobofleetStatus {
     bb: flatbuffers.ByteBuffer | null = null;
@@ -996,6 +907,282 @@ export namespace fb.amrl_msgs {
       RobofleetSubscription.addTopicRegex(builder, topicRegexOffset);
       RobofleetSubscription.addAction(builder, action);
       return RobofleetSubscription.endRobofleetSubscription(builder);
+    }
+  }
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs {
+  export class ElevatorStatus {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns ElevatorStatus
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): ElevatorStatus {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param ElevatorStatus= obj
+     * @returns ElevatorStatus
+     */
+    static getRootAsElevatorStatus(
+      bb: flatbuffers.ByteBuffer,
+      obj?: ElevatorStatus
+    ): ElevatorStatus {
+      return (obj || new ElevatorStatus()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param ElevatorStatus= obj
+     * @returns ElevatorStatus
+     */
+    static getSizePrefixedRootAsElevatorStatus(
+      bb: flatbuffers.ByteBuffer,
+      obj?: ElevatorStatus
+    ): ElevatorStatus {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new ElevatorStatus()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @returns number
+     */
+    floor(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset ? this.bb!.readUint8(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns number
+     */
+    door(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 8);
+      return offset ? this.bb!.readUint8(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startElevatorStatus(builder: flatbuffers.Builder) {
+      builder.startObject(3);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number floor
+     */
+    static addFloor(builder: flatbuffers.Builder, floor: number) {
+      builder.addFieldInt8(1, floor, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number door
+     */
+    static addDoor(builder: flatbuffers.Builder, door: number) {
+      builder.addFieldInt8(2, door, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endElevatorStatus(builder: flatbuffers.Builder): flatbuffers.Offset {
+      var offset = builder.endObject();
+      return offset;
+    }
+
+    static createElevatorStatus(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset,
+      floor: number,
+      door: number
+    ): flatbuffers.Offset {
+      ElevatorStatus.startElevatorStatus(builder);
+      ElevatorStatus.add_Metadata(builder, _metadataOffset);
+      ElevatorStatus.addFloor(builder, floor);
+      ElevatorStatus.addDoor(builder, door);
+      return ElevatorStatus.endElevatorStatus(builder);
+    }
+  }
+}
+/**
+ * @constructor
+ */
+export namespace fb.amrl_msgs {
+  export class ElevatorCommand {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns ElevatorCommand
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): ElevatorCommand {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param ElevatorCommand= obj
+     * @returns ElevatorCommand
+     */
+    static getRootAsElevatorCommand(
+      bb: flatbuffers.ByteBuffer,
+      obj?: ElevatorCommand
+    ): ElevatorCommand {
+      return (obj || new ElevatorCommand()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param ElevatorCommand= obj
+     * @returns ElevatorCommand
+     */
+    static getSizePrefixedRootAsElevatorCommand(
+      bb: flatbuffers.ByteBuffer,
+      obj?: ElevatorCommand
+    ): ElevatorCommand {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new ElevatorCommand()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @returns number
+     */
+    floorCmd(): number {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset ? this.bb!.readUint8(this.bb_pos + offset) : 0;
+    }
+
+    /**
+     * @returns boolean
+     */
+    holdDoor(): boolean {
+      var offset = this.bb!.__offset(this.bb_pos, 8);
+      return offset ? !!this.bb!.readInt8(this.bb_pos + offset) : false;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startElevatorCommand(builder: flatbuffers.Builder) {
+      builder.startObject(3);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param number floorCmd
+     */
+    static addFloorCmd(builder: flatbuffers.Builder, floorCmd: number) {
+      builder.addFieldInt8(1, floorCmd, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param boolean holdDoor
+     */
+    static addHoldDoor(builder: flatbuffers.Builder, holdDoor: boolean) {
+      builder.addFieldInt8(2, +holdDoor, +false);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endElevatorCommand(
+      builder: flatbuffers.Builder
+    ): flatbuffers.Offset {
+      var offset = builder.endObject();
+      return offset;
+    }
+
+    static createElevatorCommand(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset,
+      floorCmd: number,
+      holdDoor: boolean
+    ): flatbuffers.Offset {
+      ElevatorCommand.startElevatorCommand(builder);
+      ElevatorCommand.add_Metadata(builder, _metadataOffset);
+      ElevatorCommand.addFloorCmd(builder, floorCmd);
+      ElevatorCommand.addHoldDoor(builder, holdDoor);
+      return ElevatorCommand.endElevatorCommand(builder);
     }
   }
 }
@@ -4257,6 +4444,131 @@ export namespace fb.sensor_msgs {
       builder.requiredField(offset, 12); // fields
       builder.requiredField(offset, 20); // data
       return offset;
+    }
+  }
+}
+/**
+ * @constructor
+ */
+export namespace fb.std_msgs {
+  export class String {
+    bb: flatbuffers.ByteBuffer | null = null;
+
+    bb_pos: number = 0;
+    /**
+     * @param number i
+     * @param flatbuffers.ByteBuffer bb
+     * @returns String
+     */
+    __init(i: number, bb: flatbuffers.ByteBuffer): String {
+      this.bb_pos = i;
+      this.bb = bb;
+      return this;
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param String= obj
+     * @returns String
+     */
+    static getRootAsString(bb: flatbuffers.ByteBuffer, obj?: String): String {
+      return (obj || new String()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param flatbuffers.ByteBuffer bb
+     * @param String= obj
+     * @returns String
+     */
+    static getSizePrefixedRootAsString(
+      bb: flatbuffers.ByteBuffer,
+      obj?: String
+    ): String {
+      bb.setPosition(bb.position() + flatbuffers.SIZE_PREFIX_LENGTH);
+      return (obj || new String()).__init(
+        bb.readInt32(bb.position()) + bb.position(),
+        bb
+      );
+    }
+
+    /**
+     * @param fb.MsgMetadata= obj
+     * @returns fb.MsgMetadata|null
+     */
+    _metadata(obj?: fb.MsgMetadata): fb.MsgMetadata | null {
+      var offset = this.bb!.__offset(this.bb_pos, 4);
+      return offset
+        ? (obj || new fb.MsgMetadata()).__init(
+            this.bb!.__indirect(this.bb_pos + offset),
+            this.bb!
+          )
+        : null;
+    }
+
+    /**
+     * @param flatbuffers.Encoding= optionalEncoding
+     * @returns string|Uint8Array|null
+     */
+    data(): string | null;
+    data(optionalEncoding: flatbuffers.Encoding): string | Uint8Array | null;
+    data(optionalEncoding?: any): string | Uint8Array | null {
+      var offset = this.bb!.__offset(this.bb_pos, 6);
+      return offset
+        ? this.bb!.__string(this.bb_pos + offset, optionalEncoding)
+        : null;
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     */
+    static startString(builder: flatbuffers.Builder) {
+      builder.startObject(2);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset _metadataOffset
+     */
+    static add_Metadata(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(0, _metadataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @param flatbuffers.Offset dataOffset
+     */
+    static addData(
+      builder: flatbuffers.Builder,
+      dataOffset: flatbuffers.Offset
+    ) {
+      builder.addFieldOffset(1, dataOffset, 0);
+    }
+
+    /**
+     * @param flatbuffers.Builder builder
+     * @returns flatbuffers.Offset
+     */
+    static endString(builder: flatbuffers.Builder): flatbuffers.Offset {
+      var offset = builder.endObject();
+      builder.requiredField(offset, 6); // data
+      return offset;
+    }
+
+    static createString(
+      builder: flatbuffers.Builder,
+      _metadataOffset: flatbuffers.Offset,
+      dataOffset: flatbuffers.Offset
+    ): flatbuffers.Offset {
+      String.startString(builder);
+      String.add_Metadata(builder, _metadataOffset);
+      String.addData(builder, dataOffset);
+      return String.endString(builder);
     }
   }
 }
