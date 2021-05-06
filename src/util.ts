@@ -5,7 +5,7 @@ export const escapeRegExp = (str: string) =>
 
 // match a particular topic in any namespace. Captures namespace as group 1
 export const matchTopicAnyNamespace = (topic: string) =>
-  new RegExp(`(?:(.*)/)?${escapeRegExp(topic)}$`);
+  new RegExp(`(?:(.*)/)/?${escapeRegExp(topic)}$`);
 
 // match a fully-qualified topic.
 export const matchExactTopic = (exactTopic: string) =>
