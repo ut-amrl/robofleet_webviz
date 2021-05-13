@@ -144,11 +144,11 @@ export default function ImageryTab(props: {
         const topic = match[1];
 
         setObservedImages({
+          ...observedImages,
           [topic]: {
             type: ImageType.CompressedImage,
             data: buf,
           },
-          ...observedImages,
         });
       })();
     },
