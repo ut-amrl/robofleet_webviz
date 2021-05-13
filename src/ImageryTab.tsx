@@ -188,29 +188,31 @@ export default function ImageryTab(props: {
   let imageContent: Array<JSX.Element> | string;
 
   if (Object.keys(observedImages).length > 0) {
-    imageContent = Object.keys(observedImages).map((topic) => {
-      const { type, data } = observedImages[topic];
-      return (
-        <Box
-          key={topic}
-          flexBasis={0}
-          flexGrow={1}
-          flexShrink={1}
-          padding="8px"
-        >
-          <ImageCard
-            enabled={enabled}
-            namespace={props.namespace}
-            topic={topic}
-            enablePreviews={enablePreviews}
-            data={data}
-            type={type}
-            onOpen={stopPreviews}
-            onClose={startPreviews}
-          />
-        </Box>
-      );
-    });
+    imageContent = Array.from(Object.keys(observedImages))
+      .sort()
+      .map((topic) => {
+        const { type, data } = observedImages[topic];
+        return (
+          <Box
+            key={topic}
+            flexBasis={0}
+            flexGrow={1}
+            flexShrink={1}
+            padding="8px"
+          >
+            <ImageCard
+              enabled={enabled}
+              namespace={props.namespace}
+              topic={topic}
+              enablePreviews={enablePreviews}
+              data={data}
+              type={type}
+              onOpen={stopPreviews}
+              onClose={startPreviews}
+            />
+          </Box>
+        );
+      });
   } else {
     imageContent = 'No image topics observed.';
   }
