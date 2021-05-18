@@ -32,9 +32,9 @@ export default function CameraControls(props: any) {
       dampingFactor={0.08}
       screenSpacePanning
       mouseButtons={{
-        LEFT: THREE.MOUSE.ROTATE,
+        LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.PAN,
+        RIGHT: THREE.MOUSE.ROTATE,
       }}
       {...props}
     />
