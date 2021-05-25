@@ -6,6 +6,10 @@ import { matchTopic } from '../util';
 import ColoredLinesViewer from './ColoredLinesViewer';
 import ColoredPointsViewer from './ColoredPointsViewer';
 
+type MsgMap = {
+  [key: string]: fb.amrl_msgs.VisualizationMsg;
+};
+
 export default function VisualizationViewer(props: {
   enabled: boolean;
   namespace: string;
@@ -15,51 +19,68 @@ export default function VisualizationViewer(props: {
   linesVisible?: boolean;
 }) {
   const { enabled, namespace, topic, baseLinkMatrix } = props;
-  const [mapMsg, setMapMsg] = useState<fb.amrl_msgs.VisualizationMsg | null>(
-    null
-  );
-  const [
-    baseLinkMsg,
-    setBaseLinkMsg,
-  ] = useState<fb.amrl_msgs.VisualizationMsg | null>(null);
+  const [mapMsgMap, setMapMsgMap] = useState<MsgMap | null>(null);
+  const [baseLinkMsgMap, setBaseLinkMsgMap] = useState<MsgMap | null>(null);
 
   useRobofleetMsgListener(
     matchTopic(namespace, topic),
-    useCallback((buf, match) => {
-      const msg = fb.amrl_msgs.VisualizationMsg.getRootAsVisualizationMsg(buf);
-      const frame = msg.header()?.frameId();
-      if (frame === 'map') {
-        setMapMsg(msg);
-      }
-      if (frame === 'base_link') {
-        setBaseLinkMsg(msg);
-      }
-    }, []),
+    useCallback(
+      (buf, match) => {
+        const msg = fb.amrl_msgs.VisualizationMsg.getRootAsVisualizationMsg(
+          buf
+        );
+        const frame = msg.header()?.frameId();
+        const msgNamespace = msg.ns()!;
+        if (frame === 'map') {
+          setMapMsgMap({
+            ...mapMsgMap,
+            [msgNamespace]: msg,
+          });
+        }
+        if (frame === 'base_link') {
+          setBaseLinkMsgMap({
+            ...baseLinkMsgMap,
+            [msgNamespace]: msg,
+          });
+        }
+      },
+      [baseLinkMsgMap, mapMsgMap]
+    ),
     { enabled }
   );
 
+  const viewers: Array<JSX.Element> = [];
+  for (const ns in mapMsgMap) {
+    viewers.push(
+      <ColoredLinesViewer msg={mapMsgMap[ns]} visible={props.linesVisible} />
+    );
+    viewers.push(
+      <ColoredPointsViewer msg={mapMsgMap[ns]} visible={props.pointsVisible} />
+    );
+  }
+
+  const baseLinkViewers = [];
+  for (const ns in baseLinkMsgMap) {
+    baseLinkViewers.push(
+      <ColoredLinesViewer
+        msg={baseLinkMsgMap[ns]}
+        matrix={baseLinkMatrix}
+        visible={props.linesVisible}
+      />
+    );
+    baseLinkViewers.push(
+      <ColoredPointsViewer
+        msg={baseLinkMsgMap[ns]}
+        matrix={baseLinkMatrix}
+        visible={props.pointsVisible}
+      />
+    );
+  }
+
   return (
     <>
-      {mapMsg && (
-        <ColoredLinesViewer msg={mapMsg} visible={props.linesVisible} />
-      )}
-      {baseLinkMsg && (
-        <ColoredLinesViewer
-          msg={baseLinkMsg}
-          matrix={baseLinkMatrix}
-          visible={props.linesVisible}
-        />
-      )}
-      {mapMsg && (
-        <ColoredPointsViewer msg={mapMsg} visible={props.pointsVisible} />
-      )}
-      {baseLinkMsg && (
-        <ColoredPointsViewer
-          msg={baseLinkMsg}
-          matrix={baseLinkMatrix}
-          visible={props.pointsVisible}
-        />
-      )}
+      {viewers}
+      {baseLinkViewers}
     </>
   );
 }
