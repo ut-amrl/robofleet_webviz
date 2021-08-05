@@ -363,6 +363,14 @@ export default function VizTab(props: { namespace: string; enabled: boolean }) {
         color={0xff6e40}
         visible={scanShow}
       />
+      <LaserScanViewer
+        enabled={enabled}
+        namespace={props.namespace}
+        topic="obstacle_scan"
+        matrix={baseLink}
+        color={0xd121c5}
+        visible={scanShow}
+      />
       <VisualizationViewer
         enabled={enabled}
         namespace={props.namespace}
