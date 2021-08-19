@@ -174,12 +174,14 @@ export default function ImageryTab(props: {
 
   useRobofleetMsgListener(
     matchTopic(props.namespace, '(image_compressed/.+)'),
-    compressedImageTopicCallback
+    compressedImageTopicCallback,
+    { enabled }
   );
 
   useRobofleetMsgListener(
     matchTopic(props.namespace, '(pointcloud)'),
-    pointcloudTopicCallback
+    pointcloudTopicCallback,
+    { enabled }
   );
 
   const startPreviews = () => setEnablePreviews(true);
