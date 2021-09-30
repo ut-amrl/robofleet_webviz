@@ -250,17 +250,7 @@ export default function VizTab(props: { namespace: string; enabled: boolean }) {
               }
               label={`Show Map`}
             />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={locShowNavMap}
-                  onClick={() => setLocShowNavMap((s) => !s)}
-                />
-              }
-              label={`Show Nav Graph`}
-            />
-          </FormGroup>
-          <FormGroup row className={classes['VizControl']}>
+            <Box flexGrow="1" />
             <Select
               value={chosenMap ?? mapName}
               onChange={(event) => setChosenMap(event.target.value as string)}
@@ -286,6 +276,19 @@ export default function VizTab(props: { namespace: string; enabled: boolean }) {
             >
               Set Pose
             </Button>
+          </FormGroup>
+        </CollapserItem>
+        <CollapserItem label="Navigation">
+          <FormGroup row className={classes['VizControl']}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={locShowNavMap}
+                  onClick={() => setLocShowNavMap((s) => !s)}
+                />
+              }
+              label={`Show Nav Graph`}
+            />
             <Box flexGrow="1" />
             <Button
               onClick={() =>
