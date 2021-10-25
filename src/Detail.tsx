@@ -25,6 +25,7 @@ import ImageryTab from './ImageryTab';
 import StatsTab from './StatsTab';
 import { matchAnyTopic } from './util';
 import VizTab from './VizTab';
+import ReportTab from './ReportTab';
 import IdTokenContext from './contexts/IdTokenContext';
 import useAuthCheck from './hooks/useAuthCheck';
 
@@ -149,6 +150,7 @@ export default function Detail() {
         <Tab label="Viz" />
         <Tab label="Imagery" />
         <Tab label="Stats" />
+        <Tab label="Report" />
       </Tabs>
       <PauseButton />
     </>
@@ -173,6 +175,13 @@ export default function Detail() {
         index={tabIndex}
         render={(hidden) => (
           <StatsTab namespace={namespace} enabled={!hidden} />
+        )}
+      />
+      <TabHider
+        id={3}
+        index={tabIndex}
+        render={(hidden) => (
+          <ReportTab namespace={namespace} enabled={!hidden} />
         )}
       />
     </>
