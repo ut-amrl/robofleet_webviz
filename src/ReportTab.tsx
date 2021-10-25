@@ -35,6 +35,7 @@ function createErrorReportMsg({
   topic,
   frame,
   laser_frame,
+  timestamp,
   details,
   severityLevel,
   failedSubsystem,
@@ -43,6 +44,7 @@ function createErrorReportMsg({
   frame: string;
   laser_frame: string;
   topic: string;
+  timestamp: number;
   details: string;
   severityLevel: number;
   failedSubsystem: number;
@@ -60,7 +62,7 @@ function createErrorReportMsg({
   fb.std_msgs.Header.startHeader(fbb);
   fb.std_msgs.Header.addStamp(
     fbb,
-    fb.RosTime.createRosTime(fbb, Math.floor(Date.now() / 1000), 0)
+    fb.RosTime.createRosTime(fbb, Math.floor(timestamp / 1000), timestamp * 1e6)
   );
 
   fb.std_msgs.Header.addFrameId(fbb, frameOffset);
@@ -71,7 +73,7 @@ function createErrorReportMsg({
   fb.std_msgs.Header.startHeader(fbb);
   fb.std_msgs.Header.addStamp(
     fbb,
-    fb.RosTime.createRosTime(fbb, Math.floor(Date.now() / 1000), 0)
+    fb.RosTime.createRosTime(fbb, Math.floor(timestamp / 1000), timestamp * 1e6)
   );
 
   fb.std_msgs.Header.addFrameId(fbb, laserFrameOffset);
@@ -99,6 +101,7 @@ export default function ReportTab(props: {
   const ws = useContext(WebSocketContext);
 
   const [reporting, setReporting] = useState(false);
+  const [reportingTimestamp, setReportingTimestamp] = useState(Date.now());
   const [severityLevel, setSeverityLevel] = useState(severityLevels[0].name);
   const [subsystem, setSubsystem] = useState(subsystems[0].name);
   const [errorDetails, setErrorDetails] = useState<string>('');
@@ -117,6 +120,7 @@ export default function ReportTab(props: {
           topic: 'error_report',
           frame: 'map',
           laser_frame: 'velodyne',
+          timestamp: reportingTimestamp,
           details: errorDetails,
           severityLevel:
             severityLevels.find((l) => l.name === severityLevel)?.value || 0,
@@ -133,7 +137,13 @@ export default function ReportTab(props: {
 
   if (!reporting) {
     reportingContent = (
-      <Button onClick={() => setReporting(true)} variant="contained">
+      <Button
+        onClick={() => {
+          setReportingTimestamp(Date.now());
+          setReporting(true);
+        }}
+        variant="contained"
+      >
         Create New Report
       </Button>
     );
@@ -146,7 +156,7 @@ export default function ReportTab(props: {
           id="error-msg"
           variant="outlined"
           style={{ margin: '5px', padding: '5px' }}
-          value={errorDetails}
+          defaultValue={errorDetails}
           onChange={(e) => setErrorDetails(e.target.value as string)}
         />
         <Box display="flex" margin="10px">
