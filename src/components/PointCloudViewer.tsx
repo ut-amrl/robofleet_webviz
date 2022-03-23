@@ -91,12 +91,12 @@ export default function PointCloudViewer(props: {
       bo = cloud.dataArray()!.subarray(cloud_idx + zOffset).byteOffset;
       points[point_idx + 2] = dataView.getFloat32(bo, little_endian);
       if (intensityOffset) {
-        pointIntensity[point_idx + 0] = 0.75;
-        pointIntensity[point_idx + 1] = 0.75;
+        pointIntensity[point_idx + 0] = 0.5;
+        pointIntensity[point_idx + 1] = 0.5;
         bo = cloud.dataArray()!.subarray(cloud_idx + intensityOffset)
           .byteOffset;
         pointIntensity[point_idx + 2] =
-          dataView.getFloat32(bo, little_endian) / max_intensity;
+          dataView.getFloat32(bo, little_endian) / max_intensity * 0.4;
       }
     }
     setPointData(points);
@@ -163,7 +163,7 @@ export default function PointCloudViewer(props: {
         </bufferGeometry>
         <pointsMaterial
           vertexColors={true}
-          size={0.25}
+          size={3}
           sizeAttenuation={false}
         />
       </points>
